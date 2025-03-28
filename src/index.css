@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --nutricare-primary-dark: #9E0B7F;
+    --nutricare-primary-light: #D93BB1;
+    --nutricare-green: #ADD01C;
+    --nutricare-green-dark: #8CA417;
+    --nutricare-bg-light: #FCF0F8;
+    --nutricare-text-dark: #333333;
+    --nutricare-text-gray: #718096;
+  }
+}
+
+@layer components {
+  .font-sans {
+    font-family: Inter, system-ui, Roboto, sans-serif;
+  }
+}
