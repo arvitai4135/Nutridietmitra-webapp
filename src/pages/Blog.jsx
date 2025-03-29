@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, MessageSquare, User } from 'lucide-react';
-import Blog1 from '../assets/Images/blog1.jpg';
+import Blog1 from '../assets/Images/Blog1.jpg';
 import HealthyGlutenFree from '../assets/Images/HealthyGlutenFree.jpg';
 import HealthLifestyle from '../assets/Images/HealthLifestyle.jpg'
 import BloodSugar from '../assets/Images/BloodSugar.jpg'
