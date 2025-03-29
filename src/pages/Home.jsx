@@ -3,6 +3,12 @@ import React from 'react'
 import Hero from '../components/Hero'
 import AboutUs from '../components/AboutUs'
 import Work from '../components/Work'
+import Service from '../components/Service'
+import Testimonial from '../components/Testimonial'
+import Contact from './Contact'
+import Blog from './Blog'
+// import Footer from '../components/Footer'
+
 
 const Home = () => {
   return (
@@ -12,6 +18,11 @@ const Home = () => {
     <Hero/>
     <AboutUs/>
     <Work/>
+    <Service/>
+    <Testimonial/>
+    <Contact/>
+    <Blog/>
+    
     </>
   )
 }
