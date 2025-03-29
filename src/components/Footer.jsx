@@ -1,6 +1,6 @@
 import React from 'react';
 import { FaFacebookF, FaTwitter, FaFlickr, FaLinkedinIn, FaEnvelope, FaPhone, FaCalendarAlt } from 'react-icons/fa';
-import Blog1 from '../assets/Images/Blog1.jpg'
+import blog1 from '../assets/Images/blog1.jpg'
 import HealthyGlutenFree from '../assets/Images/HealthyGlutenFree.jpg'
 import HealthLifestyle from '../assets/Images/HealthLifestyle.jpg'
 
@@ -11,7 +11,7 @@ const Footer = () => {
       id: 1,
       title: "How Much Do Eat You Really Need Day?",
       date: "20 April, 2018",
-      image: Blog1 // Using a placeholder for the demo
+      image: blog1 // Using a placeholder for the demo
     },
     {
       id: 2,
