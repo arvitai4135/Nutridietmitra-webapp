@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, MessageSquare, User } from 'lucide-react';
-import blog1 from '../assets/Images/blog1.jpg';
+import Blog1 from '../assets/Images/Blog1.jpg';
 import HealthyGlutenFree from '../assets/Images/HealthyGlutenFree.jpg';
 import HealthLifestyle from '../assets/Images/HealthLifestyle.jpg'
 import BloodSugar from '../assets/Images/BloodSugar.jpg'
@@ -18,7 +18,7 @@ const Blog = () => {
     {
       id: 1,
       title: "Nutrition Essentials: How Much Do You Really Need Each Day?",
-      image: blog1,
+      image: Blog1,
       date: { day: "14", month: "MAR" },
       comments: 3,
       author: "Alex",
