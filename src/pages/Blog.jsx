@@ -18,7 +18,7 @@ const Blog = () => {
     {
       id: 1,
       title: "Nutrition Essentials: How Much Do You Really Need Each Day?",
-      image: Blog1,
+      image: blog1,
       date: { day: "14", month: "MAR" },
       comments: 3,
       author: "Alex",
