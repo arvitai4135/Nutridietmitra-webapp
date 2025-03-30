@@ -1,8 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Logo from "../../public/Logo.png"; // Ensure the path is correct
+import Appointment from "../components/form/Appointment"; // Update with the correct path to your Appointment component
 
 const Header = () => {
+  // State to control modal visibility
+  const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
+  
+  // Function to open the appointment modal
+  const openAppointmentModal = () => {
+    setIsAppointmentModalOpen(true);
+  };
+  
+  // Function to close the appointment modal
+  const closeAppointmentModal = () => {
+    setIsAppointmentModalOpen(false);
+  };
+
   return (
     <div className="w-full bg-white shadow-sm font-sans">
       <div className="container mx-auto px-4 py-4 sm:py-6">
@@ -49,15 +63,19 @@ const Header = () => {
             <div className="text-center sm:text-right">
               <p className="text-nutricare-text-gray text-sm font-medium">Request an</p>
               <h2 className="text-lg sm:text-xl font-bold">
-                <Link
-                  to="/appointment"
-                  className="text-nutricare-text-dark hover:text-nutricare-primary-light transition-colors duration-300"
+                {/* Changed from Link to button */}
+                <button
+                  onClick={openAppointmentModal}
+                  className="text-nutricare-text-dark hover:text-nutricare-primary-light transition-colors duration-300 font-bold"
                 >
                   Get Appointment
-                </Link>
+                </button>
               </h2>
             </div>
-            <div className="bg-nutricare-primary-light text-white p-3 rounded-full flex-shrink-0">
+            <div 
+              className="bg-nutricare-primary-light text-white p-3 rounded-full flex-shrink-0 cursor-pointer hover:bg-nutricare-primary-dark transition-colors duration-300"
+              onClick={openAppointmentModal}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6"
@@ -76,6 +94,12 @@ const Header = () => {
           </div>
         </div>
       </div>
+      
+      {/* Appointment Modal */}
+      <Appointment 
+        isOpen={isAppointmentModalOpen} 
+        onClose={closeAppointmentModal} 
+      />
     </div>
   );
 };
