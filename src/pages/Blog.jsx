@@ -7,6 +7,7 @@ import BloodSugar from '/assets/Images/BloodSugar.jpg'; // Corrected path
 import BrainBoost from '/assets/Images/BrainBoost.jpg'; // Corrected path
 import SustainableEating from '/assets/Images/SustainableEating.jpg'; // Corrected path
 
+
 const Blog = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [activeCard, setActiveCard] = useState(null);

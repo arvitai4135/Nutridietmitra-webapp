@@ -1,8 +1,10 @@
 import React from 'react';
 import { FaFacebookF, FaTwitter, FaFlickr, FaLinkedinIn, FaEnvelope, FaPhone, FaCalendarAlt } from 'react-icons/fa';
+
 import HealthyFood from '/assets/Images/HealthyFood.jpg'; // Corrected path
 import HealthyGlutenFree from '/assets/Images/HealthyGlutenFree.jpg'; // Corrected path
 import HealthLifestyle from '/assets/Images/HealthLifestyle.jpg'; // Corrected path
+
 
 const Footer = () => {
   // Sample blog post data with actual image URLs
@@ -12,6 +14,7 @@ const Footer = () => {
       title: "How Much Do Eat You Really Need Day?",
       date: "20 April, 2018",
       image: HealthyFood 
+
     },
     {
       id: 2,

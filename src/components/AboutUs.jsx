@@ -6,7 +6,7 @@ import {
   HeartPulse, 
   ArrowRight 
 } from 'lucide-react';
-import img1 from '../assets/Images/img1.jpg';
+import img1 from '/assets/Images/img1.jpg'; // Corrected path
 import ConsultationFormModal from '../components/form/Consultency.jsx';
 
 const AboutUs = () => {
