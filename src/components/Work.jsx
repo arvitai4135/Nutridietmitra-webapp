@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import SportsNutrionist from '../assets/images/SportsNutrionist.jpg';
-import PersonalisedNutrionist from '../assets/images/PersonalisedNutrionist.jpg';
-import WeightLoss from '../assets/images/WeightLoss.jpg';
-import IndividualCoaching from '../assets/images/IndividualCoaching.jpg';
-import ChildNutrition from '../assets/images/ChildNutrition.jpg';
+
+// Corrected image paths assuming they are in the public/assets/images directory
+const SportsNutrionist = '/assets/Images/SportsNutrionist.jpg';
+const PersonalisedNutrionist = '/assets/Images/PersonalisedNutrionist.jpg';
+const WeightLoss = '/assets/Images/WeightLoss.jpg';
+const IndividualCoaching = '/assets/Images/IndividualCoaching.jpg';
+const ChildNutrition = '/assets/Images/ChildNutrition.jpg';
+
 
 const services = [
   {
@@ -14,7 +17,7 @@ const services = [
     icon: 'bicycle',
     title: 'Sports Nutritionist',
     description: 'We are specializing in sports nutrition. Our sports nutrition team love the benefits of exercise brings.',
-    link: 'sports-nutritionist.html'
+    link: 'sports-nutritionist.html',
   },
   {
     id: 2,
@@ -22,15 +25,15 @@ const services = [
     icon: 'fruits',
     title: 'Personalized Nutrition',
     description: 'Our personalized nutrition foods are right for you & supplements should be taking with diet plan.',
-    link: 'personalized-nutrition.html'
+    link: 'personalized-nutrition.html',
   },
   {
     id: 3,
     image: WeightLoss,
     icon: 'reduce',
     title: 'Weight Loss Programs',
-    description: 'Weight loss process doesn\'t mean strive to body but make the eating process healthy and fully exotic.',
-    link: 'weight-loss-programs.html'
+    description: "Weight loss process doesn't mean strive to body but make the eating process healthy and fully exotic.",
+    link: 'weight-loss-programs.html',
   },
   {
     id: 4,
@@ -38,7 +41,7 @@ const services = [
     icon: 'meditation',
     title: 'Individual Coaching',
     description: 'We provide comprehensive coaching to help you achieve your fitness and nutrition goals.',
-    link: 'individual-coaching.html'
+    link: 'individual-coaching.html',
   },
   {
     id: 5,
@@ -46,11 +49,11 @@ const services = [
     icon: 'nutritionist-1',
     title: 'Child Nutrition',
     description: 'Our main goal for the child nutrition is to provide a healthy and nutritious breakfast to child for better health.',
-    link: 'child-nutrition.html'
-  }
+    link: 'child-nutrition.html',
+  },
 ];
 
-const NutriCareServiceCarousel = () => {
+const Work = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const nextSlide = () => {
@@ -77,13 +80,13 @@ const NutriCareServiceCarousel = () => {
         <div className="relative max-w-5xl mx-auto">
           {/* Navigation Arrows for Mobile */}
           <div className="flex justify-between absolute top-1/2 -translate-y-1/2 w-full z-10 px-10 md:hidden">
-            <button 
+            <button
               onClick={prevSlide}
               className="bg-nutricare-green/70 text-white p-2 rounded-full shadow-lg hover:bg-nutricare-green-dark transition -ml-6"
             >
               <ArrowLeft size={24} />
             </button>
-            <button 
+            <button
               onClick={nextSlide}
               className="bg-nutricare-green/70 text-white p-2 rounded-full shadow-lg hover:bg-nutricare-green-dark transition -mr-6"
             >
@@ -93,7 +96,7 @@ const NutriCareServiceCarousel = () => {
 
           {/* Main Carousel */}
           <AnimatePresence mode="wait">
-            <motion.div 
+            <motion.div
               key={currentIndex}
               initial={{ opacity: 0, x: 300 }}
               animate={{ opacity: 1, x: 0 }}
@@ -103,8 +106,8 @@ const NutriCareServiceCarousel = () => {
             >
               {/* Image Section */}
               <div className="relative rounded-lg overflow-hidden shadow-lg order-2 md:order-1">
-                <img 
-                  src={services[currentIndex].image} 
+                <img
+                  src={services[currentIndex].image}
                   alt={services[currentIndex].title}
                   className="w-full h-64 md:h-96 object-cover"
                 />
@@ -125,14 +128,14 @@ const NutriCareServiceCarousel = () => {
                       {services[currentIndex].title}
                     </h3>
                   </div>
-                  
+
                   <p className="text-nutricare-text-gray text-sm md:text-base mb-6 leading-relaxed">
                     {services[currentIndex].description}
                   </p>
                 </div>
-                
+
                 <div className="flex justify-between items-center">
-                  <a 
+                  <a
                     href={services[currentIndex].link}
                     className="inline-block px-4 md:px-6 py-2 md:py-3 bg-nutricare-green text-white rounded-full hover:bg-nutricare-green-dark transition text-sm md:text-base"
                   >
@@ -154,8 +157,8 @@ const NutriCareServiceCarousel = () => {
                 key={index}
                 onClick={() => setCurrentIndex(index)}
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  index === currentIndex 
-                    ? 'bg-nutricare-primary-dark scale-125' 
+                  index === currentIndex
+                    ? 'bg-nutricare-primary-dark scale-125'
                     : 'bg-nutricare-text-gray'
                 }`}
               />
@@ -164,13 +167,13 @@ const NutriCareServiceCarousel = () => {
 
           {/* Desktop Navigation Arrows */}
           <div className="hidden md:block">
-            <button 
+            <button
               onClick={prevSlide}
               className="absolute top-1/2 -translate-y-1/2 left-0 -ml-16 bg-nutricare-green text-white p-3 rounded-full shadow-lg hover:bg-nutricare-green-dark transition"
             >
               <ArrowLeft size={24} />
             </button>
-            <button 
+            <button
               onClick={nextSlide}
               className="absolute top-1/2 -translate-y-1/2 right-0 -mr-16 bg-nutricare-green text-white p-3 rounded-full shadow-lg hover:bg-nutricare-green-dark transition"
             >
@@ -183,4 +186,4 @@ const NutriCareServiceCarousel = () => {
   );
 };
 
-export default NutriCareServiceCarousel;
+export default Work;

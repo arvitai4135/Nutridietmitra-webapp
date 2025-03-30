@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import logo from "../../public/Logo.png"; // Ensure the path is correct
+import Logo from "../../public/Logo.png"; // Ensure the path is correct
 
 const Header = () => {
   return (
@@ -37,7 +37,7 @@ const Header = () => {
           <div className="sm:col-span-4 flex justify-center order-first sm:order-none">
             <Link to="/">
               <img
-                src={logo}
+                src={Logo}
                 alt="NutriDietMitra"
                 className="h-14 sm:h-16 w-auto object-contain hover:scale-105 transition-transform duration-300"
               />

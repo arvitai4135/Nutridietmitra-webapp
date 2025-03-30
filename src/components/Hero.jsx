@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ArrowRight, ChevronLeft, ChevronRight, Heart, Apple, Salad } from 'lucide-react';
-import img1 from '../assets/Images/img1.jpg';
-import img2 from '../assets/Images/img2.jpg';
-import img3 from '../assets/Images/img3.jpg';
+import img1 from '/assets/Images/img1.jpg'; // Corrected path
+import img2 from '/assets/Images/img2.jpg'; // Corrected path
+import img3 from '/assets/Images/img3.jpg'; // Corrected path
 
 const heroSlides = [
   {

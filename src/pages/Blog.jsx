@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, MessageSquare, User } from 'lucide-react';
-import Blog1 from '../assets/Images/blog1.jpg';
-import HealthyGlutenFree from '../assets/Images/HealthyGlutenFree.jpg';
-import HealthLifestyle from '../assets/Images/HealthLifestyle.jpg'
-import BloodSugar from '../assets/Images/BloodSugar.jpg'
-import BrainBoost from '../assets/Images/BrainBoost.jpg'
-import SustainableEating from '../assets/Images/SustainableEating.jpg'
+import HealthyFood from '/assets/Images/HealthyFood.jpg'; // Corrected path
+import HealthyGlutenFree from '/assets/Images/HealthyGlutenFree.jpg'; // Corrected path
+import HealthLifestyle from '/assets/Images/HealthLifestyle.jpg'; // Corrected path
+import BloodSugar from '/assets/Images/BloodSugar.jpg'; // Corrected path
+import BrainBoost from '/assets/Images/BrainBoost.jpg'; // Corrected path
+import SustainableEating from '/assets/Images/SustainableEating.jpg'; // Corrected path
 
 const Blog = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -13,12 +13,12 @@ const Blog = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [slidesToShow, setSlidesToShow] = useState(3);
   const sliderContainerRef = useRef(null);
-  
+
   const blogPosts = [
     {
       id: 1,
       title: "Nutrition Essentials: How Much Do You Really Need Each Day?",
-      image: Blog1,
+      image: HealthyFood,
       date: { day: "14", month: "MAR" },
       comments: 3,
       author: "Alex",
@@ -54,7 +54,7 @@ const Blog = () => {
     {
       id: 5,
       title: "The Mind-Diet Connection: Foods That Boost Brain Health",
-      image: BrainBoost ,
+      image: BrainBoost,
       date: { day: "03", month: "FEB" },
       comments: 8,
       author: "Julia",
@@ -63,7 +63,7 @@ const Blog = () => {
     {
       id: 6,
       title: "Sustainable Eating: Good For You And The Planet",
-      image: SustainableEating, 
+      image: SustainableEating,
       date: { day: "17", month: "APR" },
       comments: 4,
       author: "Marcus",
@@ -76,23 +76,23 @@ const Blog = () => {
 
   useEffect(() => {
     setIsVisible(true);
-    
+
     const updateDimensions = () => {
       const width = window.innerWidth;
       let slides = 3;
-      
+
       if (width < 640) {
         slides = 1;
       } else if (width < 1024) {
         slides = 2;
       }
-      
+
       setSlidesToShow(slides);
     };
-    
+
     updateDimensions();
     window.addEventListener('resize', updateDimensions);
-    
+
     return () => {
       window.removeEventListener('resize', updateDimensions);
     };
@@ -137,19 +137,19 @@ const Blog = () => {
             Your source for the latest nutrition research and wellness advice.
           </p>
         </div>
-        
+
         {/* Blog Carousel */}
         <div className="relative">
           {/* Navigation Controls */}
           <div className="flex justify-end mb-6 space-x-3">
-            <button 
+            <button
               onClick={prevSlide}
               className="w-10 h-10 rounded-full flex items-center justify-center bg-[#FCF0F8] text-[#9E0B7F] transition-all duration-300 hover:bg-[#9E0B7F] hover:text-white focus:outline-none focus:ring-2 focus:ring-[#9E0B7F] focus:ring-opacity-50"
               aria-label="Previous blog post"
             >
               <ChevronLeft size={20} />
             </button>
-            <button 
+            <button
               onClick={nextSlide}
               className="w-10 h-10 rounded-full flex items-center justify-center bg-[#9E0B7F] text-white transition-all duration-300 hover:bg-[#D93BB1] focus:outline-none focus:ring-2 focus:ring-[#9E0B7F] focus:ring-opacity-50"
               aria-label="Next blog post"
@@ -157,38 +157,38 @@ const Blog = () => {
               <ChevronRight size={20} />
             </button>
           </div>
-          
+
           {/* Blog Posts Slider */}
-          <div 
+          <div
             ref={sliderContainerRef}
             className="relative overflow-hidden pb-8"
           >
-            <div 
+            <div
               className="flex transition-transform duration-500 ease-in-out"
-              style={{ 
+              style={{
                 transform: `translateX(-${currentIndex * (100 / slidesToShow)}%)`,
               }}
             >
               {extendedPosts.map((post, index) => (
-                <div 
-                  key={`${post.id}-${index}`} 
+                <div
+                  key={`${post.id}-${index}`}
                   className="px-4 relative"
-                  style={{ 
+                  style={{
                     flex: `0 0 ${100 / slidesToShow}%`,
                   }}
                 >
                   {/* Card Container with Fixed Height and Padding for Scale Effect */}
                   <div className="group h-full relative py-2 px-2">
                     {/* Actual Card Content */}
-                    <div 
+                    <div
                       className="h-full rounded-xl overflow-hidden shadow-lg bg-white border border-gray-100 transition-all duration-300 group-hover:shadow-xl relative z-10"
                       onMouseEnter={() => setActiveCard(index)}
                       onMouseLeave={() => setActiveCard(null)}
                     >
                       {/* Blog Image with Date */}
                       <div className="relative overflow-hidden h-48 md:h-56 lg:h-64">
-                        <img 
-                          src={post.image} 
+                        <img
+                          src={post.image}
                           alt={post.title}
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                         />
@@ -197,12 +197,12 @@ const Blog = () => {
                           <div className="text-xs font-medium">{post.date.month}</div>
                         </div>
                       </div>
-                      
+
                       {/* Content */}
                       <div className="p-5">
                         <h3 className="text-xl font-bold text-[#333333] mb-3 line-clamp-2 h-14 md:h-16">
-                          <a 
-                            href="#" 
+                          <a
+                            href="#"
                             className="hover:text-[#9E0B7F] transition-colors duration-300"
                           >
                             {post.title}
@@ -235,7 +235,7 @@ const Blog = () => {
               ))}
             </div>
           </div>
-          
+
           {/* Dots Navigation */}
           <div className="flex justify-center mt-6 space-x-2">
             {Array.from({ length: Math.ceil(blogPosts.length / slidesToShow) }).map((_, index) => (
@@ -243,8 +243,8 @@ const Blog = () => {
                 key={index}
                 onClick={() => goToSlide(index)}
                 className={`h-2 rounded-full transition-all duration-300 ${
-                  Math.floor(currentIndex / slidesToShow) % Math.ceil(blogPosts.length / slidesToShow) === index 
-                    ? 'w-8 bg-[#9E0B7F]' 
+                  Math.floor(currentIndex / slidesToShow) % Math.ceil(blogPosts.length / slidesToShow) === index
+                    ? 'w-8 bg-[#9E0B7F]'
                     : 'w-2 bg-[#D93BB1] bg-opacity-40'
                 }`}
                 aria-label={`Go to slide ${index + 1}`}
@@ -253,7 +253,7 @@ const Blog = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Decorative Elements */}
       <div className="hidden md:block absolute -bottom-10 left-1/4 bg-[#D93BB1] bg-opacity-10 h-20 w-20 rounded-full"></div>
       <div className="hidden md:block absolute top-20 right-10 bg-[#ADD01C] bg-opacity-10 h-16 w-16 rounded-full"></div>

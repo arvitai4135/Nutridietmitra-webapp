@@ -1,8 +1,8 @@
 import React from 'react';
 import { FaFacebookF, FaTwitter, FaFlickr, FaLinkedinIn, FaEnvelope, FaPhone, FaCalendarAlt } from 'react-icons/fa';
-import Blog1 from '../assets/Images/Blog1.jpg'
-import HealthyGlutenFree from '../assets/Images/HealthyGlutenFree.jpg'
-import HealthLifestyle from '../assets/Images/HealthLifestyle.jpg'
+import HealthyFood from '/assets/Images/HealthyFood.jpg'; // Corrected path
+import HealthyGlutenFree from '/assets/Images/HealthyGlutenFree.jpg'; // Corrected path
+import HealthLifestyle from '/assets/Images/HealthLifestyle.jpg'; // Corrected path
 
 const Footer = () => {
   // Sample blog post data with actual image URLs
@@ -11,19 +11,19 @@ const Footer = () => {
       id: 1,
       title: "How Much Do Eat You Really Need Day?",
       date: "20 April, 2018",
-      image: Blog1 // Using a placeholder for the demo
+      image: HealthyFood 
     },
     {
       id: 2,
       title: "7 Simple & Healthy Gluten Free Cookie",
       date: "01 August, 2018",
-      image: HealthyGlutenFree // Using a placeholder for the demo
+      image: HealthyGlutenFree 
     },
     {
       id: 3,
       title: "Tips For Staying Healthy On Vacations",
       date: "13 March, 2018",
-      image: HealthLifestyle // Using a placeholder for the demo
+      image: HealthLifestyle 
     }
   ];
   
@@ -50,7 +50,7 @@ const Footer = () => {
               <div className="flex items-center mb-3">
                 <FaEnvelope className="text-nutricare-green mr-3" />
                 <a href="mailto:support@nutridiet.in" className="text-gray-400 hover:text-nutricare-green transition duration-300">
-                support@nutridiet.in
+                  support@nutridiet.in
                 </a>
               </div>
               <div className="flex items-center mb-6">
