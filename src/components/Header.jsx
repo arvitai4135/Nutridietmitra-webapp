@@ -1,24 +1,24 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import Logo from "../../public/Logo.png"; // Ensure the path is correct
+import Logo from "/Logo.png"; // Ensure the path is correct
 import Appointment from "../components/form/Appointment"; // Update with the correct path to your Appointment component
 
 const Header = () => {
   // State to control modal visibility
   const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
-  
+
   // Function to open the appointment modal
   const openAppointmentModal = () => {
     setIsAppointmentModalOpen(true);
   };
-  
+
   // Function to close the appointment modal
   const closeAppointmentModal = () => {
     setIsAppointmentModalOpen(false);
   };
 
   return (
-    <div className="w-full bg-white shadow-sm font-sans">
+    <div className="hidden sm:block w-full bg-white shadow-sm font-sans">
       <div className="container mx-auto px-4 py-4 sm:py-6">
         <div className="grid grid-cols-1 sm:grid-cols-12 items-center gap-6 sm:gap-4">
           {/* Left: Emergency Contact */}
@@ -72,7 +72,7 @@ const Header = () => {
                 </button>
               </h2>
             </div>
-            <div 
+            <div
               className="bg-nutricare-primary-light text-white p-3 rounded-full flex-shrink-0 cursor-pointer hover:bg-nutricare-primary-dark transition-colors duration-300"
               onClick={openAppointmentModal}
             >
@@ -94,11 +94,11 @@ const Header = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Appointment Modal */}
-      <Appointment 
-        isOpen={isAppointmentModalOpen} 
-        onClose={closeAppointmentModal} 
+      <Appointment
+        isOpen={isAppointmentModalOpen}
+        onClose={closeAppointmentModal}
       />
     </div>
   );

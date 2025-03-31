@@ -1,10 +1,25 @@
 import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import Appointment from "../components/form/Appointment"; // Import the Appointment component
 
 const Navbar = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAppointmentOpen, setIsAppointmentOpen] = useState(false);
+
+  const toggleAppointment = () => {
+    setIsAppointmentOpen(!isAppointmentOpen);
+    // Close menu when appointment is opened on mobile
+    if (!isAppointmentOpen && isMenuOpen) {
+      setIsMenuOpen(false);
+    }
+  };
+
+  // Function to close the mobile menu
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
 
   return (
     <div className="bg-nutricare-bg-light shadow-sm sticky top-0 z-40">
@@ -31,6 +46,7 @@ const Navbar = () => {
           >
             <NavLink
               to="/"
+              onClick={closeMenu} // Close menu on click
               className={({ isActive }) =>
                 `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 ${
                   isActive
@@ -43,6 +59,7 @@ const Navbar = () => {
             </NavLink>
             <NavLink
               to="/about"
+              onClick={closeMenu} // Close menu on click
               className={({ isActive }) =>
                 `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 ${
                   isActive
@@ -54,7 +71,8 @@ const Navbar = () => {
               About
             </NavLink>
             <NavLink
-              to="/service"
+              to="/services"
+              onClick={closeMenu} // Close menu on click
               className={({ isActive }) =>
                 `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 ${
                   isActive
@@ -67,6 +85,7 @@ const Navbar = () => {
             </NavLink>
             <NavLink
               to="/gallery"
+              onClick={closeMenu} // Close menu on click
               className={({ isActive }) =>
                 `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 ${
                   isActive
@@ -79,6 +98,7 @@ const Navbar = () => {
             </NavLink>
             <NavLink
               to="/blogs"
+              onClick={closeMenu} // Close menu on click
               className={({ isActive }) =>
                 `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 ${
                   isActive
@@ -90,7 +110,8 @@ const Navbar = () => {
               Blogs
             </NavLink>
             <NavLink
-              to="/contact-us"
+              to="/contact"
+              onClick={closeMenu} // Close menu on click
               className={({ isActive }) =>
                 `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 ${
                   isActive
@@ -101,21 +122,32 @@ const Navbar = () => {
             >
               Contact Us
             </NavLink>
+
+            {/* Appointment button for mobile view */}
+            <button
+              onClick={toggleAppointment}
+              className="md:hidden py-2 px-6 bg-nutricare-primary-dark text-white rounded-full hover:bg-nutricare-primary-light transition-colors duration-300 font-sans"
+            >
+              Book Appointment
+            </button>
           </nav>
 
-          {/* Right: Cart and Search */}
+          {/* Right: Cart, Search, and Appointment */}
           <div className="flex items-center space-x-4">
-            {/* <Link to="/cart" className="relative group">
-              <i className="fas fa-shopping-cart text-nutricare-primary-dark text-xl transition-colors duration-300 group-hover:text-nutricare-green"></i>
-              <span className="absolute -top-2 -right-2 bg-nutricare-green text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                0
-              </span>
-            </Link> */}
+            {/* Search Button */}
             <button
               onClick={() => setIsSearchOpen(!isSearchOpen)}
               className="text-nutricare-primary-dark transition-colors duration-300 hover:text-nutricare-green"
             >
               <i className="fas fa-search text-xl"></i>
+            </button>
+
+            {/* Appointment Button for desktop view */}
+            <button
+              onClick={toggleAppointment}
+              className="hidden md:block py-2 px-6 bg-nutricare-primary-dark text-white rounded-full hover:bg-nutricare-primary-light transition-colors duration-300 font-sans"
+            >
+              Book Appointment
             </button>
           </div>
         </div>
@@ -146,6 +178,9 @@ const Navbar = () => {
             </div>
           </div>
         )}
+
+        {/* Appointment Modal */}
+        <Appointment isOpen={isAppointmentOpen} onClose={() => setIsAppointmentOpen(false)} />
       </div>
     </div>
   );

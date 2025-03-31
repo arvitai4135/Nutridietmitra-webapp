@@ -5,8 +5,9 @@ import AboutUs from '../components/AboutUs'
 import Work from '../components/Work'
 import Service from '../components/Service'
 import Testimonial from '../components/Testimonial'
-import Contact from './Contact'
+// import Contact from './Contact'
 import Blog from './Blog'
+import ContactMiddle from '../components/contact/ContactMiddle'
 // import Footer from '../components/Footer'
 
 
@@ -20,7 +21,7 @@ const Home = () => {
     <Work/>
     <Service/>
     <Testimonial/>
-    <Contact/>
+    <ContactMiddle/>
     <Blog/>
     
     </>
