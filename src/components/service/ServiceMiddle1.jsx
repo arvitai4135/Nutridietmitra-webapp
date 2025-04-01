@@ -429,12 +429,12 @@ const NutritionServices = () => {
         selectedService={selectedService} 
       />
 
-      <a 
+      {/* <a 
         href="#top" 
         className="fixed bottom-6 right-6 bg-nutricare-green hover:bg-nutricare-green-dark text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110"
       >
         <ChevronUp size={24} />
-      </a>
+      </a> */}
     </div>
   );
 };
