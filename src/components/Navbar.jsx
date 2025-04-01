@@ -97,7 +97,7 @@ const Navbar = () => {
               Gallery
             </NavLink>
             <NavLink
-              to="/blogs"
+              to="/blog"
               onClick={closeMenu} // Close menu on click
               className={({ isActive }) =>
                 `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 ${

@@ -1,8 +1,8 @@
 import React from 'react';
 import About1 from '/assets/Images/About1.jpg'
-import AboutUs from '../components/AboutUs';
-import AboutTop from '../components/AboutTop';
-import AboutMiddle from '../components/AboutMiddle'
+import AboutUs from '../components/about/AboutUs';
+import AboutTop from '../components/about/AboutTop';
+import AboutMiddle from '../components/about/AboutMiddle'
 
 const About = () => {
   return (

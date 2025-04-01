@@ -1,7 +1,7 @@
 import React from 'react'
 // import TopBar from '../components/TopBar'
 import Hero from '../components/Hero'
-import AboutUs from '../components/AboutUs'
+import AboutUs from '../components/about/AboutUs'
 import Work from '../components/Work'
 import Service from '../components/Service'
 import Testimonial from '../components/Testimonial'
