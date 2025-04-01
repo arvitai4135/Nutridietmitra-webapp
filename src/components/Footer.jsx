@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react"; // Import useState
+import { Link } from "react-router-dom";
 import {
   FaFacebookF,
   FaTwitter,
@@ -12,9 +13,16 @@ import {
 import HealthyFood from "/assets/Images/HealthyFood.jpg";
 import HealthyGlutenFree from "/assets/Images/HealthyGlutenFree.jpg";
 import HealthLifestyle from "/assets/Images/HealthLifestyle.jpg";
+import Appointment from "./form/Appointment";
+
+// Component to render the green dot icon
+const LinkIcon = () => (
+  <span className="w-2 h-2 bg-nutricare-green mr-2 inline-block"></span>
+);
 
 const Footer = () => {
-  // Sample blog post data with actual image URLs
+  const [isAppointmentOpen, setIsAppointmentOpen] = useState(false); // State for modal
+
   const recentPosts = [
     {
       id: 1,
@@ -38,7 +46,6 @@ const Footer = () => {
 
   return (
     <footer className="bg-nutricare-text-dark text-white">
-      {/* Main Footer Content */}
       <div className="container mx-auto px-4 py-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info Column */}
@@ -106,76 +113,76 @@ const Footer = () => {
             </h3>
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/services"
                   className="text-gray-400 hover:text-nutricare-green flex items-center transition duration-300"
                 >
-                  <span className="w-2 h-2 bg-nutricare-green mr-2"></span>
+                  <LinkIcon />
                   Personalized Nutrition
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/services"
                   className="text-gray-400 hover:text-nutricare-green flex items-center transition duration-300"
                 >
-                  <span className="w-2 h-2 bg-nutricare-green mr-2"></span>
+                  <LinkIcon />
                   Wellness Programs
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/services"
                   className="text-gray-400 hover:text-nutricare-green flex items-center transition duration-300"
                 >
-                  <span className="w-2 h-2 bg-nutricare-green mr-2"></span>
+                  <LinkIcon />
                   Individual Coaching
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/services"
                   className="text-gray-400 hover:text-nutricare-green flex items-center transition duration-300"
                 >
-                  <span className="w-2 h-2 bg-nutricare-green mr-2"></span>
+                  <LinkIcon />
                   Sports Nutritionist Diet
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/services"
                   className="text-gray-400 hover:text-nutricare-green flex items-center transition duration-300"
                 >
-                  <span className="w-2 h-2 bg-nutricare-green mr-2"></span>
+                  <LinkIcon />
                   Child Nutritionist Plan
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-nutricare-green flex items-center transition duration-300"
+                <button
+                  onClick={() => setIsAppointmentOpen(true)} // Open modal on click
+                  className="text-gray-400 hover:text-nutricare-green flex items-center transition duration-300 w-full text-left"
                 >
-                  <span className="w-2 h-2 bg-nutricare-green mr-2"></span>
+                  <LinkIcon />
                   Make Appointments
-                </a>
+                </button>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/services"
                   className="text-gray-400 hover:text-nutricare-green flex items-center transition duration-300"
                 >
-                  <span className="w-2 h-2 bg-nutricare-green mr-2"></span>
+                  <LinkIcon />
                   Our Pricing Plan
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/services"
                   className="text-gray-400 hover:text-nutricare-green flex items-center transition duration-300"
                 >
-                  <span className="w-2 h-2 bg-nutricare-green mr-2"></span>
+                  <LinkIcon />
                   Online Nutrition Services
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -268,7 +275,7 @@ const Footer = () => {
                 Privacy Policy
               </a>
               <a
-                href="#"
+                href="/contact"
                 className="text-gray-400 text-sm hover:text-nutricare-green transition duration-300"
               >
                 Contact
@@ -283,6 +290,13 @@ const Footer = () => {
           </div>
         </div>
       </div>
+
+      {/* Appointment Modal */}
+      <Appointment
+        isOpen={isAppointmentOpen}
+        onClose={() => setIsAppointmentOpen(false)}
+        selectedService="General Appointment" // You can customize this
+      />
 
       {/* Scroll to top button */}
       <button

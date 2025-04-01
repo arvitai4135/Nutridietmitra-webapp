@@ -1,115 +1,297 @@
 import React, { useState } from 'react';
-import { ChevronUp, Home, ArrowRight, ExternalLink } from 'lucide-react';
+import { ChevronUp, ChevronDown, Filter } from 'lucide-react';
 import Appointment from '../form/Appointment';
 
 const NutritionServices = () => {
   const [hoveredService, setHoveredService] = useState(null);
   const [appointmentOpen, setAppointmentOpen] = useState(false);
   const [selectedService, setSelectedService] = useState('');
-  
-  // Services data
+  const [activeCategory, setActiveCategory] = useState('all');
+
+  // Categories for services
+  const categories = [
+    { id: 'all', name: 'All Services' },
+    { id: 'weight', name: 'Weight Management' },
+    { id: 'chronic', name: 'Chronic Conditions' },
+    { id: 'hormonal', name: 'Hormonal Health' },
+    { id: 'wellness', name: 'General Wellness' },
+    { id: 'lifestyle', name: 'Lifestyle Support' }
+  ];
+
   const services = [
     {
       id: 1,
-      title: "Sports Nutrition",
-      description: "Expert guidance for athletes and active individuals. Our sports nutrition specialists create plans that enhance performance, support recovery, and optimize energy levels.",
-      icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
-          <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
-          <path d="M14 6a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-4a2 2 0 0 1 -2 -2v-6a2 2 0 0 1 2 -2h4z" />
-          <path d="M12 3v3" />
-          <path d="M18.5 8.5l-2.5 2.5" />
-          <path d="M12 18v3" />
-          <path d="M5.5 8.5l2.5 2.5" />
-        </svg>
-      ),
-      benefits: ["Performance optimization", "Recovery support", "Injury prevention"],
-      color: "from-blue-500 to-blue-600"
-    },
-    {
-      id: 2,
-      title: "Personalized Nutrition",
-      description: "Custom meal plans tailored to your unique needs, preferences, and health goals. We analyze your body composition and lifestyle to create sustainable nutrition strategies.",
-      icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
-          <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
-          <path d="M12 10v4" />
-          <path d="M10 12h4" />
-        </svg>
-      ),
-      benefits: ["Customized meal planning", "Dietary assessments", "Supplement guidance"],
-      color: "from-emerald-500 to-emerald-600"
-    },
-    {
-      id: 3,
-      title: "Weight Management",
-      description: "Sustainable approaches to weight loss that focus on nourishing your body. We emphasize healthy habits and balanced nutrition for long-term success.",
+      title: "Weight Loss Plan",
+      description: "Customized nutrition plans designed to help you shed excess weight sustainably through balanced meals and healthy habits.",
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
           <path d="M16.2 3.8a2.7 2.7 0 0 0 -3.81 0l-10.6 10.59a2.7 2.7 0 0 0 0 3.82l7 7a2.7 2.7 0 0 0 3.81 0l10.6 -10.59a2.7 2.7 0 0 0 0 -3.82l-7 -7" />
           <path d="M4.9 19.1l7 -7" />
-          <path d="M15.7 15.7a1 1 0 0 0 1.4 -1.4" />
         </svg>
       ),
-      benefits: ["Sustainable fat loss", "Metabolic optimization", "Habit formation"],
-      color: "from-pink-500 to-pink-600"
+      benefits: ["Sustainable fat loss", "Metabolic boost", "Healthy eating habits"],
+      color: "from-pink-500 to-pink-600",
+      category: "weight"
+    },
+    {
+      id: 2,
+      title: "Weight Gain Plan",
+      description: "Tailored meal plans to help you gain weight healthily, focusing on muscle growth and nutrient-dense foods.",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
+          <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+          <path d="M14 6a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-4a2 2 0 0 1 -2 -2v-6a2 2 0 0 1 2 -2h4z" />
+        </svg>
+      ),
+      benefits: ["Muscle growth", "Balanced nutrition", "Energy optimization"],
+      color: "from-blue-500 to-blue-600",
+      category: "weight"
+    },
+    {
+      id: 3,
+      title: "PCOS Management",
+      description: "Specialized nutrition strategies to manage PCOS symptoms, balance hormones, and improve overall well-being.",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
+          <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+          <path d="M10 12h4" />
+        </svg>
+      ),
+      benefits: ["Hormone balance", "Weight management", "Symptom relief"],
+      color: "from-emerald-500 to-emerald-600",
+      category: "hormonal"
     },
     {
       id: 4,
-      title: "Wellness Coaching",
-      description: "Holistic support that addresses nutrition, physical activity, stress management, and sleep. Our coaches help you build habits that promote total wellbeing.",
+      title: "Pre and Post Pregnancy Plan",
+      description: "Nutrition guidance for a healthy pregnancy and postpartum recovery, supporting both mother and baby.",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
+          <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+          <path d="M3 12h1m8 -9v1m8 8h1m-9 8v1" />
+        </svg>
+      ),
+      benefits: ["Fetal development", "Postpartum recovery", "Energy support"],
+      color: "from-purple-500 to-purple-600",
+      category: "hormonal"
+    },
+    {
+      id: 5,
+      title: "Diabetes Management",
+      description: "Meal plans to regulate blood sugar levels, improve insulin sensitivity, and maintain overall health.",
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
           <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
           <path d="M9 9l.01 0" />
-          <path d="M15 9l.01 0" />
-          <path d="M8 13a4 4 0 0 0 8 0m0 0h-8" />
+          <path d="M15 15l.01 0" />
         </svg>
       ),
-      benefits: ["Stress management", "Sleep optimization", "Work-life balance"],
-      color: "from-purple-500 to-purple-600"
-    },
-    {
-      id: 5,
-      title: "Child Nutrition",
-      description: "Age-appropriate nutrition guidance for growing bodies and minds. We help parents establish healthy eating patterns that support development and lifelong wellness.",
-      icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
-          <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
-          <path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" />
-        </svg>
-      ),
-      benefits: ["Developmental support", "Allergy management", "Picky eater strategies"],
-      color: "from-amber-500 to-amber-600"
+      benefits: ["Blood sugar control", "Energy stability", "Complication prevention"],
+      color: "from-teal-500 to-teal-600",
+      category: "chronic"
     },
     {
       id: 6,
-      title: "Fitness Programming",
-      description: "Scientifically designed workout routines that complement your nutrition plan. We create balanced exercise programs that fit your schedule and preferences.",
+      title: "Thyroid Plan",
+      description: "Nutrition support to optimize thyroid function, manage symptoms, and enhance metabolism.",
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
           <path d="M7 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
           <path d="M17 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
-          <path d="M10 12h4" />
         </svg>
       ),
-      benefits: ["Personalized workouts", "Progress tracking", "Technique optimization"],
-      color: "from-teal-500 to-teal-600"
+      benefits: ["Metabolism support", "Hormone regulation", "Fatigue reduction"],
+      color: "from-amber-500 to-amber-600",
+      category: "hormonal"
+    },
+    {
+      id: 7,
+      title: "Kids Nutrition",
+      description: "Age-appropriate meal plans to support growth, development, and healthy eating habits for children.",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
+          <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+          <path d="M3 12h1m8 -9v1m8 8h1" />
+        </svg>
+      ),
+      benefits: ["Growth support", "Immunity boost", "Picky eater solutions"],
+      color: "from-orange-500 to-orange-600",
+      category: "lifestyle"
+    },
+    {
+      id: 8,
+      title: "Immunity Boosting Plan",
+      description: "Nutrition plans rich in vitamins and antioxidants to strengthen your immune system and fight illness.",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
+          <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+          <path d="M12 8v4l3 3" />
+        </svg>
+      ),
+      benefits: ["Immune enhancement", "Infection resistance", "Energy boost"],
+      color: "from-yellow-500 to-yellow-600",
+      category: "wellness"
+    },
+    {
+      id: 9,
+      title: "Athletes Diet Plan",
+      description: "Performance-focused nutrition for athletes to enhance strength, endurance, and recovery.",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
+          <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+          <path d="M18.5 8.5l-2.5 2.5" />
+          <path d="M5.5 8.5l2.5 2.5" />
+        </svg>
+      ),
+      benefits: ["Performance boost", "Muscle recovery", "Energy optimization"],
+      color: "from-indigo-500 to-indigo-600",
+      category: "lifestyle"
+    },
+    {
+      id: 10,
+      title: "Arthritis Plan",
+      description: "Anti-inflammatory meals to reduce joint pain and improve mobility for arthritis management.",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
+          <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+          <path d="M9 15l3 -3l3 3" />
+        </svg>
+      ),
+      benefits: ["Pain reduction", "Joint support", "Inflammation control"],
+      color: "from-red-500 to-red-600",
+      category: "chronic"
+    },
+    {
+      id: 11,
+      title: "Anti-inflammatory Diet Plan",
+      description: "Nutrition to reduce inflammation, improve gut health, and support overall wellness.",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
+          <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+          <path d="M12 9v6" />
+        </svg>
+      ),
+      benefits: ["Inflammation reduction", "Gut health", "Energy improvement"],
+      color: "from-green-500 to-green-600",
+      category: "wellness"
+    },
+    {
+      id: 12,
+      title: "Heart Health Plan",
+      description: "Heart-friendly meals to lower cholesterol, manage blood pressure, and promote cardiovascular health.",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
+          <path d="M12 20a2 2 0 0 1 -2 -2v-6a2 2 0 0 1 2 -2a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2" />
+          <path d="M9 13l-3 -3l3 -3" />
+          <path d="M15 13l3 -3l-3 -3" />
+        </svg>
+      ),
+      benefits: ["Cholesterol control", "Blood pressure support", "Heart strength"],
+      color: "from-rose-500 to-rose-600",
+      category: "chronic"
+    },
+    {
+      id: 13,
+      title: "Post Menopause Diet Plan",
+      description: "Nutrition to manage menopausal symptoms, support bone health, and maintain vitality.",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
+          <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+          <path d="M9 9l6 6" />
+        </svg>
+      ),
+      benefits: ["Bone health", "Symptom relief", "Energy balance"],
+      color: "from-violet-500 to-violet-600",
+      category: "hormonal"
+    },
+    {
+      id: 14,
+      title: "Glowing Skin Plan",
+      description: "Antioxidant-rich nutrition to promote radiant skin, reduce blemishes, and enhance complexion.",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
+          <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+          <path d="M12 3v3" />
+          <path d="M12 18v3" />
+        </svg>
+      ),
+      benefits: ["Skin radiance", "Blemish reduction", "Hydration support"],
+      color: "from-fuchsia-500 to-fuchsia-600",
+      category: "wellness"
+    },
+    {
+      id: 15,
+      title: "Detox Plan",
+      description: "Cleansing nutrition to eliminate toxins, boost energy, and revitalize your body.",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
+          <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+          <path d="M12 8v8" />
+          <path d="M8 12h8" />
+        </svg>
+      ),
+      benefits: ["Toxin elimination", "Energy boost", "Digestive health"],
+      color: "from-lime-500 to-lime-600",
+      category: "wellness"
+    },
+    {
+      id: 16,
+      title: "Celiac Disease Plan",
+      description: "Gluten-free nutrition to manage celiac disease, support gut healing, and maintain wellness.",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
+          <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+          <path d="M15 9l-6 6" />
+        </svg>
+      ),
+      benefits: ["Gluten-free living", "Gut healing", "Nutrient balance"],
+      color: "from-cyan-500 to-cyan-600",
+      category: "chronic"
+    },
+    {
+      id: 17,
+      title: "Fatty Liver Diet",
+      description: "Liver-supportive meals to reduce fat buildup, improve liver function, and enhance detoxification.",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
+          <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+          <path d="M9 15l6 -6" />
+        </svg>
+      ),
+      benefits: ["Liver detox", "Fat reduction", "Energy support"],
+      color: "from-emerald-600 to-emerald-700",
+      category: "chronic"
+    },
+    {
+      id: 18,
+      title: "Acid Reflux Diet Plan",
+      description: "Gentle nutrition to reduce acid reflux symptoms, soothe digestion, and promote gut comfort.",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
+          <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+          <path d="M12 9l3 3l-3 3" />
+        </svg>
+      ),
+      benefits: ["Reflux relief", "Digestive comfort", "Balanced pH"],
+      color: "from-blue-600 to-blue-700",
+      category: "chronic"
     }
   ];
 
-  // Make the entire service card clickable
   const handleServiceClick = (serviceTitle) => {
     setSelectedService(serviceTitle);
     setAppointmentOpen(true);
   };
 
+  // Filter services based on active category
+  const filteredServices = activeCategory === 'all' 
+    ? services 
+    : services.filter(service => service.category === activeCategory);
+
   return (
     <div className="font-sans bg-white text-nutricare-text-dark">
-      {/* Services Section */}
       <section className="py-20 bg-gradient-to-b from-nutricare-bg-light to-white">
         <div className="container mx-auto px-4">
-          {/* Section Header */}
           <div className="text-center mb-16">
             <div className="inline-block px-4 py-1 bg-nutricare-green bg-opacity-20 rounded-full text-nutricare-green-dark font-semibold text-sm mb-3">WHAT WE OFFER</div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-nutricare-primary-dark mb-6">Nutrition Services <span className="text-nutricare-green">Designed for You</span></h2>
@@ -119,9 +301,38 @@ const NutritionServices = () => {
             </p>
           </div>
 
-          {/* Services Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.map(service => (
+          {/* Category Filter */}
+          <div className="flex flex-wrap justify-center gap-3 mb-12">
+            {categories.map(category => (
+              <button
+                key={category.id}
+                onClick={() => setActiveCategory(category.id)}
+                className={`px-5 py-2 rounded-full transition-all duration-300 ${
+                  activeCategory === category.id
+                    ? 'bg-nutricare-green text-white shadow-md'
+                    : 'bg-gray-100 text-nutricare-text-gray hover:bg-gray-200'
+                }`}
+              >
+                {category.name}
+              </button>
+            ))}
+          </div>
+
+          {/* Category Heading - only show if not "all" */}
+          {activeCategory !== 'all' && (
+            <div className="mb-8 flex items-center justify-center">
+              <div className="h-px bg-gray-200 flex-1"></div>
+              <h3 className="text-xl font-medium text-nutricare-primary-dark mx-4 flex items-center">
+                <Filter size={18} className="mr-2 text-nutricare-green" />
+                {categories.find(cat => cat.id === activeCategory)?.name}
+              </h3>
+              <div className="h-px bg-gray-200 flex-1"></div>
+            </div>
+          )}
+
+          {/* Display Services */}
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            {filteredServices.map(service => (
               <div 
                 key={service.id} 
                 className="relative overflow-hidden rounded-2xl transition-all duration-300 group cursor-pointer"
@@ -135,12 +346,10 @@ const NutritionServices = () => {
                 onMouseEnter={() => setHoveredService(service.id)}
                 onMouseLeave={() => setHoveredService(null)}
               >
-                {/* Card Header with Gradient */}
                 <div className={`h-3 bg-gradient-to-r ${service.color} rounded-t-2xl`}></div>
                 
-                <div className="bg-white p-8 h-full border-t-0 border border-gray-100 rounded-b-2xl">
-                  {/* Icon with Animation */}
-                  <div className={`w-16 h-16 bg-gradient-to-br ${service.color} rounded-2xl mb-6 p-3 text-white transform 
+                <div className="bg-white p-6 h-full border-t-0 border border-gray-100 rounded-b-2xl">
+                  <div className={`w-14 h-14 bg-gradient-to-br ${service.color} rounded-2xl mb-5 p-3 text-white transform 
                     transition-all duration-300 relative z-10 shadow-lg`} 
                     style={{ 
                       transform: hoveredService === service.id ? 'rotate(8deg) scale(1.05)' : 'rotate(3deg)', 
@@ -149,19 +358,17 @@ const NutritionServices = () => {
                     <div className="absolute -inset-0.5 bg-white opacity-20 rounded-2xl blur"></div>
                   </div>
                   
-                  {/* Title with Animation */}
-                  <h3 className="text-2xl font-bold text-nutricare-primary-dark mb-4 group-hover:text-nutricare-green transition-colors">{service.title}</h3>
+                  <h3 className="text-xl font-bold text-nutricare-primary-dark mb-3 group-hover:text-nutricare-green transition-colors">{service.title}</h3>
                   
-                  <p className="text-nutricare-text-gray mb-6">{service.description}</p>
+                  <p className="text-nutricare-text-gray mb-5 text-sm">{service.description}</p>
                   
-                  {/* Benefits with Enhanced Styling */}
-                  <div className="mb-6 bg-gray-50 p-4 rounded-xl">
-                    <h4 className="text-sm font-semibold text-nutricare-green-dark mb-3">KEY BENEFITS</h4>
+                  <div className="mb-4 bg-gray-50 p-3 rounded-xl">
+                    <h4 className="text-xs font-semibold text-nutricare-green-dark mb-2">KEY BENEFITS</h4>
                     <ul>
                       {service.benefits.map((benefit, idx) => (
-                        <li key={idx} className="flex items-start mb-3 text-nutricare-text-gray">
-                          <div className={`w-4 h-4 rounded-full bg-gradient-to-r ${service.color} flex items-center justify-center flex-shrink-0 mt-1 mr-3`}>
-                            <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+                        <li key={idx} className="flex items-start mb-2 text-sm text-nutricare-text-gray">
+                          <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${service.color} flex items-center justify-center flex-shrink-0 mt-1 mr-2`}>
+                            <div className="w-1 h-1 bg-white rounded-full"></div>
                           </div>
                           <span>{benefit}</span>
                         </li>
@@ -170,7 +377,6 @@ const NutritionServices = () => {
                   </div>
                 </div>
                 
-                {/* Decorative Dots */}
                 <div className="absolute top-4 right-4 flex space-x-1 opacity-50">
                   <div className={`w-1 h-1 rounded-full bg-gradient-to-r ${service.color}`}></div>
                   <div className={`w-1 h-1 rounded-full bg-gradient-to-r ${service.color}`}></div>
@@ -182,7 +388,6 @@ const NutritionServices = () => {
         </div>
       </section>
 
-      {/* Call to Action */}
       <section className="py-16 bg-nutricare-primary-dark">
         <div className="container mx-auto px-4">
           <div className="bg-gradient-to-r from-nutricare-primary-dark to-nutricare-primary-light rounded-2xl p-10 md:p-16 text-white text-center relative overflow-hidden">
@@ -218,21 +423,18 @@ const NutritionServices = () => {
         </div>
       </section>
 
-      {/* Add Appointment Modal with selectedService passed */}
       <Appointment 
         isOpen={appointmentOpen} 
         onClose={() => setAppointmentOpen(false)}
         selectedService={selectedService} 
       />
 
-      {/* Back to top button */}
       <a 
         href="#top" 
         className="fixed bottom-6 right-6 bg-nutricare-green hover:bg-nutricare-green-dark text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110"
       >
         <ChevronUp size={24} />
       </a>
-    
     </div>
   );
 };

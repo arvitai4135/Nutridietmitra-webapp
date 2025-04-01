@@ -5,7 +5,8 @@ const PricingCard = ({
   price, 
   isFeatured = false, 
   features,
-  highlightedFeatures = []
+  highlightedFeatures = [],
+  period = 'month'
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -13,25 +14,25 @@ const PricingCard = ({
     <div 
       className={`flex flex-col h-full rounded-xl overflow-hidden transition-all duration-500 ${
         isFeatured 
-          ? 'shadow-2xl border-t-4 border-nutricare-green relative z-20 bg-white'
-          : `shadow-lg ${isHovered ? 'transform -translate-y-2 shadow-xl' : ''}`
+          ? 'shadow-2xl border-t-4 border-nutricare-green relative z-20 bg-white transform scale-105'
+          : `shadow-lg ${isHovered ? 'transform -translate-y-2 shadow-xl' : 'bg-white'}`
       }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
+      {isFeatured && (
+        <div className="absolute top-4 right-4 z-30">
+          <div className="bg-nutricare-green text-white text-xs py-1 px-3 rounded-full font-bold shadow-md">
+            POPULAR
+          </div>
+        </div>
+      )}
+      
       <div className={`py-8 text-center relative overflow-hidden ${
         isFeatured ? 'bg-nutricare-green bg-opacity-10' : 'bg-gray-800'
       }`}>
-        {isFeatured && (
-          <div className="absolute top-0 right-0">
-            <div className="bg-nutricare-green text-white text-xs py-1 px-6 font-bold rotate-45 translate-x-5 translate-y-2">
-              POPULAR
-            </div>
-          </div>
-        )}
         <h3 className={`text-2xl font-bold relative z-10 ${isFeatured ? 'text-nutricare-primary-dark' : 'text-white'}`}>{title}</h3>
         
-        {/* Animated background element */}
         <div className={`absolute inset-0 bg-gradient-to-r ${
           isFeatured 
             ? 'from-nutricare-green-dark to-nutricare-green opacity-5' 
@@ -42,16 +43,16 @@ const PricingCard = ({
       </div>
       
       <div className="p-8 text-center bg-white flex-grow flex flex-col relative">
-        {/* Animated price tag */}
-        <div className={`mb-6 transition-all duration-500 ${isHovered ? 'transform scale-110' : ''}`}>
+        <div className="mb-1 transition-all duration-500 flex items-center justify-center">
           <span className={`text-5xl font-bold ${isFeatured ? 'text-nutricare-primary-dark' : 'text-gray-800'}`}>{price}</span>
-          <span className="text-lg text-nutricare-text-gray"> / per month</span>
         </div>
         
-        <div className={`bg-nutricare-bg-light rounded-lg py-2 px-4 mb-8 inline-block mx-auto transition-all duration-500 ${
+        <p className="text-nutricare-text-gray text-sm mb-6">{period !== 'custom' ? `per ${period}` : ''}</p>
+        
+        <div className={`bg-nutricare-bg-light rounded-full py-2 px-4 mb-8 inline-block mx-auto transition-all duration-500 ${
           isHovered ? 'bg-nutricare-primary-light bg-opacity-10' : ''
         }`}>
-          <p className="text-nutricare-primary-light font-medium">With 7 Days Free Trial</p>
+          <p className="text-nutricare-primary-light font-medium text-sm">7 Days Free Trial</p>
         </div>
         
         <ul className="space-y-4 mb-8 flex-grow">
@@ -60,15 +61,15 @@ const PricingCard = ({
             return (
               <li 
                 key={index} 
-                className={`flex items-center justify-center transition-all duration-300 ${
-                  isHovered && isHighlighted 
-                    ? 'text-nutricare-primary-dark font-medium transform scale-105' 
+                className={`flex items-center transition-all duration-300 ${
+                  isHighlighted 
+                    ? 'text-nutricare-primary-dark font-medium' 
                     : 'text-nutricare-text-gray'
                 }`}
               >
                 <svg 
-                  className={`w-5 h-5 mr-2 transition-colors duration-300 ${
-                    isHovered && isHighlighted 
+                  className={`w-5 h-5 mr-3 flex-shrink-0 transition-colors duration-300 ${
+                    isHighlighted 
                       ? 'text-nutricare-primary-light' 
                       : isFeatured ? 'text-nutricare-green' : 'text-gray-500'
                   }`} 
@@ -92,7 +93,7 @@ const PricingCard = ({
                 : 'bg-gray-800'
           } hover:shadow-lg relative overflow-hidden group`}
         >
-          <span className="relative z-10">Order Now</span>
+          <span className="relative z-10">Get Started</span>
           <div className={`absolute top-0 left-0 w-full h-full bg-gradient-to-r ${
             isFeatured 
               ? 'from-nutricare-primary-light to-nutricare-primary-dark'
@@ -105,23 +106,32 @@ const PricingCard = ({
 };
 
 const PricingSection = () => {
-  const features = [
-    '24 H support',
-    'Business Analyzing',
-    'Custom Managements',
-    'Complete Documentation',
-    'Working Materials Format'
-  ];
-
-  // Define which features to highlight when hovered
-  const highlightedFeatures = {
-    'Basic': ['24 H support', 'Complete Documentation'],
-    'Advance': ['24 H support', 'Business Analyzing', 'Custom Managements', 'Complete Documentation'],
-    'Standard': ['24 H support', 'Business Analyzing', 'Working Materials Format']
+  const [activeTab, setActiveTab] = useState('regular');
+  
+  const features = {
+    regular: [
+      'Fresh Daily Meals',
+      'Customizable Menu',
+      'Free Delivery',
+      'Nutrition Tracking',
+      'Customer Support'
+    ],
+    monthly: [
+      '24 Meals per Month',
+      'Fresh Daily Delivery',
+      'Balanced Nutrition',
+      'Meal Customization',
+      'Support Included'
+    ]
   };
 
-  // Toggle between monthly and yearly billing
-  const [isYearly, setIsYearly] = useState(false);
+  const highlightedFeatures = {
+    '1 Month': ['Fresh Daily Meals', 'Free Delivery'],
+    '2 Months': ['Fresh Daily Meals', 'Free Delivery', 'Nutrition Tracking'],
+    '3 Months': ['Fresh Daily Meals', 'Customizable Menu', 'Free Delivery', 'Nutrition Tracking'],
+    '6 Months': ['Fresh Daily Meals', 'Customizable Menu', 'Free Delivery', 'Nutrition Tracking', 'Customer Support'],
+    'Monthly Meal Plan': ['24 Meals per Month', 'Fresh Daily Delivery', 'Balanced Nutrition']
+  };
 
   return (
     <section className="py-20 bg-nutricare-bg-light relative overflow-hidden">
@@ -132,64 +142,110 @@ const PricingSection = () => {
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="inline-block px-4 py-1 rounded-full bg-nutricare-primary-light bg-opacity-10 text-nutricare-primary-dark font-medium mb-4">What We Plan</span>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-nutricare-text-dark">Our Plans &amp; Price</h2>
+          <span className="inline-block px-4 py-1 rounded-full bg-nutricare-primary-light bg-opacity-10 text-nutricare-primary-dark font-medium mb-4">Pricing Plans</span>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-nutricare-text-dark">Nutrition Plans That Fit Your Lifestyle</h2>
           <p className="text-xl text-nutricare-text-gray mb-10">
-            We have set different meal plans for our clients. They can choose any of them from our services as per their convenient price.
+            Choose from our carefully designed meal plans, tailored to meet your nutritional needs and budget.
           </p>
           
-          {/* Billing toggle */}
-          <div className="flex items-center justify-center mb-8">
-            <span className={`text-sm font-medium mr-3 ${!isYearly ? 'text-nutricare-primary-dark' : 'text-nutricare-text-gray'}`}>Monthly</span>
+          {/* Toggle between regular plans and monthly meal plan */}
+          <div className="inline-flex bg-white p-1 rounded-full shadow-md mb-8">
             <button 
-              onClick={() => setIsYearly(!isYearly)}
-              className="relative inline-flex h-6 w-12 items-center rounded-full"
+              className={`py-2 px-6 rounded-full font-medium transition-all duration-300 ${
+                activeTab === 'regular' 
+                  ? 'bg-nutricare-green text-white shadow-md' 
+                  : 'text-nutricare-text-gray hover:text-nutricare-primary-dark'
+              }`}
+              onClick={() => setActiveTab('regular')}
             >
-              <span className={`toggle-bg absolute inset-0 rounded-full transition-colors duration-300 ${isYearly ? 'bg-nutricare-green' : 'bg-gray-300'}`}></span>
-              <span className={`toggle-dot bg-white h-5 w-5 rounded-full shadow transform transition-transform duration-300 ${isYearly ? 'translate-x-6' : 'translate-x-1'}`}></span>
+              Subscription Plans
             </button>
-            <span className={`text-sm font-medium ml-3 ${isYearly ? 'text-nutricare-primary-dark' : 'text-nutricare-text-gray'}`}>
-              Yearly <span className="text-nutricare-green">Save 20%</span>
-            </span>
+            <button 
+              className={`py-2 px-6 rounded-full font-medium transition-all duration-300 ${
+                activeTab === 'monthly' 
+                  ? 'bg-nutricare-green text-white shadow-md' 
+                  : 'text-nutricare-text-gray hover:text-nutricare-primary-dark'
+              }`}
+              onClick={() => setActiveTab('monthly')}
+            >
+              Monthly Package
+            </button>
           </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          <div className="md:mt-8">
-            <PricingCard
-              title="Basic"
-              price={isYearly ? "153.50$" : "15.99$"}
-              features={features}
-              highlightedFeatures={highlightedFeatures['Basic']}
-            />
+        {activeTab === 'regular' ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+            <div>
+              <PricingCard
+                title="1 Month"
+                price="₹4,000"
+                period="month"
+                features={features.regular}
+                highlightedFeatures={highlightedFeatures['1 Month']}
+              />
+            </div>
+            
+            <div>
+              <PricingCard
+                title="2 Months"
+                price="₹7,000"
+                period="2 months"
+                features={features.regular}
+                highlightedFeatures={highlightedFeatures['2 Months']}
+              />
+            </div>
+            
+            <div>
+              <PricingCard
+                title="3 Months"
+                price="₹9,000"
+                period="3 months"
+                isFeatured={true}
+                features={features.regular}
+                highlightedFeatures={highlightedFeatures['3 Months']}
+              />
+            </div>
+            
+            <div>
+              <PricingCard
+                title="6 Months"
+                price="₹18,000"
+                period="6 months"
+                features={features.regular}
+                highlightedFeatures={highlightedFeatures['6 Months']}
+              />
+            </div>
           </div>
-          
-          <div>
+        ) : (
+          <div className="max-w-lg mx-auto">
             <PricingCard
-              title="Advance"
-              price={isYearly ? "249.50$" : "25.99$"}
+              title="Monthly Meal Plan"
+              price="₹4,800"
+              period="package"
+              features={features.monthly}
+              highlightedFeatures={highlightedFeatures['Monthly Meal Plan']}
               isFeatured={true}
-              features={features}
-              highlightedFeatures={highlightedFeatures['Advance']}
             />
           </div>
-          
-          <div className="md:mt-8">
-            <PricingCard
-              title="Standard"
-              price={isYearly ? "182.30$" : "18.99$"}
-              features={features}
-              highlightedFeatures={highlightedFeatures['Standard']}
-            />
+        )}
+        
+        <div className="text-center mt-16 bg-white rounded-xl shadow-md p-8 max-w-xl mx-auto">
+          <div className="inline-block rounded-full bg-nutricare-green bg-opacity-10 p-3 mb-4">
+            <svg className="w-6 h-6 text-nutricare-green" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
           </div>
+          <h4 className="text-xl font-bold text-nutricare-primary-dark mb-2">Need a custom nutrition plan?</h4>
+          <p className="text-nutricare-text-gray mb-4">Our nutrition experts can create a personalized meal plan tailored to your specific health goals and dietary requirements.</p>
+          <button className="px-8 py-3 rounded-full bg-nutricare-green hover:bg-nutricare-green-dark text-white font-medium transition-colors duration-300 shadow-md hover:shadow-lg">
+            Get a Custom Plan
+          </button>
         </div>
         
-        <div className="text-center mt-12 bg-white rounded-xl shadow-md p-6 max-w-xl mx-auto">
-          <h4 className="text-xl font-bold text-nutricare-primary-dark mb-2">Need a custom plan?</h4>
-          <p className="text-nutricare-text-gray mb-4">Contact our team for a personalized solution tailored to your needs.</p>
-          <button className="px-6 py-2 rounded-full bg-nutricare-green hover:bg-nutricare-green-dark text-white font-medium transition-colors duration-300">
-            Contact Us
-          </button>
+        <div className="mt-16 text-center">
+          <p className="text-nutricare-text-gray">
+            <span className="font-medium text-nutricare-primary-dark">100% Satisfaction Guarantee</span> - If you're not completely satisfied within your first 7 days, we'll give you a full refund.
+          </p>
         </div>
       </div>
     </section>

@@ -6,8 +6,9 @@ import Work from '../components/Work'
 import Service from '../components/Service'
 import Testimonial from '../components/Testimonial'
 // import Contact from './Contact'
-import Blog from './Blog'
+// import Blog from './Blog'
 import ContactMiddle from '../components/contact/ContactMiddle'
+import BlogList from '../components/BlogList'
 // import Footer from '../components/Footer'
 
 
@@ -22,7 +23,7 @@ const Home = () => {
     <Service/>
     <Testimonial/>
     <ContactMiddle/>
-    <Blog/>
+    <BlogList/>
     
     </>
   )
