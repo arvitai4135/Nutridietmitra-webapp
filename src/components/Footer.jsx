@@ -1,4 +1,4 @@
-import React, { useState } from "react"; // Import useState
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   FaFacebookF,
@@ -21,24 +21,24 @@ const LinkIcon = () => (
 );
 
 const Footer = () => {
-  const [isAppointmentOpen, setIsAppointmentOpen] = useState(false); // State for modal
+  const [isAppointmentOpen, setIsAppointmentOpen] = useState(false);
 
   const recentPosts = [
     {
       id: 1,
-      title: "How Much Do Eat You Really Need Day?",
+      title: "How Much Do You Really Need to Eat Daily?",
       date: "20 April, 2018",
       image: HealthyFood,
     },
     {
       id: 2,
-      title: "7 Simple & Healthy Gluten Free Cookie",
+      title: "7 Simple & Healthy Gluten-Free Cookies",
       date: "01 August, 2018",
       image: HealthyGlutenFree,
     },
     {
       id: 3,
-      title: "Tips For Staying Healthy On Vacations",
+      title: "Tips For Staying Healthy On Vacation",
       date: "13 March, 2018",
       image: HealthLifestyle,
     },
@@ -46,60 +46,58 @@ const Footer = () => {
 
   return (
     <footer className="bg-nutricare-text-dark text-white">
-      <div className="container mx-auto px-4 py-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Company Info Column */}
           <div>
-            <div className="mb-6">
-              <div className="flex items-center mb-4">
-                <div className="w-10 h-10 rounded-full bg-nutricare-green flex items-center justify-center mr-2">
+            <div className="mb-4">
+              <div className="flex items-center mb-3">
+                <div className="w-8 h-8 rounded-full bg-nutricare-green flex items-center justify-center mr-2">
                   <span className="text-nutricare-text-dark font-bold">N</span>
                 </div>
-                <h2 className="text-2xl font-bold">NutriDietMitra</h2>
+                <h2 className="text-xl font-bold">NutriDietMitra</h2>
               </div>
-              <p className="text-gray-400 mb-6">
-                We have been the most trusted Health care Nutrition for 25
-                years. We're proud of our rich history for nutritionists
-                services.
+              <p className="text-gray-400 text-sm mb-4">
+                Founded by Dt. Tanu Bhargava in 2014, NutriDietMitra is a premier diet clinic in Jaipur with over 17 years of expertise in nutrition and wellness.
               </p>
-              <div className="w-16 h-1 bg-nutricare-green mb-6"></div>
-              <div className="flex items-center mb-3">
-                <FaEnvelope className="text-nutricare-green mr-3" />
+              <div className="w-12 h-1 bg-nutricare-green mb-4"></div>
+              <div className="flex items-center mb-2">
+                <FaEnvelope className="text-nutricare-green mr-2" size={14} />
                 <a
                   href="mailto:support@nutridiet.in"
-                  className="text-gray-400 hover:text-nutricare-green transition duration-300"
+                  className="text-gray-400 text-sm hover:text-nutricare-green transition duration-300"
                 >
                   support@nutridiet.in
                 </a>
               </div>
-              <div className="flex items-center mb-6">
-                <FaPhone className="text-nutricare-green mr-3" />
-                <span className="text-gray-400">+91-7568796XXX</span>
+              <div className="flex items-center mb-3">
+                <FaPhone className="text-nutricare-green mr-2" size={14} />
+                <span className="text-gray-400 text-sm">+91-7568796XXX</span>
               </div>
-              <div className="flex space-x-3">
+              <div className="flex space-x-2">
                 <a
                   href="#"
-                  className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center hover:bg-nutricare-green transition duration-300"
+                  className="w-7 h-7 rounded-full bg-gray-700 flex items-center justify-center hover:bg-nutricare-green transition duration-300"
                 >
-                  <FaFacebookF className="text-white" />
+                  <FaFacebookF className="text-white" size={12} />
                 </a>
                 <a
                   href="#"
-                  className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center hover:bg-nutricare-green transition duration-300"
+                  className="w-7 h-7 rounded-full bg-gray-700 flex items-center justify-center hover:bg-nutricare-green transition duration-300"
                 >
-                  <FaTwitter className="text-white" />
+                  <FaTwitter className="text-white" size={12} />
                 </a>
                 <a
                   href="#"
-                  className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center hover:bg-nutricare-green transition duration-300"
+                  className="w-7 h-7 rounded-full bg-gray-700 flex items-center justify-center hover:bg-nutricare-green transition duration-300"
                 >
-                  <FaFlickr className="text-white" />
+                  <FaFlickr className="text-white" size={12} />
                 </a>
                 <a
                   href="#"
-                  className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center hover:bg-nutricare-green transition duration-300"
+                  className="w-7 h-7 rounded-full bg-gray-700 flex items-center justify-center hover:bg-nutricare-green transition duration-300"
                 >
-                  <FaLinkedinIn className="text-white" />
+                  <FaLinkedinIn className="text-white" size={12} />
                 </a>
               </div>
             </div>
@@ -107,11 +105,11 @@ const Footer = () => {
 
           {/* Quick Links Column */}
           <div>
-            <h3 className="text-xl font-semibold mb-6 relative">
+            <h3 className="text-lg font-semibold mb-4 relative">
               <span className="relative z-10">Quick Links</span>
-              <span className="absolute bottom-0 left-0 w-12 h-1 bg-nutricare-green"></span>
+              <span className="absolute bottom-0 left-0 w-10 h-1 bg-nutricare-green"></span>
             </h3>
-            <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">
+            <ul className="grid grid-cols-2 gap-x-2 gap-y-2 text-sm">
               <li>
                 <Link
                   to="/services"
@@ -145,7 +143,7 @@ const Footer = () => {
                   className="text-gray-400 hover:text-nutricare-green flex items-center transition duration-300"
                 >
                   <LinkIcon />
-                  Sports Nutritionist Diet
+                  Sports Nutrition
                 </Link>
               </li>
               <li>
@@ -154,12 +152,12 @@ const Footer = () => {
                   className="text-gray-400 hover:text-nutricare-green flex items-center transition duration-300"
                 >
                   <LinkIcon />
-                  Child Nutritionist Plan
+                  Child Nutrition
                 </Link>
               </li>
               <li>
                 <button
-                  onClick={() => setIsAppointmentOpen(true)} // Open modal on click
+                  onClick={() => setIsAppointmentOpen(true)}
                   className="text-gray-400 hover:text-nutricare-green flex items-center transition duration-300 w-full text-left"
                 >
                   <LinkIcon />
@@ -172,7 +170,7 @@ const Footer = () => {
                   className="text-gray-400 hover:text-nutricare-green flex items-center transition duration-300"
                 >
                   <LinkIcon />
-                  Our Pricing Plan
+                  Pricing Plans
                 </Link>
               </li>
               <li>
@@ -181,7 +179,7 @@ const Footer = () => {
                   className="text-gray-400 hover:text-nutricare-green flex items-center transition duration-300"
                 >
                   <LinkIcon />
-                  Online Nutrition Services
+                  Online Consultations
                 </Link>
               </li>
             </ul>
@@ -189,14 +187,14 @@ const Footer = () => {
 
           {/* Recent Posts Column */}
           <div>
-            <h3 className="text-xl font-semibold mb-6 relative">
+            <h3 className="text-lg font-semibold mb-4 relative">
               <span className="relative z-10">Recent Posts</span>
-              <span className="absolute bottom-0 left-0 w-12 h-1 bg-nutricare-green"></span>
+              <span className="absolute bottom-0 left-0 w-10 h-1 bg-nutricare-green"></span>
             </h3>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {recentPosts.map((post) => (
-                <div key={post.id} className="flex space-x-3">
-                  <div className="flex-shrink-0 w-16 h-16 bg-gray-700 rounded-md overflow-hidden">
+                <div key={post.id} className="flex space-x-2">
+                  <div className="flex-shrink-0 w-14 h-14 bg-gray-700 rounded-md overflow-hidden">
                     <img
                       src={post.image}
                       alt={post.title}
@@ -207,13 +205,13 @@ const Footer = () => {
                     <div className="flex items-center text-xs text-gray-400 mb-1">
                       <FaCalendarAlt
                         className="mr-1 text-nutricare-green"
-                        size={12}
+                        size={10}
                       />
                       <span>{post.date}</span>
                     </div>
                     <a
                       href="#"
-                      className="text-sm hover:text-nutricare-green transition duration-300"
+                      className="text-xs hover:text-nutricare-green transition duration-300"
                     >
                       {post.title}
                     </a>
@@ -225,27 +223,26 @@ const Footer = () => {
 
           {/* Newsletter Column */}
           <div>
-            <h3 className="text-xl font-semibold mb-6 relative">
+            <h3 className="text-lg font-semibold mb-4 relative">
               <span className="relative z-10">Newsletter</span>
-              <span className="absolute bottom-0 left-0 w-12 h-1 bg-nutricare-green"></span>
+              <span className="absolute bottom-0 left-0 w-10 h-1 bg-nutricare-green"></span>
             </h3>
-            <p className="text-gray-400 mb-4">
-              Sign up to get exclusive offers from our favorite brands and to
-              be well up in the news.
+            <p className="text-gray-400 text-sm mb-3">
+              Subscribe for exclusive wellness tips, diet plans, and updates from Dt. Tanu Bhargava.
             </p>
-            <form className="space-y-3">
+            <form className="space-y-2">
               <div className="flex flex-col sm:flex-row gap-2">
                 <input
                   type="email"
                   name="EMAIL"
                   placeholder="Your email address.."
                   required
-                  className="w-full sm:flex-1 p-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-nutricare-green"
+                  className="w-full sm:flex-1 p-2 text-sm rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-nutricare-green"
                 />
                 <input
                   type="submit"
                   value="Subscribe"
-                  className="w-full sm:w-auto bg-nutricare-green text-white py-2 px-4 rounded-md hover:bg-nutricare-green-dark transition duration-300 cursor-pointer"
+                  className="w-full sm:w-auto bg-nutricare-green text-white py-1.5 px-3 text-sm rounded-md hover:bg-nutricare-green-dark transition duration-300 cursor-pointer"
                 />
               </div>
             </form>
@@ -255,9 +252,9 @@ const Footer = () => {
 
       {/* Bottom Footer */}
       <div className="border-t border-gray-700">
-        <div className="container mx-auto px-4 py-6">
+        <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="text-gray-400 text-sm mb-4 md:mb-0">
+            <div className="text-gray-400 text-xs mb-3 md:mb-0">
               Copyright © {new Date().getFullYear()}{" "}
               <a
                 href="#"
@@ -270,21 +267,21 @@ const Footer = () => {
             <div className="flex space-x-4">
               <a
                 href="#"
-                className="text-gray-400 text-sm hover:text-nutricare-green transition duration-300"
+                className="text-gray-400 text-xs hover:text-nutricare-green transition duration-300"
               >
                 Privacy Policy
               </a>
               <a
                 href="/contact"
-                className="text-gray-400 text-sm hover:text-nutricare-green transition duration-300"
+                className="text-gray-400 text-xs hover:text-nutricare-green transition duration-300"
               >
                 Contact
               </a>
               <a
                 href="#"
-                className="text-gray-400 text-sm hover:text-nutricare-green transition duration-300"
+                className="text-gray-400 text-xs hover:text-nutricare-green transition duration-300"
               >
-                Supplier
+                About Us
               </a>
             </div>
           </div>
@@ -295,17 +292,17 @@ const Footer = () => {
       <Appointment
         isOpen={isAppointmentOpen}
         onClose={() => setIsAppointmentOpen(false)}
-        selectedService="General Appointment" // You can customize this
+        selectedService="General Appointment"
       />
 
       {/* Scroll to top button */}
       <button
-        className="fixed bottom-8 right-8 w-12 h-12 rounded-full bg-nutricare-green flex items-center justify-center shadow-lg hover:bg-nutricare-green-dark transition duration-300"
+        className="fixed bottom-6 right-6 w-10 h-10 rounded-full bg-nutricare-green flex items-center justify-center shadow-lg hover:bg-nutricare-green-dark transition duration-300"
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6 text-white"
+          className="h-5 w-5 text-white"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
