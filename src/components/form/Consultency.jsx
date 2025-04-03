@@ -90,7 +90,7 @@ const Consultency = ({ isOpen, onClose }) => {
               />
             </div>
             
-            <div>
+            {/* <div>
               <label className="block text-[#333333] mb-2">Annual Sale:</label>
               <div className="flex items-center space-x-4">
                 <label className="flex items-center">
@@ -114,7 +114,7 @@ const Consultency = ({ isOpen, onClose }) => {
                   Below 1 Cr
                 </label>
               </div>
-            </div>
+            </div> */}
             
             <div>
               <input

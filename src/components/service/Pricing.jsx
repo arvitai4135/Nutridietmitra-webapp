@@ -122,6 +122,20 @@ const PricingSection = () => {
       'Balanced Nutrition',
       'Meal Customization',
       'Support Included'
+    ],
+    singleMeal: [
+      'Nutritionally Balanced',
+      'Chef-Crafted Recipe',
+      'Premium Ingredients',
+      'Calorie Controlled',
+      'Same-Day Delivery'
+    ],
+    weeklyMeal: [
+      '7 Fresh Meals',
+      'Variety of Options',
+      'Nutritionist Approved',
+      'Free Delivery',
+      'Flexible Scheduling'
     ]
   };
 
@@ -130,7 +144,9 @@ const PricingSection = () => {
     '2 Months': ['Fresh Daily Meals', 'Free Delivery', 'Nutrition Tracking'],
     '3 Months': ['Fresh Daily Meals', 'Customizable Menu', 'Free Delivery', 'Nutrition Tracking'],
     '6 Months': ['Fresh Daily Meals', 'Customizable Menu', 'Free Delivery', 'Nutrition Tracking', 'Customer Support'],
-    'Monthly Meal Plan': ['24 Meals per Month', 'Fresh Daily Delivery', 'Balanced Nutrition']
+    'Monthly Meal Plan': ['24 Meals per Month', 'Fresh Daily Delivery', 'Balanced Nutrition'],
+    'Single Meal': ['Nutritionally Balanced', 'Premium Ingredients'],
+    'Weekly Meal Plan': ['7 Fresh Meals', 'Free Delivery', 'Nutritionist Approved']
   };
 
   return (
@@ -168,7 +184,7 @@ const PricingSection = () => {
               }`}
               onClick={() => setActiveTab('monthly')}
             >
-              Monthly Package
+              Food Delivery
             </button>
           </div>
         </div>
@@ -217,15 +233,37 @@ const PricingSection = () => {
             </div>
           </div>
         ) : (
-          <div className="max-w-lg mx-auto">
-            <PricingCard
-              title="Monthly Meal Plan"
-              price="₹4,800"
-              period="package"
-              features={features.monthly}
-              highlightedFeatures={highlightedFeatures['Monthly Meal Plan']}
-              isFeatured={true}
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <div>
+              <PricingCard
+                title="Single Meal"
+                price="₹200"
+                period="meal"
+                features={features.singleMeal}
+                highlightedFeatures={highlightedFeatures['Single Meal']}
+              />
+            </div>
+            
+            <div>
+              <PricingCard
+                title="Weekly Meal Plan"
+                price="₹1,400"
+                period="week"
+                isFeatured={true}
+                features={features.weeklyMeal}
+                highlightedFeatures={highlightedFeatures['Weekly Meal Plan']}
+              />
+            </div>
+            
+            <div>
+              <PricingCard
+                title="Monthly Meal Plan"
+                price="₹4,800"
+                period="month"
+                features={features.monthly}
+                highlightedFeatures={highlightedFeatures['Monthly Meal Plan']}
+              />
+            </div>
           </div>
         )}
         

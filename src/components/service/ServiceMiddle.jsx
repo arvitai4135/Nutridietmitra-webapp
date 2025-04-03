@@ -21,10 +21,10 @@ const ServiceMiddle = () => {
               </div>
               
               {/* Overlaid Office Information */}
-              <div className="relative mt-8 lg:mt-16 mx-auto max-w-md">
+              <div className="relative mt-8 lg:mt-0 mx-auto max-w-md">
                 <div className="bg-nutricare-primary-dark text-white p-8 rounded-lg shadow-lg text-center">
-                  <h4 className="text-xl font-bold mb-2">Our Main Office</h4>
-                  <p className="text-white">123 4 TrunPrike Drive Athens Al 35613</p>
+                  <h4 className="text-xl font-bold mb-1">Our Main Office</h4>
+                  <p className="text-white">OM RESIDENCY 93/B2 Mauji Colony, Malviya Nagar,Jaipur</p>
                 </div>
               </div>
             </div>

@@ -76,9 +76,7 @@ const ContactPage = () => {
               </div>
               <h3 className="text-xl font-bold text-nutricare-primary-dark mb-4">Visit Us</h3>
               <p className="text-nutricare-text-gray mb-4">
-                DE 198 Tech Road <br />
-                Bridge Str, Newyork 10026 <br />
-                United States
+              OM RESIDENCY 93/B2 Mauji Colony, Malviya Nagar, Jaipur , Rajasthan
               </p>
               <a href="#" className="inline-block text-nutricare-primary-light hover:text-nutricare-primary-dark font-medium transition duration-300">
                 Get Directions
@@ -97,8 +95,8 @@ const ContactPage = () => {
                 Feel free to reach out to us<br />
                 via email anytime
               </p>
-              <a href="mailto:info@example.com" className="inline-block text-nutricare-primary-light hover:text-nutricare-primary-dark font-medium transition duration-300">
-                info@example.com
+              <a href="mailto: Nutridietmitra@gmail.com" className="inline-block text-nutricare-primary-light hover:text-nutricare-primary-dark font-medium transition duration-300">
+              Nutridietmitra@gmail.com
               </a>
             </div>
 
@@ -148,7 +146,7 @@ const ContactPage = () => {
                     </div>
                     <div>
                       <h4 className="text-xl font-bold text-nutricare-primary-dark mb-2">Career Inquiries</h4>
-                      <h5 className="text-lg font-medium mb-3">Alex Hardy</h5>
+                      <h5 className="text-lg font-medium mb-3">Dt. Tanu bhargava</h5>
                       <ul className="space-y-2">
                         <li className="flex items-center text-nutricare-text-gray">
                           <svg className="w-4 h-4 mr-2 text-nutricare-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -160,7 +158,7 @@ const ContactPage = () => {
                           <svg className="w-4 h-4 mr-2 text-nutricare-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                           </svg>
-                          <a href="mailto:info@example.com" className="text-nutricare-primary-light hover:underline">info@example.com</a>
+                          <a href="mailto:Nutridietmitra@gmail.com" className="text-nutricare-primary-light hover:underline">Nutridietmitra@gmail.com</a>
                         </li>
                       </ul>
                     </div>
@@ -178,7 +176,7 @@ const ContactPage = () => {
                     </div>
                     <div>
                       <h4 className="text-xl font-bold text-nutricare-primary-dark mb-2">Marketing Department</h4>
-                      <h5 className="text-lg font-medium mb-3">John Martin</h5>
+                      <h5 className="text-lg font-medium mb-3">Dt. Tanu bhargava</h5>
                       <ul className="space-y-2">
                         <li className="flex items-center text-nutricare-text-gray">
                           <svg className="w-4 h-4 mr-2 text-nutricare-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -190,7 +188,7 @@ const ContactPage = () => {
                           <svg className="w-4 h-4 mr-2 text-nutricare-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                           </svg>
-                          <a href="mailto:info@example.com" className="text-nutricare-primary-light hover:underline">info@example.com</a>
+                          <a href="mailto:Nutridietmitra@gmail.com" className="text-nutricare-primary-light hover:underline">Nutridietmitra@gmail.com</a>
                         </li>
                       </ul>
                     </div>

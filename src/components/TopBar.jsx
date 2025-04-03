@@ -10,7 +10,7 @@ const TopBar = () => {
           <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
             <div className="flex items-center">
               <i className="fas fa-map-marker-alt mr-2 text-nutricare-primary-dark hover:text-nutricare-green transition-colors duration-300"></i>
-              <span>7 km, Khumharheda, Dehradun Road, Saharanpur, UP 247001</span>
+              <span>OM RESIDENCY 93/B2 Mauji Colony, Malviya Nagar, Jaipur , Rajasthan</span>
             </div>
             <div className="flex items-center">
               <i className="fas fa-clock mr-2 text-nutricare-primary-dark hover:text-nutricare-green transition-colors duration-300"></i>
@@ -26,7 +26,7 @@ const TopBar = () => {
                 href="mailto:support@nutridiet.in"
                 className="text-nutricare-primary-dark hover:text-nutricare-primary-light transition-colors duration-300"
               >
-                support@nutridiet.in
+                Nutridietmitra@gmail.com
               </a>
             </div>
             <div className="flex items-center gap-4">

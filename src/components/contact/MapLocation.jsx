@@ -3,12 +3,12 @@ import React, { useState } from "react";
 const NutricareLocationSection = () => {
   const [isDirectionsPanelOpen, setIsDirectionsPanelOpen] = useState(false);
 
-  // Location details
+  // Updated location details for Jaipur
   const locationDetails = {
-    lat: 27.1751,
-    lng: 78.0421,
+    lat: 26.8676,  // Updated latitude for the approximate area in Jaipur
+    lng: 75.7972,  // Updated longitude for the approximate area in Jaipur
     placeName: "Nutricare Wellness",
-    address: "Taj Ganj, Agra, Uttar Pradesh",
+    address: "Plot 93, Mauji Colony Rd, Mauji Colony, Moji Nagar, Malviya Nagar, Jaipur, Rajasthan 302017",
   };
 
   const handleDirectionsClick = () => {
@@ -20,9 +20,8 @@ const NutricareLocationSection = () => {
     window.open(mapsUrl, "_blank");
   };
 
-  // Static map URL (optional API key; remove key param if not using)
-  const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${locationDetails.lat},${locationDetails.lng}&zoom=14&size=800x600&markers=color:red%7C${locationDetails.lat},${locationDetails.lng}`;
-  // Optional: Add &key=YOUR_API_KEY if you have one
+  // Static map URL with updated coordinates
+  const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=26.8676,75.7972&zoom=14&size=800x600&markers=color:red%7C26.8676,75.7972`;
 
   return (
     <section className="relative w-full h-[400px] md:h-[600px] bg-nutricare-bg-light overflow-hidden">
@@ -33,10 +32,8 @@ const NutricareLocationSection = () => {
           alt="Nutricare Wellness Location"
           className="w-full h-full object-cover"
           onError={(e) => {
-            // Fallback to a base64-encoded placeholder if local image is missing
             e.target.src =
               "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAMAAAD0iTPIAAAAA1BMVEUAAACnej3aAAAASElEQVR4nO3BMQEAAADCoPVPbQ0voAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADg4ADQMgAAAABJRU5ErkJggg==";
-            // This is a gray 800x600 placeholder; replace with your own base64 image if desired
           }}
         />
       </div>

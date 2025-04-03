@@ -64,10 +64,10 @@ const Footer = () => {
               <div className="flex items-center mb-2">
                 <FaEnvelope className="text-nutricare-green mr-2" size={14} />
                 <a
-                  href="mailto:support@nutridiet.in"
+                  href="mailto:Nutridietmitra@gmail.com"
                   className="text-gray-400 text-sm hover:text-nutricare-green transition duration-300"
                 >
-                  support@nutridiet.in
+                  Nutridietmitra@gmail.com
                 </a>
               </div>
               <div className="flex items-center mb-3">
