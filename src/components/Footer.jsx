@@ -250,57 +250,58 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Bottom Footer */}
+      {/* Bottom Footer - Updated with <Link> */}
       <div className="border-t border-gray-700">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="text-gray-400 text-xs mb-3 md:mb-0">
               Copyright © {new Date().getFullYear()}{" "}
-              <a
-                href="#"
+              <Link
+                to="/"
                 className="text-nutricare-green hover:text-white transition duration-300"
               >
                 NutriDietMitra
-              </a>
+              </Link>
               . All rights reserved.
             </div>
-            <div className="flex space-x-4">
-              <a
-                href="/privacy"
+            {/* Updated Section for Mobile View */}
+            <div className="flex flex-wrap space-x-4 justify-center md:justify-end">
+              <Link
+                to="/privacy"
                 className="text-gray-400 text-xs hover:text-nutricare-green transition duration-300"
               >
                 Privacy Policy
-              </a>
-              <a
-                href="/refund"
-                className="text-gray-400 text-xs hover:text-nutricare-green transition duration-300"
-              >
-                Refund Policy
-              </a>
-              <a
-                href="/shipping"
-                className="text-gray-400 text-xs hover:text-nutricare-green transition duration-300"
-              >
-                Shipping Policy
-              </a>
-              <a
-                href="/terms"
+              </Link>
+              <Link
+                to="/terms"
                 className="text-gray-400 text-xs hover:text-nutricare-green transition duration-300"
               >
                 T&C
-              </a>
-              <a
-                href="/contact"
+              </Link>
+              <Link
+                to="/refund"
+                className="text-gray-400 text-xs hover:text-nutricare-green transition duration-300"
+              >
+                Refund Policy
+              </Link>
+              <Link
+                to="/shipping"
+                className="text-gray-400 text-xs hover:text-nutricare-green transition duration-300"
+              >
+                Shipping Policy
+              </Link>
+              <Link
+                to="/contact"
                 className="text-gray-400 text-xs hover:text-nutricare-green transition duration-300"
               >
                 Contact
-              </a>
-              <a
-                href="/about"
+              </Link>
+              <Link
+                to="/about"
                 className="text-gray-400 text-xs hover:text-nutricare-green transition duration-300"
               >
                 About Us
-              </a>
+              </Link>
             </div>
           </div>
         </div>
