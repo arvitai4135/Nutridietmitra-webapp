@@ -1,22 +1,24 @@
 import React, { useState } from 'react';
-import HealthyEating from '/assets/Images/HealthyEating.jpg'; // Corrected path
-import Appointment from '../form/Appointment'; // Import the Appointment component
+import { useNavigate } from 'react-router-dom';
+import HealthyEating from '/assets/Images/HealthyEating.jpg';
+import Appointment from '../form/Appointment';
 
 const ContactMiddle = () => {
-  // State to control modal visibility
   const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
+  const navigate = useNavigate();
 
-  // Function to open the appointment modal
   const openAppointmentModal = () => {
     setIsAppointmentModalOpen(true);
   };
 
-  // Function to close the appointment modal
   const closeAppointmentModal = () => {
     setIsAppointmentModalOpen(false);
   };
 
-  // Using the specific colors provided
+  const handleExplorePrograms = () => {
+    navigate('/services');
+  };
+
   const colors = {
     primaryDark: '#9E0B7F',
     primaryLight: '#D93BB1',
@@ -108,22 +110,22 @@ const ContactMiddle = () => {
               </div>
             </div>
 
-            {/* Enhanced buttons with improved spacing and hover effects */}
+            {/* Enhanced buttons with navigation */}
             <div className="flex flex-col sm:flex-row gap-4">
               <button
-                className="px-8 py-4 text-white font-medium rounded-full shadow-md hover:shadow-lg transform hover:-translate-y-1 transition duration-300"
-                style={{ backgroundColor: colors.primaryDark, ':hover': { backgroundColor: colors.primaryLight } }}
-                onClick={openAppointmentModal} // Add click handler to open modal
+                className="px-8 py-4 text-white font-medium rounded-full shadow-md hover:shadow-lg transform hover:-translate-y-1 transition duration-300 hover:bg-[#D93BB1]"
+                style={{ backgroundColor: colors.primaryDark }}
+                onClick={openAppointmentModal}
               >
                 Start Your Journey
               </button>
               <button
-                className="px-8 py-4 border-2 font-medium rounded-full transition-all duration-300"
+                className="px-8 py-4 border-2 font-medium rounded-full transition-all duration-300 hover:bg-[#ADD01C] hover:text-white"
                 style={{
                   borderColor: colors.green,
                   color: colors.textDark,
-                  ':hover': { backgroundColor: colors.green, color: 'white' },
                 }}
+                onClick={handleExplorePrograms}
               >
                 Explore Programs
               </button>

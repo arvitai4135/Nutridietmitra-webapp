@@ -30,7 +30,7 @@ const TopBar = () => {
               </a>
             </div>
             <div className="flex items-center gap-4">
-              {["facebook-f", "twitter", "linkedin-in", "flickr"].map((icon) => (
+              {["facebook-f", "twitter", "linkedin-in"].map((icon) => (
                 <a
                   key={icon}
                   href="#"

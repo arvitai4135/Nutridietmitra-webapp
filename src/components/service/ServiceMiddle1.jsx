@@ -411,12 +411,12 @@ const NutritionServices = () => {
                 >
                   Book Free Consultation
                 </button>
-                <a 
+                {/* <a 
                   href="/faq" 
                   className="border border-white text-white py-3 px-8 rounded-full font-medium hover:bg-white hover:text-nutricare-primary-dark transition-colors"
                 >
                   Learn More
-                </a>
+                </a> */}
               </div>
             </div>
           </div>

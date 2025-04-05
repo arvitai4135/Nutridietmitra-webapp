@@ -159,7 +159,7 @@ const Service = () => {
 
               {/* CTA Button - Updated to open the consultation form */}
               <div className="mt-10">
-                <button
+                {/* <button
                   onClick={openConsultationForm}
                   className="bg-nutricare-green text-white font-medium py-3 px-8 rounded-lg hover:shadow-lg hover:bg-opacity-90 transition duration-300 flex items-center"
                 >
@@ -173,7 +173,7 @@ const Service = () => {
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                   </svg>
-                </button>
+                </button> */}
               </div>
             </div>
           </div>

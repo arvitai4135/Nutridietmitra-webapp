@@ -96,7 +96,7 @@ const AboutUs = () => {
               ))}
             </div>
 
-            <button
+            {/* <button
               onClick={openModal}
               className="flex items-center bg-[#D93BB1] hover:bg-[#9E0B7F] text-white px-6 py-3 rounded-full transition duration-300 group"
             >
@@ -105,7 +105,7 @@ const AboutUs = () => {
                 className="ml-2 group-hover:translate-x-1 transition"
                 size={20}
               />
-            </button>
+            </button> */}
           </div>
 
           {/* Image Section */}

@@ -266,10 +266,28 @@ const Footer = () => {
             </div>
             <div className="flex space-x-4">
               <a
-                href="#"
+                href="/privacy"
                 className="text-gray-400 text-xs hover:text-nutricare-green transition duration-300"
               >
                 Privacy Policy
+              </a>
+              <a
+                href="/refund"
+                className="text-gray-400 text-xs hover:text-nutricare-green transition duration-300"
+              >
+                Refund Policy
+              </a>
+              <a
+                href="/shipping"
+                className="text-gray-400 text-xs hover:text-nutricare-green transition duration-300"
+              >
+                Shipping Policy
+              </a>
+              <a
+                href="/terms"
+                className="text-gray-400 text-xs hover:text-nutricare-green transition duration-300"
+              >
+                T&C
               </a>
               <a
                 href="/contact"
@@ -278,7 +296,7 @@ const Footer = () => {
                 Contact
               </a>
               <a
-                href="#"
+                href="/about"
                 className="text-gray-400 text-xs hover:text-nutricare-green transition duration-300"
               >
                 About Us

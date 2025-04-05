@@ -229,12 +229,12 @@ const Hero = () => {
                 <p className="text-nutricare-text-gray text-sm md:text-base mb-4">
                   {feature.description}
                 </p>
-                <a
+                {/* <a
                   href="#"
                   className="text-nutricare-text-dark text-sm font-semibold underline hover:text-nutricare-primary-dark transition-colors"
                 >
                   View More
-                </a>
+                </a> */}
               </div>
             ))}
           </div>

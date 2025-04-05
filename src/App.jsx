@@ -17,6 +17,10 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
 import TopBar from './components/TopBar';
+import PrivacyPolicy from './components/PrivacyPolicy';
+import Refund from './components/Refund';
+import TermsAndConditions from './components/Terms&Condition';
+import Shipping from './components/Shipping';
 
 function App() {
   return (
@@ -36,6 +40,11 @@ function App() {
             <Route path="/blog" element={<Blog />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/contact" element={<Contact/>} />
+            <Route path="/privacy" element={<PrivacyPolicy/>} />
+            <Route path="/refund" element={<Refund/>} />
+            <Route path="/terms" element={<TermsAndConditions/>} />
+            <Route path="/shipping" element={<Shipping/>} />
+
           </Routes>
         </main>
 

@@ -117,7 +117,7 @@ const AboutTop = () => {
               and lifestyle habits through personalized diet plans tailored to
               individual needs and preferences.
             </p>
-            <div className="mt-6">
+            {/* <div className="mt-6">
               <a
                 href="#learn-more"
                 className="inline-flex items-center text-nutricare-primary-dark group-hover:text-nutricare-green transition-colors duration-300"
@@ -125,7 +125,7 @@ const AboutTop = () => {
                 Learn more
                 <ArrowRight className="w-4 h-4 ml-2" />
               </a>
-            </div>
+            </div> */}
           </div>
 
           {/* Vision Card */}
@@ -143,7 +143,7 @@ const AboutTop = () => {
               healing society by addressing lifestyle disorders and promoting
               wellness globally.
             </p>
-            <div className="mt-6">
+            {/* <div className="mt-6">
               <a
                 href="#learn-more"
                 className="inline-flex items-center text-nutricare-primary-dark group-hover:text-nutricare-green transition-colors duration-300"
@@ -151,11 +151,11 @@ const AboutTop = () => {
                 Learn more
                 <ArrowRight className="w-4 h-4 ml-2" />
               </a>
-            </div>
+            </div> */}
           </div>
 
           {/* History Card */}
-          <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-100 hover:border-nutricare-green hover:shadow-xl transition-all duration-300 group">
+          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:border-nutricare-green hover:shadow-xl transition-all duration-300 group">
             <div className="flex items-center mb-6">
               <div className="w-14 h-14 rounded-lg bg-nutricare-bg-light flex items-center justify-center group-hover:bg-nutricare-green transition-colors duration-300">
                 <History className="w-7 h-7 text-nutricare-primary-dark group-hover:text-white transition-colors duration-300" />
@@ -169,7 +169,7 @@ const AboutTop = () => {
               has grown from a Jaipur-based clinic to a global leader in
               personalized nutrition.
             </p>
-            <div className="mt-6">
+            {/* <div className="mt-6">
               <a
                 href="#learn-more"
                 className="inline-flex items-center text-nutricare-primary-dark group-hover:text-nutricare-green transition-colors duration-300"
@@ -177,7 +177,7 @@ const AboutTop = () => {
                 Learn more
                 <ArrowRight className="w-4 h-4 ml-2" />
               </a>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
