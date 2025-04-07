@@ -2,8 +2,8 @@ import React from 'react';
 
 const ShippingDeliveryPolicy = () => {
   return (
-    <div className="w-full p-4 md:p-8 bg-white text-nutricare-text-dark font-sans">
-      <div className="w-full bg-nutricare-bg-light p-6 md:p-10 rounded-lg shadow-md">
+    <div className="w-full p-0 bg-white text-nutricare-text-dark font-sans">
+      <div className="w-full max-w-none bg-nutricare-bg-light p-6 md:p-10 rounded-lg shadow-md">
         <h1 className="text-2xl md:text-3xl font-bold mb-6 text-nutricare-primary-dark">
           Shipping and Delivery Policy - Nutridietmitra
         </h1>

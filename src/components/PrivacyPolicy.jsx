@@ -124,7 +124,7 @@ const PrivacyPolicy = () => {
   return (
     <div className="bg-nutricare-bg-light min-h-screen font-sans">
       {/* Changed max-w-4xl to w-full for full width on desktop */}
-      <div className="w-full mx-auto p-4 md:p-8">
+      <div className="w-full mx-auto p-4 md:p-10">
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           {/* Header */}
           <div className="bg-nutricare-primary-dark text-white p-6">

@@ -9,7 +9,7 @@ const ServicesHeader = () => {
         <img 
           src={About1} 
           alt="Services Background" 
-          className="w-full h-64 md:h-80 lg:h-96 object-cover"
+          className="w-full h-64 md:h-80 lg:h-89 object-cover"
         />
         
         {/* Gradient overlay */}
