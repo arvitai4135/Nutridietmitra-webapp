@@ -3,12 +3,12 @@ import React, { useState } from "react";
 const NutricareLocationSection = () => {
   const [isDirectionsPanelOpen, setIsDirectionsPanelOpen] = useState(false);
 
-  // Updated location details for Jaipur
   const locationDetails = {
-    lat: 26.8676,  // Updated latitude for the approximate area in Jaipur
-    lng: 75.7972,  // Updated longitude for the approximate area in Jaipur
+    lat: 26.8676,
+    lng: 75.7972,
     placeName: "Nutricare Wellness",
-    address: "Plot 93, Mauji Colony Rd, Mauji Colony, Moji Nagar, Malviya Nagar, Jaipur, Rajasthan 302017",
+    address:
+      "Plot 93, Mauji Colony Rd, Mauji Colony, Moji Nagar, Malviya Nagar, Jaipur, Rajasthan 302017",
   };
 
   const handleDirectionsClick = () => {
@@ -20,16 +20,13 @@ const NutricareLocationSection = () => {
     window.open(mapsUrl, "_blank");
   };
 
-  // Static map URL with updated coordinates
-  const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=26.8676,75.7972&zoom=14&size=800x600&markers=color:red%7C26.8676,75.7972`;
-
   return (
     <section className="relative w-full h-[400px] md:h-[600px] bg-nutricare-bg-light overflow-hidden">
-      {/* Static Map Background */}
+      {/* Dummy Map Image */}
       <div className="absolute inset-0">
         <img
-          src={staticMapUrl}
-          alt="Nutricare Wellness Location"
+          src="/assets/Images/jaipurMap.jpg" // ⬅️ Put your local dummy image path or a URL here
+          alt="Map showing Nutricare Wellness location in Jaipur"
           className="w-full h-full object-cover"
           onError={(e) => {
             e.target.src =
@@ -69,7 +66,6 @@ const NutricareLocationSection = () => {
             {locationDetails.address}
           </p>
 
-          {/* Directions Panel */}
           {isDirectionsPanelOpen && (
             <div className="mb-4 bg-nutricare-bg-light p-4 rounded-lg border border-nutricare-green">
               <p className="text-sm text-nutricare-text-dark mb-2">

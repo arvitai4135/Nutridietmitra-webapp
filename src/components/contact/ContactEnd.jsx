@@ -46,7 +46,7 @@ const ContactPage = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
               </a>
-              <a href="tel:+0598756543" className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-medium py-3 px-8 rounded-full transition duration-300 inline-flex items-center">
+              <a href="tel:+917568153534" className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-medium py-3 px-8 rounded-full transition duration-300 inline-flex items-center">
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
                 </svg>
@@ -76,7 +76,7 @@ const ContactPage = () => {
               </div>
               <h3 className="text-xl font-bold text-nutricare-primary-dark mb-4">Visit Us</h3>
               <p className="text-nutricare-text-gray mb-4">
-              OM RESIDENCY 93/B2 Mauji Colony, Malviya Nagar, Jaipur , Rajasthan
+                OM RESIDENCY 93/B2 Mauji Colony, Malviya Nagar, Jaipur, Rajasthan
               </p>
               <a href="#" className="inline-block text-nutricare-primary-light hover:text-nutricare-primary-dark font-medium transition duration-300">
                 Get Directions
@@ -95,8 +95,8 @@ const ContactPage = () => {
                 Feel free to reach out to us<br />
                 via email anytime
               </p>
-              <a href="mailto: Nutridietmitra@gmail.com" className="inline-block text-nutricare-primary-light hover:text-nutricare-primary-dark font-medium transition duration-300">
-              Nutridietmitra@gmail.com
+              <a href="mailto:Nutridietmitra@gmail.com" className="inline-block text-nutricare-primary-light hover:text-nutricare-primary-dark font-medium transition duration-300">
+                Nutridietmitra@gmail.com
               </a>
             </div>
 
@@ -111,12 +111,8 @@ const ContactPage = () => {
               <p className="text-nutricare-text-gray mb-4">
                 Mon-Fri from 9am to 6pm
               </p>
-              <a href="tel:+0598756543" className="inline-block text-nutricare-primary-light hover:text-nutricare-primary-dark font-medium transition duration-300">
-                +05 9875 654 32
-              </a>
-              <br />
-              <a href="tel:1234567890" className="inline-block text-nutricare-primary-light hover:text-nutricare-primary-dark font-medium transition duration-300">
-                123 456 7890
+              <a href="tel:+917568153534" className="inline-block text-nutricare-primary-light hover:text-nutricare-primary-dark font-medium transition duration-300">
+                +91-7568153534
               </a>
             </div>
           </div>
@@ -146,13 +142,15 @@ const ContactPage = () => {
                     </div>
                     <div>
                       <h4 className="text-xl font-bold text-nutricare-primary-dark mb-2">Career Inquiries</h4>
-                      <h5 className="text-lg font-medium mb-3">Dt. Tanu bhargava</h5>
+                      <h5 className="text-lg font-medium mb-3">Dt. Tanu Bhargava</h5>
                       <ul className="space-y-2">
                         <li className="flex items-center text-nutricare-text-gray">
                           <svg className="w-4 h-4 mr-2 text-nutricare-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
                           </svg>
-                          (+01) 123 456 7899
+                          <a href="tel:+917568153534" className="text-nutricare-text-gray hover:text-nutricare-primary-light transition duration-300">
+                            +91-7568153534
+                          </a>
                         </li>
                         <li className="flex items-center text-nutricare-text-gray">
                           <svg className="w-4 h-4 mr-2 text-nutricare-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -176,13 +174,15 @@ const ContactPage = () => {
                     </div>
                     <div>
                       <h4 className="text-xl font-bold text-nutricare-primary-dark mb-2">Marketing Department</h4>
-                      <h5 className="text-lg font-medium mb-3">Dt. Tanu bhargava</h5>
+                      <h5 className="text-lg font-medium mb-3">Dt. Tanu Bhargava</h5>
                       <ul className="space-y-2">
                         <li className="flex items-center text-nutricare-text-gray">
                           <svg className="w-4 h-4 mr-2 text-nutricare-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
                           </svg>
-                          (+01) 123 456 7899
+                          <a href="tel:+917568153534" className="text-nutricare-text-gray hover:text-nutricare-primary-light transition duration-300">
+                            +91-7568153534
+                          </a>
                         </li>
                         <li className="flex items-center text-nutricare-text-gray">
                           <svg className="w-4 h-4 mr-2 text-nutricare-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -292,20 +292,6 @@ const ContactPage = () => {
           </div>
         </div>
       </section>
-
-
-      {/* <a 
-        href="#" 
-        className="fixed bottom-8 right-8 bg-nutricare-green hover:bg-nutricare-green-dark w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg transition duration-300"
-        onClick={(e) => {
-          e.preventDefault();
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-      >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-        </svg>
-      </a> */}
     </div>
   );
 };

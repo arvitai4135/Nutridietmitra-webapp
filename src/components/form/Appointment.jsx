@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { createAppointment } from "../../api/appointment"; // Adjust the import path if needed
 
 const Appointment = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
@@ -8,6 +9,9 @@ const Appointment = ({ isOpen, onClose }) => {
     medicalIssues: "",
     dietConcern: ""
   });
+  const [loading, setLoading] = useState(false);
+  const [submissionError, setSubmissionError] = useState(null);
+  const [submissionSuccess, setSubmissionSuccess] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -17,14 +21,37 @@ const Appointment = ({ isOpen, onClose }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log("Form submitted:", formData);
-    onClose();
+    setLoading(true);
+    setSubmissionError(null);
+    setSubmissionSuccess(false);
+
+    try {
+      const response = await createAppointment(formData);
+      console.log("Appointment created successfully:", response.message); // Access the message from the response
+      console.log("Appointment data:", response.data); // Access the appointment data
+      setSubmissionSuccess(true);
+      // Optionally reset the form after successful submission
+      setFormData({
+        name: "",
+        email: "",
+        mobile: "",
+        medicalIssues: "",
+        dietConcern: ""
+      });
+      // Optionally show a success message to the user
+      setTimeout(onClose, 2000); // Close the modal after a short delay
+    } catch (error) {
+      console.error("Failed to create appointment:", error);
+      setSubmissionError(error.response?.data?.message || "Failed to book appointment. Please try again later.");
+      // Optionally display a more user-friendly error message based on the error response
+      // You might want to inspect 'error.response.data' to get more specific error details
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Prevent scrolling when modal is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -44,7 +71,7 @@ const Appointment = ({ isOpen, onClose }) => {
         {/* Header */}
         <div className="bg-nutricare-primary-dark text-white p-4 flex justify-between items-center">
           <h2 className="text-xl font-semibold">Book Appointment</h2>
-          <button 
+          <button
             onClick={onClose}
             className="text-white hover:text-nutricare-bg-light transition-colors"
           >
@@ -53,7 +80,7 @@ const Appointment = ({ isOpen, onClose }) => {
             </svg>
           </button>
         </div>
-        
+
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6">
           <div className="space-y-4">
@@ -68,7 +95,7 @@ const Appointment = ({ isOpen, onClose }) => {
                 required
               />
             </div>
-            
+
             <div>
               <input
                 type="email"
@@ -80,7 +107,7 @@ const Appointment = ({ isOpen, onClose }) => {
                 required
               />
             </div>
-            
+
             <div>
               <input
                 type="tel"
@@ -92,7 +119,7 @@ const Appointment = ({ isOpen, onClose }) => {
                 required
               />
             </div>
-            
+
             <div>
               <input
                 type="text"
@@ -103,7 +130,7 @@ const Appointment = ({ isOpen, onClose }) => {
                 className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-nutricare-primary-dark"
               />
             </div>
-            
+
             <div>
               <textarea
                 name="dietConcern"
@@ -113,13 +140,17 @@ const Appointment = ({ isOpen, onClose }) => {
                 className="w-full p-3 border border-gray-300 rounded h-32 resize-none focus:outline-none focus:ring-1 focus:ring-nutricare-primary-dark"
               ></textarea>
             </div>
-            
+
+            {submissionError && <p className="text-red-500">{submissionError}</p>}
+            {submissionSuccess && <p className="text-green-500">Appointment booked successfully!</p>}
+
             <div className="pt-2">
               <button
                 type="submit"
-                className="w-full py-3 bg-nutricare-primary-dark text-white font-semibold rounded hover:bg-nutricare-primary-light transition-colors duration-300"
+                className={`w-full py-3 bg-nutricare-primary-dark text-white font-semibold rounded hover:bg-nutricare-primary-light transition-colors duration-300 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                disabled={loading}
               >
-                Send
+                {loading ? "Submitting..." : "Send"}
               </button>
             </div>
           </div>

@@ -41,8 +41,13 @@ const Header = () => {
             </div>
             <div className="text-center sm:text-left">
               <p className="text-nutricare-text-gray text-sm font-medium">24/7 Emergency Care</p>
-              <h2 className="text-lg sm:text-xl font-bold text-nutricare-text-dark hover:text-nutricare-primary-light transition-colors duration-300">
-                +00 900 145 7890
+              <h2 className="text-lg sm:text-xl font-bold">
+                <a
+                  href="tel:+917568153534"
+                  className="text-nutricare-text-dark hover:text-nutricare-primary-light transition-colors duration-300"
+                >
+                  +91-7568153534
+                </a>
               </h2>
             </div>
           </div>
@@ -63,7 +68,6 @@ const Header = () => {
             <div className="text-center sm:text-right">
               <p className="text-nutricare-text-gray text-sm font-medium">Request an</p>
               <h2 className="text-lg sm:text-xl font-bold">
-                {/* Changed from Link to button */}
                 <button
                   onClick={openAppointmentModal}
                   className="text-nutricare-text-dark hover:text-nutricare-primary-light transition-colors duration-300 font-bold"
