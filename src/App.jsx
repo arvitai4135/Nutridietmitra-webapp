@@ -26,6 +26,7 @@ import PrivacyPolicy from "./components/PrivacyPolicy";
 import Refund from "./components/Refund";
 import TermsAndConditions from "./components/Terms&Condition.jsx";
 import Shipping from "./components/Shipping";
+import OrderConfirmation from "./components/OrderConfirmation.jsx";
 
 // Admin Components (Lazy Loaded)
 const Dashboard = lazy(() => import("../src/admin/components/Dashboard.jsx"));
@@ -191,6 +192,7 @@ function App() {
                 </PublicLayout>
               }
             />
+            <Route path="/order-confirmation" element={<OrderConfirmation />} />
 
             {/* Admin Routes */}
             <Route

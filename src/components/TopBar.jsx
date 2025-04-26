@@ -1,15 +1,17 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../admin/context/AuthContext"; 
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 const TopBar = () => {
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext); // Access user from AuthContext
 
   // Functions to handle redirection
   const handleSignIn = () => {
     navigate("/login");
   };
-  
+
   const handleSignUp = () => {
     navigate("/signup");
   };
@@ -42,18 +44,26 @@ const TopBar = () => {
               </a>
             </div>
             <div className="flex items-center gap-4">
-              <button
-                onClick={handleSignIn}
-                className="bg-nutricare-primary-dark hover:bg-nutricare-primary-light text-white px-4 py-1 rounded transition-colors duration-300 cursor-pointer"
-              >
-                Sign In
-              </button>
-              <button
-                onClick={handleSignUp}
-                className="bg-nutricare-green hover:bg-nutricare-green-dark text-white px-4 py-1 rounded transition-colors duration-300 cursor-pointer"
-              >
-                Sign Up
-              </button>
+              {user ? (
+                <span className="text-nutricare-primary-dark font-medium">
+                  Welcome, {user.email.split('@')[0]}! {/* Displays username from email */}
+                </span>
+              ) : (
+                <>
+                  <button
+                    onClick={handleSignIn}
+                    className="bg-nutricare-primary-dark hover:bg-nutricare-primary-light text-white px-4 py-1 rounded transition-colors duration-300 cursor-pointer"
+                  >
+                    Sign In
+                  </button>
+                  <button
+                    onClick={handleSignUp}
+                    className="bg-nutricare-green hover:bg-nutricare-green-dark text-white px-4 py-1 rounded transition-colors duration-300 cursor-pointer"
+                  >
+                    Sign Up
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>

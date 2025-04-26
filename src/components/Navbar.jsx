@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
+import { AuthContext } from "../admin/context/AuthContext"; // Adjust path as needed
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import Appointment from "../components/form/Appointment"; // Import the Appointment component
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext); // Access user from AuthContext
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAppointmentOpen, setIsAppointmentOpen] = useState(false);
@@ -14,7 +16,7 @@ const Navbar = () => {
     navigate("/login");
     closeMenu();
   };
-  
+
   const handleSignUp = () => {
     navigate("/signup");
     closeMenu();
@@ -57,20 +59,28 @@ const Navbar = () => {
 
           {/* Right: Auth buttons and Search for mobile view */}
           <div className="flex items-center space-x-2 md:hidden">
-            {/* Auth buttons for mobile view ONLY */}
+            {/* Auth buttons or user name for mobile view */}
             <div className="flex space-x-1">
-              <button
-                onClick={handleSignIn}
-                className="py-1 px-3 text-sm bg-nutricare-primary-dark text-white rounded-full hover:bg-nutricare-primary-light transition-colors duration-300 font-sans"
-              >
-                Sign In
-              </button>
-              <button
-                onClick={handleSignUp}
-                className="py-1 px-3 text-sm bg-nutricare-green text-white rounded-full hover:bg-nutricare-green-dark transition-colors duration-300 font-sans"
-              >
-                Sign Up
-              </button>
+              {user ? (
+                <span className="text-nutricare-primary-dark font-medium text-sm">
+                  Welcome, {user.email.split('@')[0]}!
+                </span>
+              ) : (
+                <>
+                  <button
+                    onClick={handleSignIn}
+                    className="py-1 px-3 text-sm bg-nutricare-primary-dark text-white rounded-full hover:bg-nutricare-primary-light transition-colors duration-300 font-sans"
+                  >
+                    Sign In
+                  </button>
+                  <button
+                    onClick={handleSignUp}
+                    className="py-1 px-3 text-sm bg-nutricare-green text-white rounded-full hover:bg-nutricare-green-dark transition-colors duration-300 font-sans"
+                  >
+                    Sign Up
+                  </button>
+                </>
+              )}
             </div>
 
             {/* Search Button for mobile */}
