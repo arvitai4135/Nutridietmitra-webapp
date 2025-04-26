@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useContext, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { loginUser } from '../services/authService';
-import logo from '../../../public/logo.png';
+import logo from '/logo.png';
 import food from '../../../public/assets/AdminImages/food.jpg';
 
 const Login = () => {
