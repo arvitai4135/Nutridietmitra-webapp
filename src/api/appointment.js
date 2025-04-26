@@ -1,19 +1,65 @@
-// src/services/appointmentService.js
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+// Create Appointment (POST /api/appointments/create)
+export const createAppointment = async (appointmentData) => {
+  const payload = {
+    name: appointmentData.name,
+    email: appointmentData.email,
+    mobile_number: appointmentData.mobile_number,
+    medical_issue: appointmentData.medicalIssues,
+    message: appointmentData.dietConcern || null,
+    status: 'active',
+  };
 
-const createAppointment = async (data) => {
-  try {
-    const response = await axios.post(`${API_BASE_URL}/api/appointments/create`, data);
-    console.error(response);
-    // The API response is expected to be an AdminAppointmentResponse object
-    // with a 'data' property containing the created appointment object.
-    return response.data;
-  } catch (error) {
-    console.error("Error creating appointment:", error);
-    throw error; // Re-throw the error for the component to handle
-  }
+  const response = await axios.post(
+    `${import.meta.env.VITE_API_BASE_URL}/appointments/create`,
+    payload,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+  return response.data; // Expected: "Appointment created"
 };
 
-export { createAppointment };
+// Get Active Appointment (GET /api/appointments/active)
+export const getActiveAppointment = async () => {
+  const response = await axios.get(
+    `${import.meta.env.VITE_API_BASE_URL}/appointments/active`,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+  return response.data; // Expected: appointment data or string
+};
+
+// Delete Appointment (DELETE /api/appointments/delete/{appointment_id})
+export const deleteAppointment = async (appointmentId) => {
+  const response = await axios.delete(
+    `${import.meta.env.VITE_API_BASE_URL}/appointments/delete/${appointmentId}`
+  );
+  return response.data; // Expected: "Appointment deleted"
+};
+
+// Update Appointment (PUT /api/appointments/update/{appointment_id})
+export const updateAppointment = async (appointmentId, updateData) => {
+  const payload = {
+    status: updateData.status || 'active',
+    medical_issue: updateData.medicalIssues,
+    message: updateData.message || null,
+  };
+
+  const response = await axios.put(
+    `${import.meta.env.VITE_API_BASE_URL}/appointments/update/${appointmentId}`,
+    payload,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+  return response.data; // Expected: "Appointment updated"
+};

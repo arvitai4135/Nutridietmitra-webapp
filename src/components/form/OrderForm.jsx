@@ -6,7 +6,9 @@ const OrderForm = ({
   planTitle, 
   planPrice, 
   planType, 
-  planPeriod 
+  planPeriod,
+  onSubmit,
+  user
 }) => {
   const [formData, setFormData] = useState({
     fullName: '',
@@ -18,8 +20,9 @@ const OrderForm = ({
     startDate: new Date().toISOString().split('T')[0],
     endDate: ''
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Update form data when props change
   useEffect(() => {
     if (isOpen) {
       setFormData((prevData) => ({
@@ -29,6 +32,7 @@ const OrderForm = ({
         startDate: new Date().toISOString().split('T')[0],
         endDate: calculateEndDate(planPeriod)
       }));
+      setError(null);
     }
   }, [isOpen, planType, planPrice, planPeriod]);
 
@@ -38,26 +42,12 @@ const OrderForm = ({
 
     let endDate = new Date(today);
     switch (period) {
-      case 'month':
-        endDate.setMonth(today.getMonth() + 1);
-        break;
-      case '2 months':
-        endDate.setMonth(today.getMonth() + 2);
-        break;
-      case '3 months':
-        endDate.setMonth(today.getMonth() + 3);
-        break;
-      case '6 months':
-        endDate.setMonth(today.getMonth() + 6);
-        break;
-      case 'week':
-        endDate.setDate(today.getDate() + 7);
-        break;
-      case 'meal':
-        endDate = today;
-        break;
-      default:
-        break;
+      case 'month': endDate.setMonth(today.getMonth() + 1); break;
+      case '2 months': endDate.setMonth(today.getMonth() + 2); break;
+      case '3 months': endDate.setMonth(today.getMonth() + 3); break;
+      case '6 months': endDate.setMonth(today.getMonth() + 6); break;
+      case 'week': endDate.setDate(today.getDate() + 7); break;
+      case 'meal': endDate = today; break;
     }
     return endDate.toISOString().split('T')[0];
   }
@@ -69,26 +59,13 @@ const OrderForm = ({
       const newStartDate = new Date(value);
       let newEndDate = new Date(newStartDate);
       switch (planPeriod) {
-        case 'month':
-          newEndDate.setMonth(newStartDate.getMonth() + 1);
-          break;
-        case '2 months':
-          newEndDate.setMonth(newStartDate.getMonth() + 2);
-          break;
-        case '3 months':
-          newEndDate.setMonth(newStartDate.getMonth() + 3);
-          break;
-        case '6 months':
-          newEndDate.setMonth(newStartDate.getMonth() + 6);
-          break;
-        case 'week':
-          newEndDate.setDate(newStartDate.getDate() + 7);
-          break;
-        case 'meal':
-          newEndDate = newStartDate;
-          break;
-        default:
-          newEndDate = newStartDate;
+        case 'month': newEndDate.setMonth(newStartDate.getMonth() + 1); break;
+        case '2 months': newEndDate.setMonth(newStartDate.getMonth() + 2); break;
+        case '3 months': newEndDate.setMonth(newStartDate.getMonth() + 3); break;
+        case '6 months': newEndDate.setMonth(newStartDate.getMonth() + 6); break;
+        case 'week': newEndDate.setDate(newStartDate.getDate() + 7); break;
+        case 'meal': newEndDate = newStartDate; break;
+        default: newEndDate = newStartDate;
       }
       setFormData({
         ...formData,
@@ -103,18 +80,44 @@ const OrderForm = ({
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    onClose();
+    setLoading(true);
+    setError(null);
+
+    const phoneNumber = formData.phoneNumber.startsWith('+') ? formData.phoneNumber : `+91${formData.phoneNumber}`;
+    if (!/^\+?[1-9]\d{1,14}$/.test(phoneNumber)) {
+      setError('Phone number must be in E.164 format (e.g., +919876543210)');
+      setLoading(false);
+      return;
+    }
+
+    const payload = {
+      user_id: user?.id || 0,
+      price: formData.price,
+      currency: 'INR',
+      link_purpose: formData.selectedPlanType,
+      notify_url: 'https://yourdomain.com/api/payments/cashfree-webhook',
+      return_url: 'https://yourdomain.com/pricing',
+      customer_name: formData.fullName,
+      customer_email: formData.email || user?.email || 'user@example.com',
+      customer_phone: phoneNumber,
+      planTitle: planTitle
+    };
+
+    try {
+      await onSubmit(payload);
+    } catch (err) {
+      setError(err.message || 'Failed to initiate payment');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!isOpen) return null;
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 bg-black bg-opacity-50" onClick={onClose}>
       <div className="relative bg-white rounded-lg shadow-lg max-w-md w-full p-4 mt-8" onClick={(e) => e.stopPropagation()}>
-        {/* Close button */}
         <button 
           onClick={onClose}
           className="absolute top-2 right-2 text-gray-600 hover:text-gray-800 bg-white rounded-full p-1 shadow-md"
@@ -125,15 +128,12 @@ const OrderForm = ({
           </svg>
         </button>
         
-        {/* Header */}
         <div className="text-center mb-2">
           <h3 className="text-xl font-bold text-pink-600">Get Started with {planTitle}</h3>
           <p className="text-gray-500 text-sm">Complete your information to begin your journey</p>
         </div>
         
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-2">
-          {/* Full Name */}
           <div>
             <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
               Full Name
@@ -149,7 +149,6 @@ const OrderForm = ({
             />
           </div>
           
-          {/* Email Address */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
               Email Address
@@ -165,7 +164,6 @@ const OrderForm = ({
             />
           </div>
           
-          {/* Phone Number */}
           <div>
             <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-1">
               Phone Number
@@ -178,10 +176,10 @@ const OrderForm = ({
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
               required
+              placeholder="e.g., 9876543210"
             />
           </div>
           
-          {/* Delivery Address */}
           <div>
             <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
               Delivery Address
@@ -197,7 +195,6 @@ const OrderForm = ({
             ></textarea>
           </div>
           
-          {/* Plan Type */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Plan Type
@@ -228,7 +225,6 @@ const OrderForm = ({
             </div>
           </div>
           
-          {/* Plan Details */}
           <div className="bg-gray-100 p-2 rounded-md">
             <h4 className="font-medium text-pink-600 mb-1">Plan Details</h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -274,14 +270,17 @@ const OrderForm = ({
             </div>
           </div>
           
-          {/* Submit Button */}
           <div className="pt-2">
             <button
               type="submit"
-              className="w-full py-2 px-4 bg-pink-600 text-white font-medium rounded-full hover:bg-pink-700 transition-colors duration-300"
+              disabled={loading}
+              className={`w-full py-2 px-4 bg-pink-600 text-white font-medium rounded-full hover:bg-pink-700 transition-colors duration-300 ${
+                loading ? 'opacity-70 cursor-not-allowed' : ''
+              }`}
             >
-              Complete Order
+              {loading ? 'Processing...' : 'Complete Order'}
             </button>
+            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
           </div>
         </form>
       </div>

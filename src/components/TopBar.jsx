@@ -1,7 +1,19 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 const TopBar = () => {
+  const navigate = useNavigate();
+
+  // Functions to handle redirection
+  const handleSignIn = () => {
+    navigate("/login");
+  };
+  
+  const handleSignUp = () => {
+    navigate("/signup");
+  };
+
   return (
     <div className="hidden sm:block w-full py-5 bg-nutricare-bg-light text-nutricare-text-dark">
       <div className="container mx-auto px-4 sm:px-6 lg:px-16">
@@ -23,23 +35,25 @@ const TopBar = () => {
             <div className="flex items-center">
               <i className="fas fa-envelope mr-2 text-nutricare-primary-dark hover:text-nutricare-green transition-colors duration-300"></i>
               <a
-                href="mailto:support@nutridiet.in"
+                href="mailto:Nutridietmitra@gmail.com"
                 className="text-nutricare-primary-dark hover:text-nutricare-primary-light transition-colors duration-300"
               >
                 Nutridietmitra@gmail.com
               </a>
             </div>
             <div className="flex items-center gap-4">
-              {["facebook-f", "twitter", "linkedin-in"].map((icon) => (
-                <a
-                  key={icon}
-                  href="#"
-                  className="text-nutricare-primary-dark"
-                  aria-label={icon}
-                >
-                  <i className={`fab fa-${icon} hover:text-nutricare-green transition-colors duration-300`}></i>
-                </a>
-              ))}
+              <button
+                onClick={handleSignIn}
+                className="bg-nutricare-primary-dark hover:bg-nutricare-primary-light text-white px-4 py-1 rounded transition-colors duration-300 cursor-pointer"
+              >
+                Sign In
+              </button>
+              <button
+                onClick={handleSignUp}
+                className="bg-nutricare-green hover:bg-nutricare-green-dark text-white px-4 py-1 rounded transition-colors duration-300 cursor-pointer"
+              >
+                Sign Up
+              </button>
             </div>
           </div>
         </div>

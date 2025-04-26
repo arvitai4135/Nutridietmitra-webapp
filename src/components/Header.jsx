@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import Logo from "/Logo.png"; // Ensure the path is correct
+import Logo1 from "/Logo1.png"; // Ensure the path is correct
 import Appointment from "../components/form/Appointment"; // Update with the correct path to your Appointment component
 
 const Header = () => {
@@ -56,7 +56,7 @@ const Header = () => {
           <div className="sm:col-span-4 flex justify-center order-first sm:order-none">
             <Link to="/">
               <img
-                src={Logo}
+                src={Logo1}
                 alt="NutriDietMitra"
                 className="h-14 sm:h-16 w-auto object-contain hover:scale-105 transition-transform duration-300"
               />

@@ -25,7 +25,7 @@ const Testimonial = () => {
         'Following a sports nutrition plan for the past 4 months has completely transformed my performance. Before, I struggled with low energy and early fatigue. Now, I feel consistently energized through my workouts and recovery is much faster!',
       name: 'Michael Reynolds',
       location: 'Toronto, Canada',
-      image: '/api/placeholder/150/150',
+      image: '/assets/Images/img1.jpg',
     },
     {
       id: 2,
@@ -33,7 +33,7 @@ const Testimonial = () => {
         'As a marathon runner, proper nutrition is everything. The customized plan I received addressed all my specific needs and has helped me shave 15 minutes off my personal best. The guidance on timing my nutrients has been game-changing.',
       name: 'Sarah Chen',
       location: 'Seattle, USA',
-      image: '/api/placeholder/150/150',
+      image: '/assets/Images/img1.jpg',
     },
     {
       id: 3,
@@ -41,7 +41,7 @@ const Testimonial = () => {
         "After years of trying different approaches, I finally found a nutrition plan that works with my body instead of against it. My endurance has doubled and I'm setting new personal records every month. The difference is remarkable!",
       name: 'James Wilson',
       location: 'Melbourne, Australia',
-      image: '/api/placeholder/150/150',
+      image: '/assets/Images/img1.jpg',
     },
   ];
 

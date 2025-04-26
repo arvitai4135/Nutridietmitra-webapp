@@ -1,12 +1,24 @@
 import React, { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import Appointment from "../components/form/Appointment"; // Import the Appointment component
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAppointmentOpen, setIsAppointmentOpen] = useState(false);
+
+  // Functions to handle redirection for auth
+  const handleSignIn = () => {
+    navigate("/login");
+    closeMenu();
+  };
+  
+  const handleSignUp = () => {
+    navigate("/signup");
+    closeMenu();
+  };
 
   const toggleAppointment = () => {
     setIsAppointmentOpen(!isAppointmentOpen);
@@ -36,7 +48,41 @@ const Navbar = () => {
             </button>
           </div>
 
-          {/* Navigation Links */}
+          {/* Logo - keep the original space for logo if needed */}
+          <div className="flex-shrink-0 md:hidden">
+            <Link to="/" className="text-xl font-bold text-nutricare-primary-dark">
+              NutriDiet
+            </Link>
+          </div>
+
+          {/* Right: Auth buttons and Search for mobile view */}
+          <div className="flex items-center space-x-2 md:hidden">
+            {/* Auth buttons for mobile view ONLY */}
+            <div className="flex space-x-1">
+              <button
+                onClick={handleSignIn}
+                className="py-1 px-3 text-sm bg-nutricare-primary-dark text-white rounded-full hover:bg-nutricare-primary-light transition-colors duration-300 font-sans"
+              >
+                Sign In
+              </button>
+              <button
+                onClick={handleSignUp}
+                className="py-1 px-3 text-sm bg-nutricare-green text-white rounded-full hover:bg-nutricare-green-dark transition-colors duration-300 font-sans"
+              >
+                Sign Up
+              </button>
+            </div>
+
+            {/* Search Button for mobile */}
+            <button
+              onClick={() => setIsSearchOpen(!isSearchOpen)}
+              className="text-nutricare-primary-dark transition-colors duration-300 hover:text-nutricare-green"
+            >
+              <i className="fas fa-search text-xl"></i>
+            </button>
+          </div>
+
+          {/* Original Desktop Navigation Links - PRESERVED EXACTLY */}
           <nav
             className={`${
               isMenuOpen ? "block" : "hidden"
@@ -46,7 +92,7 @@ const Navbar = () => {
           >
             <NavLink
               to="/"
-              onClick={closeMenu} // Close menu on click
+              onClick={closeMenu}
               className={({ isActive }) =>
                 `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 ${
                   isActive
@@ -59,7 +105,7 @@ const Navbar = () => {
             </NavLink>
             <NavLink
               to="/about"
-              onClick={closeMenu} // Close menu on click
+              onClick={closeMenu}
               className={({ isActive }) =>
                 `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 ${
                   isActive
@@ -72,7 +118,7 @@ const Navbar = () => {
             </NavLink>
             <NavLink
               to="/services"
-              onClick={closeMenu} // Close menu on click
+              onClick={closeMenu}
               className={({ isActive }) =>
                 `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 ${
                   isActive
@@ -85,7 +131,7 @@ const Navbar = () => {
             </NavLink>
             <NavLink
               to="/gallery"
-              onClick={closeMenu} // Close menu on click
+              onClick={closeMenu}
               className={({ isActive }) =>
                 `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 ${
                   isActive
@@ -97,8 +143,8 @@ const Navbar = () => {
               Gallery
             </NavLink>
             <NavLink
-              to="/blog"
-              onClick={closeMenu} // Close menu on click
+              to="/blogs"
+              onClick={closeMenu}
               className={({ isActive }) =>
                 `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 ${
                   isActive
@@ -111,7 +157,7 @@ const Navbar = () => {
             </NavLink>
             <NavLink
               to="/contact"
-              onClick={closeMenu} // Close menu on click
+              onClick={closeMenu}
               className={({ isActive }) =>
                 `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 ${
                   isActive
@@ -132,9 +178,9 @@ const Navbar = () => {
             </button>
           </nav>
 
-          {/* Right: Cart, Search, and Appointment */}
-          <div className="flex items-center space-x-4">
-            {/* Search Button */}
+          {/* Original Desktop Right Buttons - PRESERVED EXACTLY */}
+          <div className="hidden md:flex items-center space-x-4">
+            {/* Search Button for desktop */}
             <button
               onClick={() => setIsSearchOpen(!isSearchOpen)}
               className="text-nutricare-primary-dark transition-colors duration-300 hover:text-nutricare-green"
@@ -142,10 +188,10 @@ const Navbar = () => {
               <i className="fas fa-search text-xl"></i>
             </button>
 
-            {/* Appointment Button for desktop view */}
+            {/* Appointment Button for desktop */}
             <button
               onClick={toggleAppointment}
-              className="hidden md:block py-2 px-6 bg-nutricare-primary-dark text-white rounded-full hover:bg-nutricare-primary-light transition-colors duration-300 font-sans"
+              className="py-2 px-6 bg-nutricare-primary-dark text-white rounded-full hover:bg-nutricare-primary-light transition-colors duration-300 font-sans"
             >
               Book Appointment
             </button>

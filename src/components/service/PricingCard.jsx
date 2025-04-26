@@ -7,7 +7,8 @@ const PricingCard = ({
   isFeatured = false, 
   features,
   highlightedFeatures = [],
-  period = 'month'
+  period = 'month',
+  onSubscribe // Payment handler from PricingSection
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -124,6 +125,7 @@ const PricingCard = ({
         planPrice={price}
         planType={getPlanType()}
         planPeriod={period}
+        onSubmit={onSubscribe} // Pass the payment handler
       />
     </>
   );
