@@ -1,4 +1,4 @@
-// src/components/Dashboard.jsx
+
 import { useContext, useState, useEffect } from 'react';
 import { Link, useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
@@ -21,7 +21,7 @@ const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    name: user?.name || 'Dekomori',
+    name: user?.email?.split('@')[0] || 'No user', // Use email username as default name
     email: user?.email || '',
     weight: user?.weight || '',
     height: user?.height || '',
@@ -29,6 +29,17 @@ const Dashboard = () => {
 
   // For the blog editor
   const [blogContent, setBlogContent] = useState("");
+
+  // Utility function to capitalize the first letter of a string
+  const capitalizeFirstLetter = (str) => {
+    if (!str || typeof str !== 'string') return 'Guest';
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  };
+
+  // Get the display name with first letter capitalized
+  const displayName = capitalizeFirstLetter(
+    user?.name || user?.email?.split('@')[0] || 'Guest'
+  );
 
   const handleLogout = () => {
     logout();
@@ -64,9 +75,7 @@ const Dashboard = () => {
     { name: 'Booking', path: 'booking', icon: '📅' },
     { name: 'Plans', path: 'plans', icon: '🛒' },
     { name: 'Blog', path: '/editor', icon: '📝' },
-    { name: 'Consultancy', path: 'consultency', icon: '👩‍⚕️' },
-    // { name: 'About', path: 'about', icon: 'ℹ️' },
-    { name: 'Contact', path: 'contact', icon: '📞' },
+    // Removed Consultancy and Contact
   ];
 
   // Check if we're on the main dashboard route
@@ -86,6 +95,9 @@ const Dashboard = () => {
     // Otherwise, return nothing as the main dashboard content will be shown
     return null;
   };
+
+  // Get the first character for the profile icon, ensuring it's capitalized
+  const userInitial = (user?.name?.charAt(0) || user?.email?.split('@')[0]?.charAt(0) || 'D').toUpperCase();
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen font-sans bg-[#FCF0F8]">
@@ -147,17 +159,6 @@ const Dashboard = () => {
               </Link>
             );
           })}
-          <div className="mt-6 pt-4 border-t border-white border-opacity-20">
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center text-base text-white hover:bg-[#ADD01C] hover:text-[#333333] transition py-3 px-3 rounded-xl"
-            >
-              <div className="flex items-center justify-center w-10 h-10 mr-3 rounded-lg bg-white/20">
-                <span className="text-xl">🚪</span>
-              </div>
-              <span>Logout</span>
-            </button>
-          </div>
         </nav>
       </aside>
 
@@ -171,32 +172,47 @@ const Dashboard = () => {
         </div>
 
         <div className="p-4 md:p-6 relative z-10">
-          {/* Header with user info should be shown on all pages except editor */}
+          {/* Header with user info and logout button */}
           {!isEditorRoute && (
             <div className="flex justify-between items-center mb-6">
               <div>
                 <h1 className="text-2xl md:text-3xl font-bold text-[#333333]">
-                  Hello, {user?.name || 'Dekomori'}!
+                  Hello, {displayName}! {/* Use capitalized display name */}
                 </h1>
                 <p className="text-[#718096] mt-1">Email: {user?.email || 'Not logged in'}</p>
               </div>
-              <button onClick={() => setIsModalOpen(true)} className="focus:outline-none">
-                <div className="w-12 h-12 bg-gradient-to-r from-[#9E0B7F] to-[#D93BB1] rounded-full flex items-center justify-center text-white font-bold shadow-md hover:shadow-lg transition-shadow">
-                  {user?.name?.charAt(0) || 'D'}
-                </div>
-              </button>
+              <div className="flex items-center space-x-2">
+                <button onClick={() => setIsModalOpen(true)} className="focus:outline-none">
+                  <div className="w-12 h-12 bg-gradient-to-r from-[#9E0B7F] to-[#D93BB1] rounded-full flex items-center justify-center text-white font-bold shadow-md hover:shadow-lg transition-shadow">
+                    {userInitial}
+                  </div>
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="bg-nutricare-primary-dark hover:bg-nutricare-primary-light text-white px-3 py-1 rounded transition-colors duration-300 cursor-pointer"
+                >
+                  Logout
+                </button>
+              </div>
             </div>
           )}
 
-          {/* In case we're on editor route, add a simpler header */}
           {isEditorRoute && (
             <div className="flex justify-between items-center mb-4">
               <h1 className="text-2xl md:text-3xl font-bold text-[#333333]">Blog Editor</h1>
-              <button onClick={() => setIsModalOpen(true)} className="focus:outline-none">
-                <div className="w-10 h-10 bg-gradient-to-r from-[#9E0B7F] to-[#D93BB1] rounded-full flex items-center justify-center text-white font-bold shadow-md hover:shadow-lg transition-shadow">
-                  {user?.name?.charAt(0) || 'D'}
-                </div>
-              </button>
+              <div className="flex items-center space-x-2">
+                <button onClick={() => setIsModalOpen(true)} className="focus:outline-none">
+                  <div className="w-10 h-10 bg-gradient-to-r from-[#9E0B7F] to-[#D93BB1] rounded-full flex items-center justify-center text-white font-bold shadow-md hover:shadow-lg transition-shadow">
+                    {userInitial}
+                  </div>
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="bg-nutricare-primary-dark hover:bg-nutricare-primary-light text-white px-3 py-1 rounded transition-colors duration-300 cursor-pointer"
+                >
+                  Logout
+                </button>
+              </div>
             </div>
           )}
 
@@ -350,7 +366,7 @@ const Dashboard = () => {
                     </Link>
                     <Link
                       to="ecommerce"
-                      className="bg-[#D93BB1] text-white p-3 rounded-xl flex items-center justify-center hover:bg-[#9E0B7F] transition-colors shadow-md"
+                      className="bg-[#D93BB1] text-white p-3 Rounded-xl flex items-center justify-center hover:bg-[#9E0B7F] transition-colors shadow-md"
                     >
                       <span className="text-xl mr-2">🛒</span> View Plans
                     </Link>

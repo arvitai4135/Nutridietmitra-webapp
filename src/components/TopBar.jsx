@@ -5,7 +5,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 
 const TopBar = () => {
   const navigate = useNavigate();
-  const { user } = useContext(AuthContext); // Access user from AuthContext
+  const { user, logout } = useContext(AuthContext); // Access user and logout from AuthContext
 
   // Functions to handle redirection
   const handleSignIn = () => {
@@ -16,10 +16,15 @@ const TopBar = () => {
     navigate("/signup");
   };
 
+  const handleLogout = () => {
+    logout(); // Clear auth state (tokens, user data, etc.)
+    navigate("/"); // Redirect to main website (root route)
+  };
+
   return (
     <div className="hidden sm:block w-full py-5 bg-nutricare-bg-light text-nutricare-text-dark">
       <div className="container mx-auto px-4 sm:px-6 lg:px-16">
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-6 font-sans text-base">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-6 font-sans text-base" style={{ fontFamily: "Arial, sans-serif" }}>
           {/* Left Section */}
           <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
             <div className="flex items-center">
@@ -45,9 +50,17 @@ const TopBar = () => {
             </div>
             <div className="flex items-center gap-4">
               {user ? (
-                <span className="text-nutricare-primary-dark font-medium">
-                  Welcome, {user.email.split('@')[0]}! {/* Displays username from email */}
-                </span>
+                <>
+                  <span className="text-nutricare-primary-dark font-medium">
+                    Welcome, {user.email.split('@')[0]}! {/* Displays username from email */}
+                  </span>
+                  <button
+                    onClick={handleLogout}
+                    className="bg-nutricare-primary-dark hover:bg-nutricare-primary-light text-white px-4 py-1 rounded transition-colors duration-300 cursor-pointer"
+                  >
+                    Logout
+                  </button>
+                </>
               ) : (
                 <>
                   <button
