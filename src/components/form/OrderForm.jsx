@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../../admin/context/AuthContext'; // Import AuthContext
 
-const OrderForm = ({ 
-  isOpen, 
-  onClose, 
-  planTitle, 
-  planPrice, 
-  planType, 
+const OrderForm = ({
+  isOpen,
+  onClose,
+  planTitle,
+  planPrice,
+  planType,
   planPeriod,
   onSubmit,
-  user
+  user,
 }) => {
+  const { isLoggedIn } = useContext(AuthContext); // Access AuthContext
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -18,7 +20,7 @@ const OrderForm = ({
     selectedPlanType: planType || 'subscription',
     price: planPrice || '₹4,000',
     startDate: new Date().toISOString().split('T')[0],
-    endDate: ''
+    endDate: '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -30,7 +32,7 @@ const OrderForm = ({
         selectedPlanType: planType || 'subscription',
         price: planPrice || '₹4,000',
         startDate: new Date().toISOString().split('T')[0],
-        endDate: calculateEndDate(planPeriod)
+        endDate: calculateEndDate(planPeriod),
       }));
       setError(null);
     }
@@ -42,40 +44,65 @@ const OrderForm = ({
 
     let endDate = new Date(today);
     switch (period) {
-      case 'month': endDate.setMonth(today.getMonth() + 1); break;
-      case '2 months': endDate.setMonth(today.getMonth() + 2); break;
-      case '3 months': endDate.setMonth(today.getMonth() + 3); break;
-      case '6 months': endDate.setMonth(today.getMonth() + 6); break;
-      case 'week': endDate.setDate(today.getDate() + 7); break;
-      case 'meal': endDate = today; break;
+      case 'month':
+        endDate.setMonth(today.getMonth() + 1);
+        break;
+      case '2 months':
+        endDate.setMonth(today.getMonth() + 2);
+        break;
+      case '3 months':
+        endDate.setMonth(today.getMonth() + 3);
+        break;
+      case '6 months':
+        endDate.setMonth(today.getMonth() + 6);
+        break;
+      case 'week':
+        endDate.setDate(today.getDate() + 7);
+        break;
+      case 'meal':
+        endDate = today;
+        break;
     }
     return endDate.toISOString().split('T')[0];
   }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
+
     if (name === 'startDate') {
       const newStartDate = new Date(value);
       let newEndDate = new Date(newStartDate);
       switch (planPeriod) {
-        case 'month': newEndDate.setMonth(newStartDate.getMonth() + 1); break;
-        case '2 months': newEndDate.setMonth(newStartDate.getMonth() + 2); break;
-        case '3 months': newEndDate.setMonth(newStartDate.getMonth() + 3); break;
-        case '6 months': newEndDate.setMonth(newStartDate.getMonth() + 6); break;
-        case 'week': newEndDate.setDate(newStartDate.getDate() + 7); break;
-        case 'meal': newEndDate = newStartDate; break;
-        default: newEndDate = newStartDate;
+        case 'month':
+          newEndDate.setMonth(newStartDate.getMonth() + 1);
+          break;
+        case '2 months':
+          newEndDate.setMonth(newStartDate.getMonth() + 2);
+          break;
+        case '3 months':
+          newEndDate.setMonth(newStartDate.getMonth() + 3);
+          break;
+        case '6 months':
+          newEndDate.setMonth(newStartDate.getMonth() + 6);
+          break;
+        case 'week':
+          newEndDate.setDate(newStartDate.getDate() + 7);
+          break;
+        case 'meal':
+          newEndDate = newStartDate;
+          break;
+        default:
+          newEndDate = newStartDate;
       }
       setFormData({
         ...formData,
         [name]: value,
-        endDate: planPeriod === 'custom' ? '' : newEndDate.toISOString().split('T')[0]
+        endDate: planPeriod === 'custom' ? '' : newEndDate.toISOString().split('T')[0],
       });
     } else {
       setFormData({
         ...formData,
-        [name]: value
+        [name]: value,
       });
     }
   };
@@ -85,30 +112,73 @@ const OrderForm = ({
     setLoading(true);
     setError(null);
 
+    // Validate form inputs
+    if (!formData.fullName) {
+      setError('Full name is required');
+      setLoading(false);
+      return;
+    }
+    if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email)) {
+      setError('Valid email is required');
+      setLoading(false);
+      return;
+    }
     const phoneNumber = formData.phoneNumber.startsWith('+') ? formData.phoneNumber : `+91${formData.phoneNumber}`;
     if (!/^\+?[1-9]\d{1,14}$/.test(phoneNumber)) {
       setError('Phone number must be in E.164 format (e.g., +919876543210)');
       setLoading(false);
       return;
     }
+    if (!formData.address) {
+      setError('Delivery address is required');
+      setLoading(false);
+      return;
+    }
+
+    // Check if logged in (if backend requires authentication)
+    if (!isLoggedIn) {
+      setError('Please log in to complete the order');
+      setLoading(false);
+      return;
+    }
 
     const payload = {
       user_id: user?.id || 0,
-      price: formData.price,
+      price: formData.price.replace('₹', '').replace(',', ''), // Convert price to number (e.g., "₹4,000" -> 4000)
       currency: 'INR',
       link_purpose: formData.selectedPlanType,
-      notify_url: 'https://yourdomain.com/api/payments/cashfree-webhook',
-      return_url: 'https://yourdomain.com/pricing',
+      notify_url: 'https://backend.nutridietmitra.com/api/payments/cashfree-webhook', // Update to new backend
+      return_url: 'https://yourdomain.com/pricing', // Update to your frontend URL
       customer_name: formData.fullName,
       customer_email: formData.email || user?.email || 'user@example.com',
       customer_phone: phoneNumber,
-      planTitle: planTitle
+      plan_title: planTitle,
+      start_date: formData.startDate,
+      end_date: formData.endDate,
+      address: formData.address,
     };
 
     try {
       await onSubmit(payload);
+      onClose(); // Close modal on success
     } catch (err) {
-      setError(err.message || 'Failed to initiate payment');
+      console.error('Order submission error:', err.response ? err.response.data : err.message);
+      let errorMessage = 'Failed to initiate payment';
+      if (err.response) {
+        const { status, data } = err.response;
+        if (status === 401) {
+          errorMessage = 'Unauthorized. Please log in again.';
+        } else if (status === 422) {
+          errorMessage = data.detail?.map((e) => e.msg).join(', ') || 'Invalid input data';
+        } else if (status === 500) {
+          errorMessage = data.message || 'Server error. Please try again later.';
+        } else {
+          errorMessage = data.message || data.detail || 'An error occurred';
+        }
+      } else if (err.request) {
+        errorMessage = 'Network error. Please check your internet connection.';
+      }
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -116,9 +186,15 @@ const OrderForm = ({
 
   if (!isOpen) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 bg-black bg-opacity-50" onClick={onClose}>
-      <div className="relative bg-white rounded-lg shadow-lg max-w-md w-full p-4 mt-8" onClick={(e) => e.stopPropagation()}>
-        <button 
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-2 bg-black bg-opacity-50"
+      onClick={onClose}
+    >
+      <div
+        className="relative bg-white rounded-lg shadow-lg max-w-md w-full p-4 mt-8"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
           onClick={onClose}
           className="absolute top-2 right-2 text-gray-600 hover:text-gray-800 bg-white rounded-full p-1 shadow-md"
           aria-label="Close"
@@ -127,13 +203,13 @@ const OrderForm = ({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-        
+
         <div className="text-center mb-2">
           <h3 className="text-xl font-bold text-pink-600">Get Started with {planTitle}</h3>
           <p className="text-gray-500 text-sm">Complete your information to begin your journey</p>
         </div>
-        
-        <form onSubmit={handleSubmit} className="space-y-2">
+
+        <form onSubmit={handleSubmit} className="space-y-2" autoComplete="off">
           <div>
             <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
               Full Name
@@ -146,9 +222,10 @@ const OrderForm = ({
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
               required
+              autoComplete="off"
             />
           </div>
-          
+
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
               Email Address
@@ -161,9 +238,10 @@ const OrderForm = ({
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
               required
+              autoComplete="off"
             />
           </div>
-          
+
           <div>
             <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-1">
               Phone Number
@@ -177,9 +255,10 @@ const OrderForm = ({
               className="w-full px-3 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
               required
               placeholder="e.g., 9876543210"
+              autoComplete="off"
             />
           </div>
-          
+
           <div>
             <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
               Delivery Address
@@ -192,13 +271,12 @@ const OrderForm = ({
               rows="2"
               className="w-full px-3 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
               required
+              autoComplete="off"
             ></textarea>
           </div>
-          
+
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Plan Type
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Plan Type</label>
             <div className="flex space-x-3">
               <label className="flex items-center">
                 <input
@@ -208,6 +286,7 @@ const OrderForm = ({
                   checked={formData.selectedPlanType === 'subscription'}
                   onChange={handleChange}
                   className="h-4 w-4 text-pink-600 focus:ring-pink-500"
+                  autoComplete="off"
                 />
                 <span className="ml-1 text-sm text-gray-700">Subscription</span>
               </label>
@@ -219,12 +298,13 @@ const OrderForm = ({
                   checked={formData.selectedPlanType === 'foodDelivery'}
                   onChange={handleChange}
                   className="h-4 w-4 text-pink-600 focus:ring-pink-500"
+                  autoComplete="off"
                 />
                 <span className="ml-1 text-sm text-gray-700">Food Delivery</span>
               </label>
             </div>
           </div>
-          
+
           <div className="bg-gray-100 p-2 rounded-md">
             <h4 className="font-medium text-pink-600 mb-1">Plan Details</h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -239,6 +319,7 @@ const OrderForm = ({
                   value={formData.price}
                   readOnly
                   className="w-full px-2 py-1 bg-white border border-gray-300 rounded-md text-gray-800"
+                  autoComplete="off"
                 />
               </div>
               <div>
@@ -252,6 +333,7 @@ const OrderForm = ({
                   value={formData.startDate}
                   onChange={handleChange}
                   className="w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
+                  autoComplete="off"
                 />
               </div>
               <div className="sm:col-span-2">
@@ -265,11 +347,12 @@ const OrderForm = ({
                   value={formData.endDate}
                   readOnly
                   className="w-full px-2 py-1 bg-white border border-gray-300 rounded-md text-gray-800"
+                  autoComplete="off"
                 />
               </div>
             </div>
           </div>
-          
+
           <div className="pt-2">
             <button
               type="submit"

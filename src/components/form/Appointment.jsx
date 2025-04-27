@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { createAppointment } from '../../api/appointment';
+import { AuthContext } from '../../admin/context/AuthContext'; // Import AuthContext
 
 const Appointment = ({ isOpen, onClose }) => {
+  const { isLoggedIn } = useContext(AuthContext); // Access AuthContext
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -16,10 +18,19 @@ const Appointment = ({ isOpen, onClose }) => {
 
   const validateForm = () => {
     const errors = {};
-    if (formData.name.length > 100) {
+    if (!formData.name) {
+      errors.name = 'Name is required';
+    } else if (formData.name.length > 100) {
       errors.name = 'Name must be 100 characters or less';
     }
-    if (!/^\+?[1-9]\d{1,14}$/.test(formData.mobile_number)) {
+    if (!formData.email) {
+      errors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      errors.email = 'Invalid email format';
+    }
+    if (!formData.mobile_number) {
+      errors.mobile_number = 'Mobile number is required';
+    } else if (!/^\+?[1-9]\d{1,14}$/.test(formData.mobile_number)) {
       errors.mobile_number = 'Invalid mobile number (e.g., +1234567890)';
     }
     return errors;
@@ -39,6 +50,12 @@ const Appointment = ({ isOpen, onClose }) => {
     const errors = validateForm();
     if (Object.keys(errors).length > 0) {
       setValidationErrors(errors);
+      return;
+    }
+
+    // Optional: Check if logged in (if backend requires authentication)
+    if (!isLoggedIn) {
+      setSubmissionError('Please log in to book an appointment.');
       return;
     }
 
@@ -62,13 +79,18 @@ const Appointment = ({ isOpen, onClose }) => {
       console.error('Full error response:', error.response ? error.response.data : error.message);
       let errorMessage = 'Failed to book appointment. Please try again later.';
       if (error.response) {
-        if (error.response.status === 422) {
-          errorMessage = error.response.data.detail?.[0]?.msg || 'Validation error';
-        } else if (error.response.status === 500) {
-          errorMessage = error.response.data?.detail?.[0]?.msg || error.response.data?.message || 'Server error occurred. Please contact support.';
-        } else if (error.response.data) {
-          errorMessage = error.response.data.toString();
+        const { status, data } = error.response;
+        if (status === 401) {
+          errorMessage = 'Unauthorized. Please log in again.';
+        } else if (status === 422) {
+          errorMessage = data.detail?.map((err) => err.msg).join(', ') || 'Invalid input data.';
+        } else if (status === 500) {
+          errorMessage = data.message || 'Server error occurred. Please contact support.';
+        } else {
+          errorMessage = data.message || data.detail || 'An error occurred.';
         }
+      } else if (error.request) {
+        errorMessage = 'Network error. Please check your internet connection.';
       }
       setSubmissionError(errorMessage);
     } finally {
@@ -125,6 +147,7 @@ const Appointment = ({ isOpen, onClose }) => {
                 placeholder="Your Name (required)"
                 className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-nutricare-primary-dark"
                 required
+                autoComplete="off"
               />
               {validationErrors.name && (
                 <p className="text-red-500 text-sm">{validationErrors.name}</p>
@@ -139,7 +162,11 @@ const Appointment = ({ isOpen, onClose }) => {
                 placeholder="Your Email (required)"
                 className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-nutricare-primary-dark"
                 required
+                autoComplete="off"
               />
+              {validationErrors.email && (
+                <p className="text-red-500 text-sm">{validationErrors.email}</p>
+              )}
             </div>
             <div>
               <input
@@ -150,6 +177,7 @@ const Appointment = ({ isOpen, onClose }) => {
                 placeholder="Your Mobile Number (required, e.g., +1234567890)"
                 className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-nutricare-primary-dark"
                 required
+                autoComplete="off"
               />
               {validationErrors.mobile_number && (
                 <p className="text-red-500 text-sm">{validationErrors.mobile_number}</p>
@@ -163,6 +191,7 @@ const Appointment = ({ isOpen, onClose }) => {
                 onChange={handleChange}
                 placeholder="Medical Issues & Concern"
                 className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-nutricare-primary-dark"
+                autoComplete="off"
               />
             </div>
             <div>
@@ -172,6 +201,7 @@ const Appointment = ({ isOpen, onClose }) => {
                 onChange={handleChange}
                 placeholder="Your Concern/Message Regarding Diet"
                 className="w-full p-3 border border-gray-300 rounded h-32 resize-none focus:outline-none focus:ring-1 focus:ring-nutricare-primary-dark"
+                autoComplete="off"
               ></textarea>
             </div>
             {submissionError && <p className="text-red-500">{submissionError}</p>}

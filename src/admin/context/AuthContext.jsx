@@ -1,3 +1,4 @@
+// src/context/AuthContext.js
 import { createContext, useState, useEffect } from 'react';
 
 export const AuthContext = createContext();
@@ -8,29 +9,22 @@ export const AuthProvider = ({ children }) => {
   const [refreshToken, setRefreshToken] = useState(sessionStorage.getItem('refresh_token') || null);
   const [justSignedUp, setJustSignedUp] = useState(false);
 
-  // useEffect(() => {
-  //   const storedToken = sessionStorage.getItem('token');
-  //   const storedUser = sessionStorage.getItem('user');
-  //   const storedRefreshToken = sessionStorage.getItem('refresh_token');
-
-  //   if (storedToken && storedUser && !user) {
-  //     console.log('Restoring session:', { storedToken, storedUser, storedRefreshToken });
-  //     setToken(storedToken);
-  //     setUser(JSON.parse(storedUser));
-  //     setRefreshToken(storedRefreshToken);
-  //   }
-  // }, []);
-
   useEffect(() => {
     const storedToken = sessionStorage.getItem('token');
     const storedUser = sessionStorage.getItem('user');
     const storedRefreshToken = sessionStorage.getItem('refresh_token');
-  
+
     console.log('Restoring session:', { storedToken, storedUser, storedRefreshToken });
     setToken(storedToken);
-    setUser(storedUser ? JSON.parse(storedUser) : null);
+    try {
+      setUser(storedUser ? JSON.parse(storedUser) : null);
+    } catch (error) {
+      console.error('Failed to parse stored user:', error);
+      setUser(null);
+    }
     setRefreshToken(storedRefreshToken);
   }, []);
+
   const login = (newToken, newUser, newRefreshToken, isSignup = false) => {
     setToken(newToken);
     setUser(newUser);

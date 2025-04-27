@@ -267,6 +267,7 @@ const Login = () => {
                     })}
                     placeholder="your@email.com"
                     type="email"
+                    autoComplete="off" // Disables browser autofill suggestions
                     className="w-full py-2 pl-10 pr-4 border border-[#27AE60]/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C0399F] focus:border-transparent transition shadow-sm text-sm"
                   />
                 </div>

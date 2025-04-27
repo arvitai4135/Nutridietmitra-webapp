@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { Search, ChevronLeft, Calendar, Edit2, XCircle, Eye, Clock } from 'lucide-react';
-import axios from 'axios';
-import { AuthContext } from '../context/AuthContext'; // Adjust path to your AuthContext file
+import api from '../services/api'; // Adjust path to api.js
+import { AuthContext } from '../context/AuthContext';
 
 export default function AppointmentBooking() {
   const { token } = useContext(AuthContext);
@@ -28,14 +28,10 @@ export default function AppointmentBooking() {
           throw new Error('Authentication required. Please log in.');
         }
 
-        const response = await axios.get('/api/appointments/appointments', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await api.get('/appointments/appointments');
         console.log('API Response:', response.data);
         const mappedAppointments = Array.isArray(response.data.data)
-          ? response.data.data.map(item => ({
+          ? response.data.data.map((item) => ({
               id: item.id || `#APPT${Math.floor(1000 + Math.random() * 9000)}`,
               name: item.name || 'Unknown',
               email: item.email || '',
@@ -51,13 +47,12 @@ export default function AppointmentBooking() {
         setError(null);
       } catch (err) {
         console.error('Error fetching appointments:', err);
-        const errorMessage = err.response?.status === 401
-          ? 'Authentication failed. Please log in and try again.'
-          : err.response?.status === 404
-          ? 'No appointments found'
-          : err.response?.status === 500
-          ? 'Server error: Unable to fetch appointments. Please try again later.'
-          : 'Failed to fetch appointments';
+        const errorMessage =
+          err.response?.status === 404
+            ? 'No appointments found'
+            : err.response?.status === 500
+            ? 'Server error: Unable to fetch appointments. Please try again later.'
+            : 'Failed to fetch appointments';
         setError(errorMessage);
         setAppointments([]);
       } finally {
@@ -71,12 +66,7 @@ export default function AppointmentBooking() {
   // Update appointment via PUT API
   const updateAppointment = async (appointmentId, updatedData) => {
     try {
-      const response = await axios.put(`/api/appointments/update/${appointmentId}`, updatedData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await api.put(`/appointments/update/${appointmentId}`, updatedData);
       return response.data;
     } catch (err) {
       console.error('Error updating appointment:', err);
@@ -105,8 +95,8 @@ export default function AppointmentBooking() {
         message: selectedAppointment.description,
       });
 
-      setAppointments(prev =>
-        prev.map(appointment =>
+      setAppointments((prev) =>
+        prev.map((appointment) =>
           appointment.id === selectedAppointment.id
             ? { ...appointment, status: newStatus === 'active' ? 'Active' : 'Inactive' }
             : appointment
@@ -134,7 +124,7 @@ export default function AppointmentBooking() {
   // Handle edit form changes
   const handleEditFormChange = (e) => {
     const { name, value } = e.target;
-    setEditFormData(prev => ({ ...prev, [name]: value }));
+    setEditFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   // Handle edit form submission
@@ -149,8 +139,8 @@ export default function AppointmentBooking() {
         message: editFormData.message,
       });
 
-      setAppointments(prev =>
-        prev.map(appointment =>
+      setAppointments((prev) =>
+        prev.map((appointment) =>
           appointment.id === selectedAppointment.id
             ? {
                 ...appointment,
@@ -172,7 +162,7 @@ export default function AppointmentBooking() {
 
   // Apply filters to appointments
   const filteredAppointments = Array.isArray(appointments)
-    ? appointments.filter(appointment => {
+    ? appointments.filter((appointment) => {
         const matchesSearch =
           (appointment.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
           (appointment.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -186,9 +176,7 @@ export default function AppointmentBooking() {
 
   // Get status badge style
   const getStatusBadgeStyle = (status) => {
-    return status === 'Active'
-      ? 'bg-green-500 text-white'
-      : 'bg-red-500 text-white';
+    return status === 'Active' ? 'bg-green-500 text-white' : 'bg-red-500 text-white';
   };
 
   // Loading state component
@@ -215,11 +203,10 @@ export default function AppointmentBooking() {
   const ToggleConfirmationModal = () => (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 max-w-md w-full">
-        <h3 className="text-lg font-semibold mb-4">
-          Confirm Status Change
-        </h3>
+        <h3 className="text-lg font-semibold mb-4">Confirm Status Change</h3>
         <p className="text-gray-600 mb-6">
-          Are you sure you want to {selectedAppointment?.status === 'Active' ? 'deactivate' : 'activate'} the appointment for {selectedAppointment?.name}?
+          Are you sure you want to {selectedAppointment?.status === 'Active' ? 'deactivate' : 'activate'} the appointment for{' '}
+          {selectedAppointment?.name}?
         </p>
         <div className="flex justify-end space-x-3">
           <button
@@ -344,9 +331,7 @@ export default function AppointmentBooking() {
       {/* Appointments Count */}
       {!isLoading && !error && (
         <div className="flex justify-between items-center mb-6">
-          <div className="text-sm text-gray-500">
-            Showing {filteredAppointments.length} appointments
-          </div>
+          <div className="text-sm text-gray-500">Showing {filteredAppointments.length} appointments</div>
         </div>
       )}
 
@@ -359,9 +344,7 @@ export default function AppointmentBooking() {
         <div className="flex flex-col items-center justify-center py-16 px-4">
           <Calendar size={64} className="text-blue-400 mb-4" />
           <h3 className="text-xl font-semibold text-gray-800 mb-2">No Appointments Found</h3>
-          <p className="text-gray-500 text-center max-w-md">
-            No appointments match your current filters.
-          </p>
+          <p className="text-gray-500 text-center max-w-md">No appointments match your current filters.</p>
         </div>
       ) : (
         <>
@@ -392,9 +375,7 @@ export default function AppointmentBooking() {
                     <td className="px-4 py-3 text-sm text-gray-800">{appointment.dateTime}</td>
                     <td className="px-4 py-3 text-sm text-gray-800">{appointment.duration}</td>
                     <td className="px-4 py-3 text-sm">
-                      <span className={`px-2 py-1 rounded-full text-xs ${getStatusBadgeStyle(appointment.status)}`}>
-                        {appointment.status}
-                      </span>
+                      <span className={`px-2 py-1 rounded-full text-xs ${getStatusBadgeStyle(appointment.status)}`}>{appointment.status}</span>
                     </td>
                     <td className="px-4 py-3 text-sm flex space-x-2">
                       <button className="text-blue-700 hover:text-blue-600" title="View Details">
@@ -430,9 +411,7 @@ export default function AppointmentBooking() {
                     <h3 className="font-medium text-gray-800">{appointment.name}</h3>
                     <p className="text-xs text-gray-500">{appointment.id}</p>
                   </div>
-                  <span className={`px-2 py-1 rounded-full text-xs ${getStatusBadgeStyle(appointment.status)}`}>
-                    {appointment.status}
-                  </span>
+                  <span className={`px-2 py-1 rounded-full text-xs ${getStatusBadgeStyle(appointment.status)}`}>{appointment.status}</span>
                 </div>
 
                 <div className="space-y-2 mb-4">
@@ -491,9 +470,7 @@ export default function AppointmentBooking() {
               <button className="px-3 py-1 border border-gray-200 rounded-md text-gray-500 bg-white disabled:opacity-50" disabled>
                 Previous
               </button>
-              <button className="px-3 py-1 bg-blue-700 text-white rounded-md hover:bg-blue-600">
-                1
-              </button>
+              <button className="px-3 py-1 bg-blue-700 text-white rounded-md hover:bg-blue-600">1</button>
               <button className="px-3 py-1 border border-gray-200 rounded-md text-gray-500 bg-white disabled:opacity-50" disabled>
                 Next
               </button>
