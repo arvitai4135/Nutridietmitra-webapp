@@ -5,10 +5,10 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: '0.0.0.0',
-    port: 3000,
+    port: 3001,
     proxy: {
       '/api': {
-        target: 'https://backend.nutridietmitra.com/docs',
+        target: 'https://backend.nutridietmitra.com',
         changeOrigin: true,
         // rewrite: (path) => path.replace(/^\/api/, ''), 
       },

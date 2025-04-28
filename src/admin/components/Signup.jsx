@@ -25,14 +25,14 @@ const Signup = () => {
         return;
       }
 
-      const { token, user } = await registerUser(data);
-      console.log('Signup successful, calling login with token:', token, 'user:', user);
-      login(token, user, null, true); // Pass isSignup: true
+      const { token, refresh_token, user } = await registerUser(data);
+      console.log('Signup successful, calling login with token:', token, 'user:', user, 'refresh_token:', refresh_token);
+      login(token, user, refresh_token, true);
       console.log('Redirecting to / after signup');
-      navigate('/'); // Explicitly enforce website home page redirect
+      navigate('/');
     } catch (error) {
       console.error('Signup failed', error);
-      setApiError(error.response?.data?.message || 'Signup failed. Please try again.');
+      setApiError(error.message || 'Signup failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
