@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import PricingCard from "../service/PricingCard";
 import SubscriptionForm from "../form/OrderForm";
 import { AuthContext } from "../../admin/context/AuthContext";
+import api from "../../admin/services/api";
 
 const globalStyles = `
 @keyframes fadeIn {
@@ -82,11 +83,8 @@ const PricingSection = () => {
   const handlePayment = async (formData) => {
     console.log("Token:", token);
     console.log("User:", user);
-    console.log("FormData price:", formData.price);
-    console.log("FormData planTitle:", formData.planTitle);
-    console.log("FormData customer_name:", formData.customer_name);
-    console.log("FormData customer_email:", formData.customer_email);
-    console.log("FormData customer_phone:", formData.customer_phone);
+    console.log("FormData:", formData);
+
     if (!token) {
       setError("Please log in to proceed with payment.");
       navigate("/login");
@@ -97,7 +95,6 @@ const PricingSection = () => {
     setError(null);
 
     const amount = parseFloat(formData.price.replace("₹", "").replace(",", "")) || 1;
-    console.log("Parsed amount:", amount);
     if (amount <= 0) {
       setError("Amount must be greater than 0");
       setLoading(false);
@@ -105,9 +102,9 @@ const PricingSection = () => {
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const customerEmail = formData.customer_email || user?.email || "user@example.com";
+    const customerEmail = formData.customer_email || user?.email;
     if (!emailRegex.test(customerEmail)) {
-      setError("Invalid email format");
+      setError("Please provide a valid email address");
       setLoading(false);
       return;
     }
@@ -116,72 +113,44 @@ const PricingSection = () => {
       ? formData.customer_phone.slice(3)
       : formData.customer_phone;
 
+    // Include order_id or reference in payload for webhook tracking
+    const orderId = `ORDER_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`; // Generate unique order ID
+
     const payload = {
-      amount: amount,
+      amount,
       currency: "INR",
       link_purpose: formData.link_purpose || "subscription",
       customer_name: formData.customer_name || "Anonymous",
       customer_email: customerEmail,
       customer_phone: customerPhone,
       plan_type: mapPlanType(formData.planTitle),
-      notify_url: "http://localhost:5000/api/payments/cashfree-webhook", // Update to your backend webhook URL
-      return_url: "http://localhost:5173/order-confirmation", // Keep for now
+      start_date: formData.start_date,
+      end_date: formData.end_date,
+      address: formData.address,
+      order_id: orderId, // Pass order_id to backend for webhook association
+      return_url: `${window.location.origin}/payment-callback?order_id=${orderId}`, // Cashfree return URL
     };
-    console.log("Full Payload:", JSON.stringify(payload, null, 2));
-    console.log("Request URL:", "/api/payments/create-payment-link");
-    console.log("Headers:", { "Content-Type": "application/json", Authorization: `Bearer ${token}` });
 
     try {
-      const response = await fetch("/api/payments/create-payment-link", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
+      const response = await api.post("/payments/create-payment-link", payload);
+      console.log("Payment link creation response:", response.data);
 
-      const data = await response.json();
-      console.log("Response:", JSON.stringify(data, null, 2));
+      const paymentLink = response.data.data?.link_url;
 
-      if (response.ok) {
-        const paymentLink = data.payment_link || data.url || data.data?.link_url;
-        if (paymentLink) {
-          console.log("Opening payment link in new tab:", paymentLink);
-          const paymentWindow = window.open(paymentLink, "_blank");
-
-          // Poll for payment status since return_url might not work
-          const checkPaymentStatus = async () => {
-            try {
-              const statusResponse = await fetch("/api/payments/check-status", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({ link_url: paymentLink }),
-              });
-              const statusData = await statusResponse.json();
-              console.log("Payment status check:", statusData);
-              if (statusData.status === "SUCCESS") {
-                navigate("/order-confirmation");
-                paymentWindow?.close();
-                clearInterval(pollingInterval);
-              }
-            } catch (err) {
-              console.error("Error checking payment status:", err);
-            }
-          };
-
-          const pollingInterval = setInterval(checkPaymentStatus, 5000); // Check every 5 seconds
-        } else {
-          throw new Error("Payment link not found in response");
+      if (paymentLink) {
+        const paymentWindow = window.open(paymentLink, "_blank");
+        if (!paymentWindow) {
+          setError("Failed to open payment page. Please allow pop-ups and try again.");
+          setLoading(false);
+          return;
         }
+        setError("Please complete the payment in the new tab. You will be redirected back after payment, or return here to check your order status.");
       } else {
-        throw new Error(data.detail?.[0]?.msg || data.detail || "Failed to create payment link");
+        throw new Error("Payment link not found in response");
       }
     } catch (err) {
-      setError(err.message || "An error occurred during payment initiation");
+      console.error("Payment error:", err);
+      setError(err.response?.data?.message || err.message || "An error occurred during payment initiation");
     } finally {
       setLoading(false);
     }

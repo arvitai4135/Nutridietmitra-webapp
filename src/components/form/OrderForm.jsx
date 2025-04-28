@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { AuthContext } from '../../admin/context/AuthContext'; // Import AuthContext
+import { AuthContext } from '../../admin/context/AuthContext';
 
 const OrderForm = ({
   isOpen,
@@ -11,10 +11,9 @@ const OrderForm = ({
   onSubmit,
   user,
 }) => {
-  const { isLoggedIn } = useContext(AuthContext); // Access AuthContext
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
+    fullName: user?.full_name || '',
+    email: user?.email || '',
     phoneNumber: '',
     address: '',
     selectedPlanType: planType || 'subscription',
@@ -27,16 +26,19 @@ const OrderForm = ({
 
   useEffect(() => {
     if (isOpen) {
-      setFormData((prevData) => ({
-        ...prevData,
+      setFormData({
+        fullName: user?.full_name || '',
+        email: user?.email || '',
+        phoneNumber: '',
+        address: '',
         selectedPlanType: planType || 'subscription',
         price: planPrice || '₹4,000',
         startDate: new Date().toISOString().split('T')[0],
         endDate: calculateEndDate(planPeriod),
-      }));
+      });
       setError(null);
     }
-  }, [isOpen, planType, planPrice, planPeriod]);
+  }, [isOpen, planType, planPrice, planPeriod, user]);
 
   function calculateEndDate(period) {
     const today = new Date();
@@ -123,9 +125,9 @@ const OrderForm = ({
       setLoading(false);
       return;
     }
-    const phoneNumber = formData.phoneNumber.startsWith('+') ? formData.phoneNumber : `+91${formData.phoneNumber}`;
-    if (!/^\+?[1-9]\d{1,14}$/.test(phoneNumber)) {
-      setError('Phone number must be in E.164 format (e.g., +919876543210)');
+    const phoneNumber = formData.phoneNumber.startsWith('+91') ? formData.phoneNumber : `+91${formData.phoneNumber}`;
+    if (!/^\+91\d{10}$/.test(phoneNumber)) {
+      setError('Phone number must be in the format +919876543210');
       setLoading(false);
       return;
     }
@@ -135,50 +137,24 @@ const OrderForm = ({
       return;
     }
 
-    // Check if logged in (if backend requires authentication)
-    if (!isLoggedIn) {
-      setError('Please log in to complete the order');
-      setLoading(false);
-      return;
-    }
-
     const payload = {
-      user_id: user?.id || 0,
-      price: formData.price.replace('₹', '').replace(',', ''), // Convert price to number (e.g., "₹4,000" -> 4000)
-      currency: 'INR',
-      link_purpose: formData.selectedPlanType,
-      notify_url: 'https://backend.nutridietmitra.com/api/payments/cashfree-webhook', // Update to new backend
-      return_url: 'https://yourdomain.com/pricing', // Update to your frontend URL
       customer_name: formData.fullName,
-      customer_email: formData.email || user?.email || 'user@example.com',
+      customer_email: formData.email,
       customer_phone: phoneNumber,
-      plan_title: planTitle,
+      address: formData.address,
+      price: formData.price,
+      planTitle: planTitle,
+      link_purpose: formData.selectedPlanType,
       start_date: formData.startDate,
       end_date: formData.endDate,
-      address: formData.address,
     };
 
     try {
       await onSubmit(payload);
-      onClose(); // Close modal on success
+      onClose();
     } catch (err) {
-      console.error('Order submission error:', err.response ? err.response.data : err.message);
-      let errorMessage = 'Failed to initiate payment';
-      if (err.response) {
-        const { status, data } = err.response;
-        if (status === 401) {
-          errorMessage = 'Unauthorized. Please log in again.';
-        } else if (status === 422) {
-          errorMessage = data.detail?.map((e) => e.msg).join(', ') || 'Invalid input data';
-        } else if (status === 500) {
-          errorMessage = data.message || 'Server error. Please try again later.';
-        } else {
-          errorMessage = data.message || data.detail || 'An error occurred';
-        }
-      } else if (err.request) {
-        errorMessage = 'Network error. Please check your internet connection.';
-      }
-      setError(errorMessage);
+      console.error('Order submission error:', err);
+      setError(err.message || 'Failed to initiate payment');
     } finally {
       setLoading(false);
     }
@@ -254,7 +230,7 @@ const OrderForm = ({
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
               required
-              placeholder="e.g., 9876543210"
+              placeholder="e.g., +919876543210"
               autoComplete="off"
             />
           </div>
