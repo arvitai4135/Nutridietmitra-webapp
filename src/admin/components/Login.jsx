@@ -75,7 +75,7 @@ const Login = () => {
             <div className="flex justify-center mb-2">
               <div className="w-16 h-16 bg-white rounded-full shadow-lg flex items-center justify-center mb-3">
                 <img
-                  src="/logo.png"
+                  src="/Logo1.png"
                   alt="NutriDiet Logo"
                   className="w-12 h-12 object-contain"
                   onError={(e) => (e.target.src = "https://via.placeholder.com/48?text=Logo")} // Fallback image
@@ -206,7 +206,7 @@ const Login = () => {
               </div>
               <div className="w-15 h-15 bg-gradient-to-br from-[#C0399F]/60 to-[#27AE60]/60 rounded-lg flex items-center justify-center shadow-md">
                 <img
-                  src="/logo.png"
+                  src="/Logo1.png"
                   alt="NutriDiet Logo"
                   className="w-10 h-10 object-contain"
                   onError={(e) => (e.target.src = "https://via.placeholder.com/40?text=Logo")} // Fallback image

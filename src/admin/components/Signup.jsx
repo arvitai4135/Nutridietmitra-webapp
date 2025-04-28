@@ -60,7 +60,7 @@ const Signup = () => {
             {/* Top Section with Logo */}
             <div className="flex justify-center mb-2">
               <div className="w-16 h-16 bg-white rounded-full shadow-lg flex items-center justify-center mb-3">
-                <img src="/logo.png" alt="NutriDiet Logo" className="w-12 h-12 object-contain" />
+                <img src="/Logo1.png" alt="NutriDiet Logo" className="w-12 h-12 object-contain" />
               </div>
             </div>
             
@@ -153,7 +153,7 @@ const Signup = () => {
               </div>
               {/* Small Logo */}
               <div className="w-15 h-15 bg-gradient-to-br from-[#27AE60]/60 to-[#C0399F]/60 rounded-lg flex items-center justify-center shadow-md">
-                <img src="logo.png" alt="NutriDiet Logo" className="w-10 h-10 object-contain" />
+                <img src="/Logo1.png" alt="NutriDiet Logo" className="w-10 h-10 object-contain" />
               </div>
             </div>
             
