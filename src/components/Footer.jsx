@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   FaFacebookF,
@@ -9,11 +9,9 @@ import {
   FaPhone,
   FaCalendarAlt,
 } from "react-icons/fa";
-
-import HealthyFood from "/assets/Images/HealthyFood.jpg";
-import HealthyGlutenFree from "/assets/Images/HealthyGlutenFree.jpg";
-import HealthLifestyle from "/assets/Images/HealthLifestyle.jpg";
+import api from "../admin/services/api"; // Import the configured Axios instance
 import Appointment from "./form/Appointment";
+import { toast } from "react-toastify"; // Optional: For toast notifications
 
 // Component to render the green dot icon
 const LinkIcon = () => (
@@ -22,27 +20,75 @@ const LinkIcon = () => (
 
 const Footer = () => {
   const [isAppointmentOpen, setIsAppointmentOpen] = useState(false);
+  const [recentPosts, setRecentPosts] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const recentPosts = [
-    {
-      id: 1,
-      title: "How Much Do You Really Need to Eat Daily?",
-      date: "20 April, 2018",
-      image: HealthyFood,
-    },
-    {
-      id: 2,
-      title: "7 Simple & Healthy Gluten-Free Cookies",
-      date: "01 August, 2018",
-      image: HealthyGlutenFree,
-    },
-    {
-      id: 3,
-      title: "Tips For Staying Healthy On Vacation",
-      date: "13 March, 2018",
-      image: HealthLifestyle,
-    },
-  ];
+  // Fetch recent blogs on component mount
+  useEffect(() => {
+    const fetchRecentBlogs = async () => {
+      try {
+        setLoading(true);
+        const response = await api.get("/blogs/all_blog_lists");
+        console.log("API Response:", response.data); // Log full response
+
+        if (response.data.success && Array.isArray(response.data.data)) {
+          // Sort blogs by created_at (most recent first) and take top 3
+          const sortedBlogs = response.data.data
+            .filter((blog) => blog.title && blog.created_at) // Filter out invalid blogs
+            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+            .slice(0, 3);
+
+          console.log("Sorted Blogs:", sortedBlogs); // Log sorted blogs
+
+          // Map API data to the format expected by the UI
+          const formattedBlogs = sortedBlogs.map((blog) => {
+            // Use a static image for all blogs
+            const imageUrl = "/assets/Images/BrainBoost.jpg"; // Static image URL
+
+            // Ensure valid date
+            let formattedDate;
+            try {
+              formattedDate = new Date(blog.created_at).toLocaleDateString("en-US", {
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+              });
+            } catch (e) {
+              console.warn(`Invalid date for blog ${blog.id}:`, blog.created_at);
+              formattedDate = "Unknown Date";
+            }
+
+            return {
+              id: blog.id,
+              title: blog.title || "Untitled",
+              date: formattedDate,
+              image: imageUrl,
+              slug: blog.slug || `blog-${blog.id}`, // Fallback slug
+            };
+          });
+
+          console.log("Formatted Blogs:", formattedBlogs); // Log formatted blogs
+          setRecentPosts(formattedBlogs);
+        } else {
+          throw new Error("Invalid blog data received");
+        }
+      } catch (err) {
+        console.error("Error fetching blogs:", err);
+        const errorMessage =
+          err.response?.data?.message || "Failed to load recent posts. Please try again later.";
+        setError(errorMessage);
+        setRecentPosts([]);
+        toast.error(errorMessage); // Optional: Show toast notification
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecentBlogs();
+  }, []);
+
+  console.log("Rendering recentPosts:", recentPosts); // Log before rendering
 
   return (
     <footer className="bg-nutricare-text-dark text-white">
@@ -196,14 +242,22 @@ const Footer = () => {
               <span className="relative z-10">Recent Posts</span>
               <span className="absolute bottom-0 left-0 w-10 h-1 bg-nutricare-green"></span>
             </h3>
-            <div className="space-y-3">
-              {recentPosts.map((post) => (
-                <div key={post.id} className="flex space-x-2">
+            {loading ? (
+              <p className="text-gray-400 text-sm">Loading posts...</p>
+            ) : error ? (
+              <p className="text-red-500 text-sm">{error}</p>
+            ) : recentPosts.length > 0 ? (
+              recentPosts.map((post) => (
+                <div key={post.id} className="flex space-x-2 mb-3">
                   <div className="flex-shrink-0 w-14 h-14 bg-gray-700 rounded-md overflow-hidden">
                     <img
                       src={post.image}
                       alt={post.title}
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        console.error(`Failed to load image: ${post.image}`);
+                        e.target.src = "https://via.placeholder.com/150"; // Fallback on error
+                      }}
                     />
                   </div>
                   <div>
@@ -214,16 +268,18 @@ const Footer = () => {
                       />
                       <span>{post.date}</span>
                     </div>
-                    <a
-                      href="#"
+                    <Link
+                      to={`/blog/${post.slug}`}
                       className="text-xs hover:text-nutricare-green transition duration-300"
                     >
                       {post.title}
-                    </a>
+                    </Link>
                   </div>
                 </div>
-              ))}
-            </div>
+              ))
+            ) : (
+              <p className="text-gray-400 text-sm">No recent posts available.</p>
+            )}
           </div>
 
           {/* Newsletter Column */}
@@ -255,7 +311,7 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Bottom Footer - Updated with <Link> */}
+      {/* Bottom Footer */}
       <div className="border-t border-gray-700">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
@@ -269,7 +325,6 @@ const Footer = () => {
               </Link>
               . All rights reserved.
             </div>
-            {/* Updated Section for Mobile View */}
             <div className="flex flex-wrap space-x-4 justify-center md:justify-end">
               <Link
                 to="/privacy"

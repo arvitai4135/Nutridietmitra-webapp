@@ -32,13 +32,14 @@ import OrderConfirmation from "./components/OrderConfirmation.jsx";
 const Dashboard = lazy(() => import("../src/admin/components/Dashboard.jsx"));
 const Login = lazy(() => import("../src/admin/components/Login.jsx"));
 const Signup = lazy(() => import("../src/admin/components/Signup.jsx"));
+const ForgotPassword = lazy(() => import("../src/admin/components/passwords/ForgotPassword.jsx"));
+const ChangePassword = lazy(() => import("../src/admin/components/passwords/ChangePassword.jsx"));
+const ResetPassword = lazy(() => import("../src/admin/components/passwords/ResetPassword.jsx"));
 const BlogEditor = lazy(() => import("../src/admin/components/tiptapEditor/TiptapEditor.jsx"));
-// const AdminHome = lazy(() => import("../src/admin/pages/Home.jsx")); // Renamed to avoid conflict
 const Booking = lazy(() => import("../src/admin/pages/Booking.jsx"));
 const Plans = lazy(() => import("../src/admin/components/Plans.jsx"));
-// const AdminAbout = lazy(() => import("../src/admin/pages/About.jsx")); // Renamed to avoid conflict
 const AdminBlog = lazy(() => import("../src/pages/Blogs.jsx"));
-const AdminContact = lazy(() => import("../src/admin/pages/Contact.jsx")); // Renamed to avoid conflict
+// const AdminContact = lazy(() => import("../src/admin/pages/Contact.jsx"));
 
 const theme = createTheme();
 
@@ -212,6 +213,32 @@ function App() {
               }
             />
             <Route
+              path="/forgot-password"
+              element={
+                <AdminLayout>
+                  <ForgotPassword />
+                </AdminLayout>
+              }
+            />
+            <Route
+              path="/reset-password"
+              element={
+                <AdminLayout>
+                  <ResetPassword />
+                </AdminLayout>
+              }
+            />
+            <Route
+              path="/change-password"
+              element={
+                <ProtectedRoute>
+                  <AdminLayout>
+                    <ChangePassword />
+                  </AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/dashboard"
               element={
                 <ProtectedRoute>
@@ -221,12 +248,10 @@ function App() {
                 </ProtectedRoute>
               }
             >
-              {/* <Route index element={<AdminHome />} /> */}
               <Route path="booking" element={<Booking />} />
               <Route path="plans" element={<Plans />} />
-              {/* <Route path="about" element={<AdminAbout />} /> */}
               <Route path="blog" element={<AdminBlog />} />
-              <Route path="contact" element={<AdminContact />} />
+              {/* <Route path="contact" element={<AdminContact />} /> */}
             </Route>
             <Route
               path="/editor"
@@ -241,7 +266,6 @@ function App() {
 
             {/* Catch-all Route */}
             <Route path="*" element={<Navigate to="/" replace />} />
-            {/* <Route path="/profile" element={<Profile />} /> */}
           </Routes>
         </Router>
       </AuthProvider>
