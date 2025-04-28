@@ -68,6 +68,8 @@ function TiptapEditor() {
     fetchAllBlogs();
     return () => {
       Object.values(imageUrls.current).forEach((url) => URL.revokeObjectURL(url));
+      imageUrls.current = {};
+      imageRatios.current = {};
     };
   }, []);
 
@@ -130,6 +132,7 @@ function TiptapEditor() {
     try {
       const response = await api.get(`/blogs/get_blog/${blogId}`);
       const blog = response.data.data;
+      console.log('Blog body:', blog.body); // Debugging log
       setTitle(blog.title || '');
       setDescription(blog.description || '');
       setSlug(blog.slug || '');
@@ -140,6 +143,7 @@ function TiptapEditor() {
       );
       setCategories(blog.categories || []);
       const generatedContent = constructEditorContent(blog.body || []);
+      console.log('Generated content:', generatedContent); // Debugging log
       setContent(generatedContent);
       setImages([]);
       setHasUnsavedChanges(false);
@@ -159,9 +163,10 @@ function TiptapEditor() {
   };
 
   const constructEditorContent = (bodyArray) => {
+    console.log('Body array:', bodyArray); // Debugging log
     let htmlContent = '';
     bodyArray.forEach((item) => {
-      if (item.type === 'image') {
+      if (item.type === 'image' && item.url && typeof item.url === 'string') {
         htmlContent += `<div class="image-container image-align-center" contenteditable="false"><img src="${item.url}" alt="${item.caption || 'Blog Image'}" style="width: 100%; max-width: 100%; height: auto;" class="my-2.5" /></div>`;
       } else if (item.type === 'heading') {
         htmlContent += `<h${item.level}>${item.content}</h${item.level}>`;
@@ -295,21 +300,18 @@ function TiptapEditor() {
       setErrorMessage('Categories must be a valid array of non-empty strings.');
       return;
     }
-    // Filter out paragraphs with empty or whitespace-only content
     const filteredJsonContent = jsonContent.map((item) => {
       if (item.type === 'paragraph') {
         return item.content && typeof item.content === 'string' && item.content.trim().length > 0
           ? item
           : null;
       }
-      // Normalize list style
       if (item.type === 'list') {
         const normalizedStyle = item.style === 'ordered' ? 'numbered' : item.style;
         return { ...item, style: normalizedStyle };
       }
       return item;
     }).filter((item) => item !== null);
-    // Log the jsonContent and filteredJsonContent for debugging
     console.log('Original jsonContent:', JSON.stringify(jsonContent, null, 2));
     console.log('Filtered jsonContent:', JSON.stringify(filteredJsonContent, null, 2));
     if (filteredJsonContent.length === 0) {

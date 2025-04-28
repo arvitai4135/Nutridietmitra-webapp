@@ -75,18 +75,25 @@ function EditorContent({
 }) {
   const isInitialMount = useRef(true);
 
+  // Log content for debugging when in Preview section
+  useEffect(() => {
+    if (activeSection === 'Preview') {
+      console.log('Preview content:', content);
+    }
+  }, [activeSection, content]);
+
   // Initialize editor content only on mount
   useEffect(() => {
     if (isInitialMount.current && editorRef.current) {
       editorRef.current.innerHTML = DOMPurify.sanitize(content || '<p>Start writing your blog post...</p>', {
         ALLOWED_TAGS: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'img', 'div', 'br', 'strong', 'em', 'u', 'a'],
-        ALLOWED_ATTR: ['src', 'alt', 'class', 'style', 'data-image-id', 'href'],
-        ADD_ATTR: ['src', 'href'],
+        ALLOWED_ATTR: ['src', 'alt', 'class', 'style', 'data-image-id', 'href', 'contenteditable'],
+        ADD_ATTR: ['src', 'href', 'contenteditable'],
         ADD_URI_SAFE_ATTR: ['src', 'href'],
       });
       isInitialMount.current = false;
     }
-  }, [editorRef]);
+  }, [editorRef, content]);
 
   const saveCursorPosition = () => {
     const selection = window.getSelection();
@@ -509,6 +516,41 @@ function EditorContent({
     }
   };
 
+  const insertImageAtCursor = (image) => {
+    if (isAdmin && editorRef.current) {
+      const position = saveCursorPosition();
+      const imgHtml = `<div class="image-container image-align-${image.alignment}" data-image-id="${image.id}" contenteditable="false"><img src="${image.url}" alt="Blog Image" style="width: ${image.width}%; height: auto; max-width: 100%;" class="my-2.5" /></div>`;
+      
+      const selection = window.getSelection();
+      let range;
+      if (selection.rangeCount > 0) {
+        range = selection.getRangeAt(0);
+      } else {
+        range = document.createRange();
+        range.selectNodeContents(editorRef.current);
+        range.collapse(false);
+      }
+
+      const imgNode = document.createElement('div');
+      imgNode.innerHTML = imgHtml;
+      const imageContainer = imgNode.firstChild;
+      range.insertNode(imageContainer);
+
+      const newP = document.createElement('p');
+      newP.innerHTML = '<br>';
+      imageContainer.insertAdjacentElement('afterend', newP);
+
+      range.setStart(newP, 0);
+      range.setEnd(newP, 0);
+
+      selection.removeAllRanges();
+      selection.addRange(range);
+      debouncedSetContent(editorRef.current.innerHTML);
+      setHasUnsavedChanges(true);
+      restoreCursorPosition(position);
+    }
+  };
+
   const toggleAspectRatioLock = () => {
     if (isAdmin) {
       setLockAspectRatio(!lockAspectRatio);
@@ -622,6 +664,7 @@ function EditorContent({
     if (isAdmin && editorRef.current) {
       const htmlContent = editorRef.current.innerHTML;
       const jsonContent = parseEditorContentToJSON(htmlContent);
+      console.log('Parsed JSON content:', jsonContent); // Debugging log
       handleSave({ htmlContent, jsonContent });
     }
   };
@@ -634,7 +677,6 @@ function EditorContent({
             margin: 10px 0;
             width: 100%;
             box-sizing: border-box;
-            pointer-events: none;
           }
           .image-align-left {
             display: flex;
@@ -649,16 +691,14 @@ function EditorContent({
             justify-content: flex-end;
           }
           .image-container img {
-            max-width: 100%;
+            width: 100%;
             height: auto;
-            pointer-events: auto;
-          }
-          .image-container p {
-            pointer-events: auto;
+            max-width: 100%;
           }
           .prose img {
-            max-width: 100%;
+            width: 100%;
             height: auto;
+            max-width: 100%;
           }
           .prose h1 {
             font-size: 2rem;
@@ -773,6 +813,13 @@ function EditorContent({
               font-size: 0.85rem !important;
               padding: 0.25rem 0.75rem !important;
             }
+            .image-container {
+              margin: 8px 0;
+            }
+            .image-container img {
+              width: 100%;
+              height: auto;
+            }
           }
           .disabled-input {
             background-color: #f5f5f5;
@@ -797,7 +844,7 @@ function EditorContent({
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6"
             fill="none"
-            viewBox="0 0 24 24"
+            viewBox="0 24 24"
             stroke="currentColor"
           >
             <path
@@ -1420,32 +1467,11 @@ function EditorContent({
                             className={`absolute top-2 right-2 p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity bg-[#9E0B7F] text-white ${
                               !isAdmin ? 'disabled-button' : ''
                             }`}
-                            onClick={() => {
-                              if (isAdmin && editorRef.current) {
-                                const selection = window.getSelection();
-                                if (selection.rangeCount > 0) {
-                                  const range = selection.getRangeAt(0);
-                                  const imgHtml = `<div class="image-container image-align-${image.alignment}" data-image-id="${image.id}" contenteditable="false"><img src="${image.url}" alt="Blog Image" style="width: ${image.width}%; height: auto; max-width: 100%;" class="my-2.5" /></div>`;
-                                  const imgNode = document.createElement('div');
-                                  imgNode.innerHTML = imgHtml;
-                                  const imageContainer = imgNode.firstChild;
-                                  range.insertNode(imageContainer);
-                                  const newP = document.createElement('p');
-                                  newP.innerHTML = '<br>';
-                                  if (imageContainer) {
-                                    imageContainer.insertAdjacentElement('afterend', newP);
-                                  }
-                                  range.setStart(newP, 0);
-                                  range.setEnd(newP, 0);
-                                  selection.removeAllRanges();
-                                  selection.addRange(range);
-                                  debouncedSetContent(editorRef.current.innerHTML);
-                                }
-                              }
-                            }}
+                            onClick={() => isAdmin && insertImageAtCursor(image)}
+                            title="Insert Image into Editor"
                             disabled={!isAdmin}
                           >
-                            <Image size={14} />
+                            <Image size={16} />
                           </button>
                         </div>
                       ))}
@@ -1453,44 +1479,45 @@ function EditorContent({
                   </div>
                 )}
               </div>
-
-              <div className="w-full md:w-1/2 p-4 md:p-6 overflow-auto bg-[#FCF0F8] border-l border-gray-200 preview-container">
-                <h2 className="text-xl font-bold mb-4 text-[#9E0B7F]">Blog Preview</h2>
-                <div className="border-t border-gray-200 pt-4">
-                  <h1 className="text-3xl font-bold mb-2 text-[#9E0B7F] preview-title">{title || 'Untitled'}</h1>
-                  <div className="flex items-center mb-2 flex-wrap text-[#718096] preview-meta">
-                    <Calendar size={16} className="mr-1" />
-                    <span>{publishDate || 'Not set'}</span>
-                    <span className="mx-2">•</span>
-                    <div className="flex flex-wrap gap-2 preview-categories">
+              <div className="w-full md:w-1/2 p-4 md:p-6 bg-[#FCF0F8] overflow-auto">
+                <div className="preview-container bg-white rounded-md p-6 shadow-sm">
+                  <h1 className="preview-title text-3xl font-bold text-[#9E0B7F] mb-4">{title || 'Blog Title'}</h1>
+                  <div className="preview-meta flex items-center text-[#718096] mb-4">
+                    <span className="mr-4 flex items-center">
+                      <Calendar size={16} className="mr-1" />
+                      {publishDate || 'Publish Date'}
+                    </span>
+                    <div className="preview-categories flex flex-wrap gap-2">
                       {categories.length > 0 ? (
                         categories.map((category) => (
                           <span
                             key={category}
-                            className="px-2 py-0.5 rounded-full text-sm bg-[#FCF0F8] text-[#9E0B7F]"
+                            className="px-2 py-1 rounded-full bg-[#FCF0F8] text-[#9E0B7F] text-sm"
                           >
                             {category}
                           </span>
                         ))
                       ) : (
-                        <span>No categories</span>
+                        <span className="px-2 py-1 rounded-full bg-[#FCF0F8] text-[#9E0B7F] text-sm">
+                          No categories
+                        </span>
                       )}
                     </div>
                   </div>
-                  <p className="mb-4 text-[#718096] preview-description">{description || 'No description provided'}</p>
+                  <p className="preview-description text-[#333333] mb-6">{description || 'Blog Description'}</p>
                   <div
-                    className="prose max-w-none bg-white p-4 rounded-md shadow-sm preview-content"
+                    className="preview-content prose max-w-none"
                     dangerouslySetInnerHTML={{
-                      __html: DOMPurify.sanitize(content || '<p>Start writing your blog post...</p>', {
+                      __html: DOMPurify.sanitize(content || '<p>No content available</p>', {
                         ALLOWED_TAGS: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'img', 'div', 'br', 'strong', 'em', 'u', 'a'],
-                        ALLOWED_ATTR: ['src', 'alt', 'class', 'style', 'data-image-id', 'href'],
-                        ADD_ATTR: ['src', 'href'],
+                        ALLOWED_ATTR: ['src', 'alt', 'class', 'style', 'data-image-id', 'href', 'contenteditable'],
+                        ADD_ATTR: ['src', 'href', 'contenteditable'],
                         ADD_URI_SAFE_ATTR: ['src', 'href'],
                       }),
                     }}
                   />
-                  <p className="text-sm mt-4 text-[#718096] preview-url">
-                    URL: nutridietmitra.com/blog/{slug || 'slug-not-set'}
+                  <p className="preview-url text-[#718096] mt-6">
+                    URL: <span className="text-[#9E0B7F]">{slug ? `/blog/${slug}` : '/blog/enter-slug-here'}</span>
                   </p>
                 </div>
               </div>
@@ -1498,43 +1525,45 @@ function EditorContent({
           )}
 
           {activeSection === 'Preview' && (
-            <div className="w-full p-4 md:p-6 overflow-auto bg-[#FCF0F8] preview-container">
-              <h2 className="text-xl font-bold mb-4 text-[#9E0B7F]">Blog Preview</h2>
-              <div className="border-t border-gray-200 pt-4">
-                <h1 className="text-3xl font-bold mb-2 text-[#9E0B7F] preview-title">{title || 'No title'}</h1>
-                <div className="flex items-center mb-2 flex-wrap text-[#718096] preview-meta">
-                  <Calendar size={16} className="mr-1" />
-                  <span>{publishDate || 'Not set'}</span>
-                  <span className="mx-2">•</span>
-                  <div className="flex flex-wrap gap-2 preview-categories">
+            <div className="w-full p-4 md:p-6 overflow-auto">
+              <div className="preview-container bg-white rounded-md p-6 shadow-sm">
+                <h1 className="preview-title text-3xl font-bold text-[#9E0B7F] mb-4">{title || 'Blog Title'}</h1>
+                <div className="preview-meta flex items-center text-[#718096] mb-4">
+                  <span className="mr-4 flex items-center">
+                    <Calendar size={16} className="mr-1" />
+                    {publishDate || 'Publish Date'}
+                  </span>
+                  <div className="preview-categories flex flex-wrap gap-2">
                     {categories.length > 0 ? (
                       categories.map((category) => (
                         <span
                           key={category}
-                          className="px-2 py-0.5 rounded-full text-sm bg-[#FCF0F8] text-[#9E0B7F]"
+                          className="px-2 py-1 rounded-full bg-[#FCF0F8] text-[#9E0B7F] text-sm"
                         >
                           {category}
                         </span>
                       ))
                     ) : (
-                      <span>No categories</span>
+                      <span className="px-2 py-1 rounded-full bg-[#FCF0F8] text-[#9E0B7F] text-sm">
+                        No categories
+                      </span>
                     )}
                   </div>
                 </div>
-                <p className="mb-4 text-[#718096] preview-description">{description || 'No description provided'}</p>
+                <p className="preview-description text-[#333333] mb-6">{description || 'Blog Description'}</p>
                 <div
-                  className="prose max-w-none bg-white p-4 rounded-md shadow-sm preview-content"
+                  className="preview-content prose max-w-none"
                   dangerouslySetInnerHTML={{
                     __html: DOMPurify.sanitize(content || '<p>No content available</p>', {
                       ALLOWED_TAGS: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'img', 'div', 'br', 'strong', 'em', 'u', 'a'],
-                      ALLOWED_ATTR: ['src', 'alt', 'class', 'style', 'data-image-id', 'href'],
-                      ADD_ATTR: ['src', 'href'],
+                      ALLOWED_ATTR: ['src', 'alt', 'class', 'style', 'data-image-id', 'href', 'contenteditable'],
+                      ADD_ATTR: ['src', 'href', 'contenteditable'],
                       ADD_URI_SAFE_ATTR: ['src', 'href'],
                     }),
                   }}
                 />
-                <p className="text-sm mt-4 text-[#718096] preview-url">
-                  URL: nutridietmitra.com/blog/{slug || 'slug-not-set'}
+                <p className="preview-url text-[#718096] mt-6">
+                  URL: <span className="text-[#9E0B7F]">{slug ? `/blog/${slug}` : '/blog/enter-slug-here'}</span>
                 </p>
               </div>
             </div>
@@ -1542,13 +1571,15 @@ function EditorContent({
 
           {activeSection === 'Published' && (
             <div className="w-full p-4 md:p-6 overflow-auto">
-              <h2 className="text-xl font-bold mb-4 text-[#9E0B7F]">Published Posts</h2>
-              {publishedPosts.length > 0 ? (
+              <h2 className="text-2xl font-bold text-[#9E0B7F] mb-6">Published Posts</h2>
+              {publishedPosts.length === 0 ? (
+                <p className="text-[#718096]">No published posts available.</p>
+              ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {publishedPosts.map((post) => (
-                    <div key={post.id} className="border rounded-md p-4 bg-white shadow-sm">
-                      <h3 className="text-lg font-semibold text-[#333333]">{post.title}</h3>
-                      <p className="text-sm text-[#718096] mb-2">{post.date}</p>
+                    <div key={post.id} className="bg-white rounded-md p-4 shadow-sm">
+                      <h3 className="text-lg font-medium text-[#333333]">{post.title}</h3>
+                      <p className="text-[#718096] text-sm mb-2">{post.date}</p>
                       <button
                         onClick={() => fetchBlogById(post.id)}
                         className="px-4 py-2 rounded-md bg-[#9E0B7F] text-white hover:bg-opacity-90"
@@ -1558,32 +1589,30 @@ function EditorContent({
                     </div>
                   ))}
                 </div>
-              ) : (
-                <p className="text-[#718096]">No published posts available.</p>
               )}
             </div>
           )}
 
           {activeSection === 'Drafts' && (
             <div className="w-full p-4 md:p-6 overflow-auto">
-              <h2 className="text-xl font-bold mb-4 text-[#9E0B7F]">Draft Posts</h2>
-              {draftPosts.length > 0 ? (
+              <h2 className="text-2xl font-bold text-[#9E0B7F] mb-6">Draft Posts</h2>
+              {draftPosts.length === 0 ? (
+                <p className="text-[#718096]">No draft posts available.</p>
+              ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {draftPosts.map((post) => (
-                    <div key={post.id} className="border rounded-md p-4 bg-white shadow-sm">
-                      <h3 className="text-lg font-semibold text-[#333333]">{post.title}</h3>
-                      <p className="text-sm text-[#718096] mb-2">{post.date}</p>
+                    <div key={post.id} className="bg-white rounded-md p-4 shadow-sm">
+                      <h3 className="text-lg font-medium text-[#333333]">{post.title}</h3>
+                      <p className="text-[#718096] text-sm mb-2">{post.date}</p>
                       <button
                         onClick={() => fetchBlogById(post.id)}
                         className="px-4 py-2 rounded-md bg-[#9E0B7F] text-white hover:bg-opacity-90"
                       >
-                        Edit
+                        View
                       </button>
                     </div>
                   ))}
                 </div>
-              ) : (
-                <p className="text-[#718096]">No draft posts available.</p>
               )}
             </div>
           )}
