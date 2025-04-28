@@ -22,6 +22,11 @@ const Navbar = () => {
     closeMenu();
   };
 
+  const handleProfileClick = () => {
+    navigate("/change-password"); // Navigate to change-password
+    closeMenu();
+  };
+
   const toggleAppointment = () => {
     setIsAppointmentOpen(!isAppointmentOpen);
     // Close menu when appointment is opened on mobile
@@ -62,9 +67,16 @@ const Navbar = () => {
             {/* Auth buttons or user name for mobile view */}
             <div className="flex space-x-1">
               {user ? (
-                <span className="text-nutricare-primary-dark font-medium text-sm">
-                  Welcome, {user.email.split('@')[0]}!
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-nutricare-primary-dark font-medium text-sm">
+                    Welcome, {user.email.split('@')[0]}!
+                  </span>
+                  <i
+                    className="fas fa-user text-nutricare-primary-dark hover:text-nutricare-green transition-colors duration-300 cursor-pointer text-sm"
+                    onClick={handleProfileClick}
+                    title="Change Password"
+                  ></i>
+                </div>
               ) : (
                 <>
                   <button
