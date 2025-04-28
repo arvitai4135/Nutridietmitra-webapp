@@ -994,7 +994,7 @@ function TiptapEditor() {
 
       <div className="md:hidden p-4 flex justify-between items-center bg-[#9E0B7F] text-white">
         <div className="flex items-center space-x-2">
-          <img src="/logo.png" alt="NutriDietMitra Logo" className="w-8 h-8" />
+          <img src="/Logo1.png" alt="NutriDietMitra Logo" className="w-8 h-8" />
           <h1 className="text-xl font-bold">NutriDiet</h1>
         </div>
         <button onClick={toggleMobileMenu} className="text-white p-2 rounded-md">
@@ -1070,7 +1070,7 @@ function TiptapEditor() {
 
       <div className="hidden md:block w-64 flex-shrink-0 sidebar-nav bg-[#9E0B7F] text-white px-4 py-6">
         <div className="flex items-center space-x-2 mb-6">
-          <img src="/logo.png" alt="NutriDietMitra Logo" className="w-8 h-8" />
+          <img src="/Logo1.png" alt="NutriDietMitra Logo" className="w-8 h-8" />
           <h1 className="text-xl font-bold">NutriDiet</h1>
         </div>
         <nav>
@@ -1126,7 +1126,7 @@ function TiptapEditor() {
       <div className="flex-grow flex flex-col overflow-auto">
         <header className="bg-white p-4 border-b flex justify-between items-center">
           <div className="flex items-center space-x-2">
-            <img src="/logo.png" alt="NutriDietMitra Logo" className="w-10 h-10" />
+            <img src="/Logo1.png" alt="NutriDietMitra Logo" className="w-10 h-10" />
             <h1 className="text-2xl font-bold text-[#9E0B7F]">NutriDiet {activeSection}</h1>
           </div>
           <div className="flex items-center">
