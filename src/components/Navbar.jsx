@@ -1,92 +1,20 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../admin/context/AuthContext"; // Adjust path as needed
-import api from "../admin/services/api"; // Import Axios instance
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import Appointment from "../components/form/Appointment"; // Import the Appointment component
 
-// Custom hook to lock body scroll
-const useLockBodyScroll = (isOpen) => {
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-      document.body.style.position = "fixed";
-      document.body.style.width = "100%";
-    } else {
-      document.body.style.overflow = "";
-      document.body.style.position = "";
-      document.body.style.width = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-      document.body.style.position = "";
-      document.body.style.width = "";
-    };
-  }, [isOpen]);
-};
-
-// Service to fetch user profile
-const getUserProfile = async () => {
-  try {
-    const response = await api.get("/users/info");
-    if (!response.data.success) {
-      throw new Error(response.data.message || "Failed to fetch user info");
-    }
-    return response.data.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || "Failed to fetch user profile");
-  }
-};
-
-// Service to update user profile (assumed endpoint)
-const updateUserProfile = async (userData) => {
-  try {
-    const response = await api.put("/users/update", userData); // Adjust endpoint if different
-    if (!response.data.success) {
-      throw new Error(response.data.message || "Failed to update user info");
-    }
-    return response.data.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || "Failed to update user profile");
-  }
-};
-
 const Navbar = () => {
   const navigate = useNavigate();
-  const { user, logout, setUser } = useContext(AuthContext);
+  const { user, updateUser } = useContext(AuthContext); // Access user and updateUser from AuthContext
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAppointmentOpen, setIsAppointmentOpen] = useState(false);
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false); // State for profile modal
   const [formData, setFormData] = useState({
-    full_name: "",
-    phone_number: "",
-    email: "",
-  });
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  // Lock body scroll when menu or modals are open
-  useLockBodyScroll(isMenuOpen || isProfileModalOpen || isSearchOpen || isAppointmentOpen);
-
-  // Fetch user profile when modal opens
-  useEffect(() => {
-    if (isProfileModalOpen && user) {
-      const fetchProfile = async () => {
-        try {
-          const profile = await getUserProfile();
-          setFormData({
-            full_name: profile.full_name || "",
-            phone_number: profile.phone_number || "",
-            email: profile.email || user.email,
-          });
-        } catch (err) {
-          setError(err.message);
-        }
-      };
-      fetchProfile();
-    }
-  }, [isProfileModalOpen, user]);
+    full_name: user?.full_name || '',
+    phone_number: user?.phone_number || ''
+  }); // State for editable fields
 
   // Functions to handle redirection for auth
   const handleSignIn = () => {
@@ -99,19 +27,9 @@ const Navbar = () => {
     closeMenu();
   };
 
-  const handleProfileClick = () => {
-    setIsProfileModalOpen(true);
-    closeMenu();
-  };
-
-  const handleLogout = () => {
-    logout();
-    navigate("/");
-    closeMenu();
-  };
-
   const toggleAppointment = () => {
     setIsAppointmentOpen(!isAppointmentOpen);
+    // Close menu when appointment is opened on mobile
     if (!isAppointmentOpen && isMenuOpen) {
       setIsMenuOpen(false);
     }
@@ -122,86 +40,86 @@ const Navbar = () => {
     setIsMenuOpen(false);
   };
 
-  // Modal handlers
-  const handleModalClose = () => {
-    setIsProfileModalOpen(false);
-    setError("");
-  };
-
-  const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    // Basic validation
-    if (!formData.full_name.trim()) {
-      setError("Full name is required");
-      setLoading(false);
-      return;
+  // Function to open/close profile modal
+  const toggleProfileModal = () => {
+    setIsProfileModalOpen(!isProfileModalOpen);
+    // Close menu when profile modal is opened on mobile
+    if (!isProfileModalOpen && isMenuOpen) {
+      setIsMenuOpen(false);
     }
-    if (!/^\d{10}$/.test(formData.phone_number)) {
-      setError("Phone number must be 10 digits");
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const updatedProfile = await updateUserProfile({
-        full_name: formData.full_name,
-        phone_number: formData.phone_number,
+    // Reset form data when closing modal
+    if (isProfileModalOpen) {
+      setFormData({
+        full_name: user?.full_name || '',
+        phone_number: user?.phone_number || ''
       });
-      setUser({ ...user, full_name: updatedProfile.full_name }); // Update context
-      setIsProfileModalOpen(false);
-      alert("Profile updated successfully!");
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
     }
   };
 
+  // Function to navigate to change password
   const handleChangePassword = () => {
-    setIsProfileModalOpen(false);
     navigate("/change-password");
+    setIsProfileModalOpen(false); // Close modal
+  };
+
+  // Function to handle input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  // Function to handle save
+  const handleSave = async () => {
+    try {
+      // Call updateUser from AuthContext (replace with your actual update logic)
+      await updateUser({
+        full_name: formData.full_name,
+        phone_number: formData.phone_number
+      });
+      setIsProfileModalOpen(false); // Close modal on success
+    } catch (error) {
+      console.error("Failed to update user:", error);
+      // Optionally show an error message to the user
+    }
   };
 
   return (
     <div className="bg-nutricare-bg-light shadow-sm sticky top-0 z-40">
-      <div className="container mx-auto px-2 sm:px-6 lg:px-8">
-        <div className="flex items-center py-3 gap-2 md:gap-4">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center py-4">
           {/* Menu Toggle for Mobile */}
-          <div className="md:hidden flex-shrink-0">
+          <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="focus:outline-none text-nutricare-primary-dark transition-transform duration-300 ease-in-out"
               aria-label="Toggle menu"
             >
-              <i className={`fas fa-${isMenuOpen ? "times" : "bars"} text-lg`}></i>
+              <i className={`fas fa-${isMenuOpen ? "times" : "bars"} text-xl`}></i>
             </button>
           </div>
 
-          {/* Logo */}
-          <div className="flex-shrink-0">
-            <Link to="/" className="text-lg font-bold text-nutricare-primary-dark">
+          {/* Logo - keep the original space for logo if needed */}
+          <div className="flex-shrink-0 md:hidden">
+            <Link to="/" className="text-xl font-bold text-nutricare-primary-dark">
               NutriDiet
             </Link>
           </div>
 
           {/* Right: Auth buttons and Search for mobile view */}
-          <div className="flex items-center space-x-1 md:hidden ml-auto">
+          <div className="flex items-center space-x-2 md:hidden">
+            {/* Auth buttons or user name for mobile view */}
             <div className="flex space-x-1">
               {user ? (
-                <div className="flex items-center gap-1">
-                  <span className="text-nutricare-primary-dark font-medium text-xs">
-                    {user.email.split("@")[0]}
+                <div className="flex items-center gap-2">
+                  <span className="text-nutricare-primary-dark font-medium text-sm">
+                    Welcome, {user.email.split('@')[0]}!
                   </span>
                   <i
-                    className="fas fa-user text-nutricare-primary-dark hover:text-nutricare-green transition-colors duration-300 cursor-pointer text-xs"
-                    onClick={handleProfileClick}
+                    className="fas fa-user text-nutricare-primary-dark hover:text-nutricare-green transition-colors duration-300 cursor-pointer text-sm"
+                    onClick={toggleProfileModal} // Open profile modal
                     title="Profile"
                   ></i>
                 </div>
@@ -209,40 +127,42 @@ const Navbar = () => {
                 <>
                   <button
                     onClick={handleSignIn}
-                    className="py-1 px-2 text-xs bg-nutricare-primary-dark text-white rounded-full hover:bg-nutricare-primary-light transition-colors duration-300 font-sans"
+                    className="py-1 px-3 text-sm bg-nutricare-primary-dark text-white rounded-full hover:bg-nutricare-primary-light transition-colors duration-300 font-sans"
                   >
                     Sign In
                   </button>
                   <button
                     onClick={handleSignUp}
-                    className="py-1 px-2 text-xs bg-nutricare-green text-white rounded-full hover:bg-nutricare-green-dark transition-colors duration-300 font-sans"
+                    className="py-1 px-3 text-sm bg-nutricare-green text-white rounded-full hover:bg-nutricare-green-dark transition-colors duration-300 font-sans"
                   >
                     Sign Up
                   </button>
                 </>
               )}
             </div>
+
+            {/* Search Button for mobile */}
             <button
               onClick={() => setIsSearchOpen(!isSearchOpen)}
               className="text-nutricare-primary-dark transition-colors duration-300 hover:text-nutricare-green"
             >
-              <i className="fas fa-search text-lg"></i>
+              <i className="fas fa-search text-xl"></i>
             </button>
           </div>
 
-          {/* Navigation Links */}
+          {/* Original Desktop Navigation Links - PRESERVED EXACTLY */}
           <nav
             className={`${
               isMenuOpen ? "block" : "hidden"
-            } md:flex md:space-x-6 font-sans fixed md:static top-12 left-0 w-full md:w-auto bg-nutricare-bg-light md:bg-transparent shadow md:shadow-none z-50 md:z-auto flex flex-col md:flex-row items-center space-y-4 md:space-y-0 py-4 md:py-0 max-h-[calc(100vh-3rem)] overflow-y-auto overscroll-contain transition-all duration-300 ease-in-out ${
-              isMenuOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-full md:opacity-100 md:translate-x-0"
+            } md:flex md:space-x-6 font-sans absolute md:static top-16 left-0 w-full md:w-auto bg-nutricare-bg-light md:bg-transparent shadow md:shadow-none z-50 md:z-auto flex flex-col md:flex-row items-center space-y-4 md:space-y-0 py-6 md:py-0 transition-all duration-700 ease-in-out ${
+              isMenuOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10 md:opacity-100 md:translate-x-0"
             }`}
           >
             <NavLink
               to="/"
               onClick={closeMenu}
               className={({ isActive }) =>
-                `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 text-sm md:text-base ${
+                `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 ${
                   isActive
                     ? "text-nutricare-primary-dark bg-nutricare-bg-light"
                     : "text-nutricare-text-dark hover:text-nutricare-primary-dark hover:bg-nutricare-bg-light"
@@ -255,7 +175,7 @@ const Navbar = () => {
               to="/about"
               onClick={closeMenu}
               className={({ isActive }) =>
-                `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 text-sm md:text-base ${
+                `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 ${
                   isActive
                     ? "text-nutricare-primary-dark bg-nutricare-bg-light"
                     : "text-nutricare-text-dark hover:text-nutricare-primary-dark hover:bg-nutricare-bg-light"
@@ -268,7 +188,7 @@ const Navbar = () => {
               to="/services"
               onClick={closeMenu}
               className={({ isActive }) =>
-                `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 text-sm md:text-base ${
+                `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 ${
                   isActive
                     ? "text-nutricare-primary-dark bg-nutricare-bg-light"
                     : "text-nutricare-text-dark hover:text-nutricare-primary-dark hover:bg-nutricare-bg-light"
@@ -281,7 +201,7 @@ const Navbar = () => {
               to="/gallery"
               onClick={closeMenu}
               className={({ isActive }) =>
-                `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 text-sm md:text-base ${
+                `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 ${
                   isActive
                     ? "text-nutricare-primary-dark bg-nutricare-bg-light"
                     : "text-nutricare-text-dark hover:text-nutricare-primary-dark hover:bg-nutricare-bg-light"
@@ -294,7 +214,7 @@ const Navbar = () => {
               to="/blogs"
               onClick={closeMenu}
               className={({ isActive }) =>
-                `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 text-sm md:text-base ${
+                `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 ${
                   isActive
                     ? "text-nutricare-primary-dark bg-nutricare-bg-light"
                     : "text-nutricare-text-dark hover:text-nutricare-primary-dark hover:bg-nutricare-bg-light"
@@ -307,7 +227,7 @@ const Navbar = () => {
               to="/contact"
               onClick={closeMenu}
               className={({ isActive }) =>
-                `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 text-sm md:text-base ${
+                `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 ${
                   isActive
                     ? "text-nutricare-primary-dark bg-nutricare-bg-light"
                     : "text-nutricare-text-dark hover:text-nutricare-primary-dark hover:bg-nutricare-bg-light"
@@ -316,66 +236,30 @@ const Navbar = () => {
             >
               Contact Us
             </NavLink>
-            {user && (
-              <button
-                onClick={handleLogout}
-                className="md:hidden py-2 px-4 bg-nutricare-primary-dark text-white rounded-full hover:bg-nutricare-primary-light transition-colors duration-300 font-sans text-sm"
-              >
-                Logout
-              </button>
-            )}
+
+            {/* Appointment button for mobile view */}
             <button
               onClick={toggleAppointment}
-              className="md:hidden py-2 px-4 bg-nutricare-primary-dark text-white rounded-full hover:bg-nutricare-primary-light transition-colors duration-300 font-sans text-sm"
+              className="md:hidden py-2 px-6 bg-nutricare-primary-dark text-white rounded-full hover:bg-nutricare-primary-light transition-colors duration-300 font-sans"
             >
               Book Appointment
             </button>
           </nav>
 
-          {/* Desktop Right Buttons */}
+          {/* Original Desktop Right Buttons - PRESERVED EXACTLY */}
           <div className="hidden md:flex items-center space-x-4">
+            {/* Search Button for desktop */}
             <button
               onClick={() => setIsSearchOpen(!isSearchOpen)}
               className="text-nutricare-primary-dark transition-colors duration-300 hover:text-nutricare-green"
             >
-              <i className="fas fa-search text-lg"></i>
+              <i className="fas fa-search text-xl"></i>
             </button>
-            {user ? (
-              <div className="flex items-center gap-3">
-                <span className="text-nutricare-primary-dark font-medium text-base">
-                  {user.email.split("@")[0]}
-                </span>
-                <i
-                  className="fas fa-user text-nutricare-primary-dark hover:text-nutricare-green transition-colors duration-300 cursor-pointer text-base"
-                  onClick={handleProfileClick}
-                  title="Profile"
-                ></i>
-                <button
-                  onClick={handleLogout}
-                  className="py-2 px-4 bg-nutricare-primary-dark text-white rounded-full hover:bg-nutricare-primary-light transition-colors duration-300 font-sans text-base"
-                >
-                  Logout
-                </button>
-              </div>
-            ) : (
-              <>
-                <button
-                  onClick={handleSignIn}
-                  className="py-2 px-4 bg-nutricare-primary-dark text-white rounded-full hover:bg-nutricare-primary-light transition-colors duration-300 font-sans text-base"
-                >
-                  Sign In
-                </button>
-                <button
-                  onClick={handleSignUp}
-                  className="py-2 px-4 bg-nutricare-green text-white rounded-full hover:bg-nutricare-green-dark transition-colors duration-300 font-sans text-base"
-                >
-                  Sign Up
-                </button>
-              </>
-            )}
+
+            {/* Appointment Button for desktop */}
             <button
               onClick={toggleAppointment}
-              className="py-2 px-6 bg-nutricare-primary-dark text-white rounded-full hover:bg-nutricare-primary-light transition-colors duration-300 font-sans text-base"
+              className="py-2 px-6 bg-nutricare-primary-dark text-white rounded-full hover:bg-nutricare-primary-light transition-colors duration-300 font-sans"
             >
               Book Appointment
             </button>
@@ -385,24 +269,24 @@ const Navbar = () => {
         {/* Search Overlay */}
         {isSearchOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
-            <div className="bg-nutricare-bg-light p-6 rounded-lg shadow-lg w-full max-w-xs sm:max-w-md transform transition-all duration-300 ease-in-out scale-100">
+            <div className="bg-nutricare-bg-light p-6 rounded-lg shadow-lg w-full max-w-md transform transition-all duration-300 ease-in-out scale-100">
               <button
                 onClick={() => setIsSearchOpen(false)}
                 className="absolute top-4 right-4 text-nutricare-text-dark hover:text-nutricare-green transition-colors duration-300"
               >
-                <i className="fas fa-times text-lg"></i>
+                <i className="fas fa-times text-xl"></i>
               </button>
               <form className="flex items-center">
                 <input
                   type="search"
                   placeholder="Type Word Then Enter..."
-                  className="w-full p-2 border border-nutricare-text-gray rounded-l focus:outline-none focus:border-nutricare-primary-dark font-sans text-sm sm:text-base"
+                  className="w-full p-2 border border-nutricare-text-gray rounded-l focus:outline-none focus:border-nutricare-primary-dark font-sans"
                 />
                 <button
                   type="submit"
                   className="bg-nutricare-primary-dark text-white p-2 rounded-r hover:bg-nutricare-green transition-colors duration-300"
                 >
-                  <i className="fas fa-search text-sm sm:text-base"></i>
+                  <i className="fas fa-search"></i>
                 </button>
               </form>
             </div>
@@ -410,98 +294,97 @@ const Navbar = () => {
         )}
 
         {/* Profile Modal */}
-        {isProfileModalOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
-            <div className="bg-white rounded-lg p-6 w-full max-w-xs sm:max-w-md md:max-w-lg max-h-[90vh] overflow-y-auto overscroll-contain">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg sm:text-xl font-bold">User Profile</h2>
-                <button
-                  onClick={handleModalClose}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  <i className="fas fa-times text-lg"></i>
-                </button>
-              </div>
-              {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-              <form onSubmit={handleFormSubmit}>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Email (Read-only)
-                  </label>
+        {isProfileModalOpen && user && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
+            <div className="bg-nutricare-bg-light p-6 rounded-lg shadow-lg w-[90%] max-w-md transform transition-all duration-300 ease-in-out scale-100 max-h-[90vh] overflow-y-auto">
+              {/* Close Button */}
+              <button
+                onClick={toggleProfileModal}
+                className="absolute top-4 right-4 text-nutricare-text-dark hover:text-nutricare-green transition-colors duration-300"
+              >
+                <i className="fas fa-times text-xl"></i>
+              </button>
+
+              {/* Modal Header */}
+              <h2 className="text-xl font-bold text-nutricare-primary-dark mb-4">Profile Information</h2>
+
+              {/* Profile Form */}
+              <div className="space-y-4">
+                {/* Email (Read-only) */}
+                <div>
+                  <label className="block text-sm font-medium text-nutricare-text-dark">Email</label>
                   <input
                     type="email"
-                    name="email"
-                    value={formData.email}
+                    value={user.email || 'N/A'}
                     readOnly
-                    className="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 text-sm sm:text-base px-3 py-2"
+                    className="w-full p-2 border border-nutricare-text-gray rounded focus:outline-none bg-gray-100 font-sans text-sm"
                   />
                 </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Full Name
-                  </label>
+
+                {/* Full Name (Editable) */}
+                <div>
+                  <label className="block text-sm font-medium text-nutricare-text-dark">Full Name</label>
                   <input
                     type="text"
                     name="full_name"
                     value={formData.full_name}
                     onChange={handleInputChange}
-                    required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-nutricare-green focus:ring-nutricare-green text-sm sm:text-base px-3 py-2"
+                    className="w-full p-2 border border-nutricare-text-gray rounded focus:outline-none focus:border-nutricare-primary-dark font-sans text-sm"
+                    placeholder="Enter full name"
                   />
                 </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Phone Number
-                  </label>
+
+                {/* Phone Number (Editable) */}
+                <div>
+                  <label className="block text-sm font-medium text-nutricare-text-dark">Phone Number</label>
                   <input
                     type="tel"
                     name="phone_number"
                     value={formData.phone_number}
                     onChange={handleInputChange}
-                    required
-                    pattern="\d{10}"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-nutricare-green focus:ring-nutricare-green text-sm sm:text-base px-3 py-2"
+                    className="w-full p-2 border border-nutricare-text-gray rounded focus:outline-none focus:border-nutricare-primary-dark font-sans text-sm"
+                    placeholder="Enter phone number"
                   />
                 </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Subscription Plan (Read-only)
-                  </label>
+
+                {/* Subscription Details (Read-only, placeholder) */}
+                <div>
+                  <label className="block text-sm font-medium text-nutricare-text-dark">Subscription Plan</label>
                   <input
                     type="text"
-                    value={user.subscription_plan || "Not subscribed"}
+                    value={user.subscription_plan || 'Basic Plan'} // Placeholder, replace with actual data
                     readOnly
-                    className="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 text-sm sm:text-base px-3 py-2"
+                    className="w-full p-2 border border-nutricare-text-gray rounded focus:outline-none bg-gray-100 font-sans text-sm"
                   />
                 </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Food Plan (Read-only)
-                  </label>
+
+                {/* Food Plan Details (Read-only, placeholder) */}
+                <div>
+                  <label className="block text-sm font-medium text-nutricare-text-dark">Food Plan</label>
                   <input
                     type="text"
-                    value={user.food_plan || "No food plan"}
+                    value={user.food_plan || 'Standard Diet'} // Placeholder, replace with actual data
                     readOnly
-                    className="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 text-sm sm:text-base px-3 py-2"
+                    className="w-full p-2 border border-nutricare-text-gray rounded focus:outline-none bg-gray-100 font-sans text-sm"
                   />
                 </div>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full sm:w-auto bg-nutricare-primary-dark hover:bg-nutricare-primary-light text-white px-4 py-2 rounded text-sm sm:text-base transition-colors duration-300"
-                  >
-                    {loading ? "Saving..." : "Save Changes"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleChangePassword}
-                    className="w-full sm:w-auto bg-nutricare-green hover:bg-nutricare-green-dark text-white px-4 py-2 rounded text-sm sm:text-base transition-colors duration-300"
-                  >
-                    Change Password
-                  </button>
-                </div>
-              </form>
+
+                {/* Change Password Button */}
+                <button
+                  onClick={handleChangePassword}
+                  className="w-full py-2 px-4 bg-nutricare-primary-dark text-white rounded-full hover:bg-nutricare-primary-light transition-colors duration-300 font-sans text-sm"
+                >
+                  Change Password
+                </button>
+
+                {/* Save Button */}
+                <button
+                  onClick={handleSave}
+                  className="w-full py-2 px-4 bg-nutricare-green text-white rounded-full hover:bg-nutricare-green-dark transition-colors duration-300 font-sans text-sm"
+                >
+                  Save
+                </button>
+              </div>
             </div>
           </div>
         )}
