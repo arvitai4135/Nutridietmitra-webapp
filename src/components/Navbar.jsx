@@ -6,7 +6,7 @@ import Appointment from "../components/form/Appointment"; // Import the Appointm
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { user, updateUser } = useContext(AuthContext); // Access user and updateUser from AuthContext
+  const { user, updateUser, logout } = useContext(AuthContext); // Access user, updateUser, and logout from AuthContext
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAppointmentOpen, setIsAppointmentOpen] = useState(false);
@@ -24,6 +24,13 @@ const Navbar = () => {
 
   const handleSignUp = () => {
     navigate("/signup");
+    closeMenu();
+  };
+
+  // Function to handle logout
+  const handleLogout = () => {
+    logout(); // Call logout from AuthContext
+    navigate("/"); // Redirect to main website
     closeMenu();
   };
 
@@ -122,6 +129,12 @@ const Navbar = () => {
                     onClick={toggleProfileModal} // Open profile modal
                     title="Profile"
                   ></i>
+                  <button
+                    onClick={handleLogout}
+                    className="py-1 px-3 text-sm bg-nutricare-primary-dark text-white rounded-full hover:bg-nutricare-primary-light transition-colors duration-300 font-sans"
+                  >
+                    Logout
+                  </button>
                 </div>
               ) : (
                 <>
