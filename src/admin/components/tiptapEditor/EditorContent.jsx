@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Calendar,
   Tag,
@@ -21,6 +22,7 @@ import {
   Eye,
   Lock,
   Unlock,
+  LayoutDashboard,
 } from 'lucide-react';
 import DOMPurify from 'dompurify';
 
@@ -43,6 +45,7 @@ function EditorContent({
   errorMessage,
   publishedPosts,
   draftPosts,
+  selectedPostId,
   editorRef,
   fileInputRef,
   imageRatios,
@@ -62,6 +65,7 @@ function EditorContent({
   setMobileMenuOpen,
   setActiveSection,
   setErrorMessage,
+  setSelectedPostId,
   handleTitleChange,
   handleDescriptionChange,
   handleSlugChange,
@@ -69,31 +73,41 @@ function EditorContent({
   handleAddCategory,
   handleRemoveCategory,
   handleSave,
+  handleUpdate,
+  handleDelete,
   toggleMobileMenu,
   setSection,
   fetchBlogById,
+  isDeleting,
+  viewOnly,
 }) {
-  const isInitialMount = useRef(true);
-
-  // Log content for debugging when in Preview section
   useEffect(() => {
     if (activeSection === 'Preview') {
       console.log('Preview content:', content);
     }
   }, [activeSection, content]);
 
-  // Initialize editor content only on mount
   useEffect(() => {
-    if (isInitialMount.current && editorRef.current) {
-      editorRef.current.innerHTML = DOMPurify.sanitize(content || '<p>Start writing your blog post...</p>', {
+    if (editorRef.current && activeSection === 'Blog Editor' && !viewOnly) {
+      const sanitizedContent = DOMPurify.sanitize(content || '<p>Start writing your blog post...</p>', {
         ALLOWED_TAGS: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'img', 'div', 'br', 'strong', 'em', 'u', 'a'],
         ALLOWED_ATTR: ['src', 'alt', 'class', 'style', 'data-image-id', 'href', 'contenteditable'],
         ADD_ATTR: ['src', 'href', 'contenteditable'],
         ADD_URI_SAFE_ATTR: ['src', 'href'],
       });
-      isInitialMount.current = false;
+      if (editorRef.current.innerHTML !== sanitizedContent) {
+        editorRef.current.innerHTML = sanitizedContent;
+        const range = document.createRange();
+        const sel = window.getSelection();
+        range.selectNodeContents(editorRef.current);
+        range.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
     }
-  }, [editorRef, content]);
+  }, [editorRef, content, activeSection, viewOnly]);
+
+  const navigate = useNavigate();
 
   const saveCursorPosition = () => {
     const selection = window.getSelection();
@@ -157,10 +171,21 @@ function EditorContent({
         } else if (node.classList.contains('image-container')) {
           const img = node.querySelector('img');
           if (img) {
+            const style = img.getAttribute('style') || '';
+            const widthMatch = style.match(/width:\s*(\d+\.?\d*)%/);
+            const heightMatch = style.match(/height:\s*(auto|\d+\.?\d*%)?/);
+            const width = widthMatch ? parseFloat(widthMatch[1]) : 100;
+            const height = heightMatch
+              ? heightMatch[1] === 'auto'
+                ? 'auto'
+                : parseFloat(heightMatch[1])
+              : 'auto';
             jsonContent.push({
               type: 'image',
               url: img.src,
               caption: img.alt || 'No caption',
+              width: width,
+              height: height,
             });
           }
         }
@@ -171,7 +196,7 @@ function EditorContent({
   };
 
   const handleFormat = (command, value = null) => {
-    if (isAdmin && editorRef.current) {
+    if (isAdmin && editorRef.current && !viewOnly) {
       editorRef.current.focus();
       const position = saveCursorPosition();
 
@@ -249,317 +274,194 @@ function EditorContent({
             list.appendChild(li);
           });
 
-          const range = window.getSelection().getRangeAt(0);
-          const beforeRange = document.createRange();
-          beforeRange.setStart(blockNode, 0);
-          beforeRange.setEnd(range.startContainer, range.startOffset);
-
-          const afterRange = document.createRange();
-          afterRange.setStart(range.endContainer, range.endOffset);
-          afterRange.setEnd(blockNode, blockNode.childNodes.length);
-
-          const beforeText = beforeRange.toString();
-          const afterText = afterRange.toString();
-
-          const fragment = document.createDocumentFragment();
-
-          if (beforeText.trim()) {
-            const beforeP = document.createElement('p');
-            beforeP.textContent = beforeText;
-            fragment.appendChild(beforeP);
-          }
-
-          fragment.appendChild(list);
-
-          if (afterText.trim()) {
-            const afterP = document.createElement('p');
-            afterP.textContent = afterText;
-            fragment.appendChild(afterP);
-          }
-
-          blockNode.parentNode.replaceChild(fragment, blockNode);
-
-          range.selectNodeContents(list.lastChild);
-          range.collapse(false);
+          blockNode.parentNode.replaceChild(list, blockNode);
         }
-      } else if (command.startsWith('formatBlock')) {
-        let blockNode = window.getSelection().getRangeAt(0).commonAncestorContainer;
-        if (blockNode.nodeType !== 1) {
-          blockNode = blockNode.parentNode;
-        }
-        while (blockNode && blockNode !== editorRef.current) {
-          if (['P', 'DIV', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(blockNode.tagName)) {
-            break;
-          }
-          blockNode = blockNode.parentNode;
-        }
-
-        if (!blockNode || blockNode === editorRef.current) {
-          const p = document.createElement('p');
-          const contents = window.getSelection().getRangeAt(0).extractContents();
-          p.appendChild(contents);
-          window.getSelection().getRangeAt(0).insertNode(p);
-          blockNode = p;
-        }
-
-        const selectedText = window.getSelection().getRangeAt(0).toString().trim();
-        if (!selectedText) {
-          document.execCommand('formatBlock', false, value);
-        } else {
-          const range = window.getSelection().getRangeAt(0);
-          const newElement = document.createElement(value);
-          range.surroundContents(newElement);
-        }
+      } else if (command === 'createLink') {
+        document.execCommand(command, false, value);
+      } else if (command === 'formatBlock') {
+        document.execCommand(command, false, value);
+      } else if (command === 'fontName') {
+        document.execCommand(command, false, value);
       } else {
         document.execCommand(command, false, value);
       }
 
-      debouncedSetContent(editorRef.current.innerHTML);
-      restoreCursorPosition(position);
       updateActiveFormattingStates();
-      setHasUnsavedChanges(true);
-    }
-  };
-
-  const handleContentChange = () => {
-    if (isAdmin && editorRef.current) {
-      const newContent = editorRef.current.innerHTML;
-      debouncedSetContent(newContent);
-      setHasUnsavedChanges(true);
-    }
-  };
-
-  const handleImageUpload = (e) => {
-    if (isAdmin) {
-      const files = Array.from(e.target.files);
-      if (files.length > 0) {
-        const position = saveCursorPosition();
-        const newImages = files.map((file) => {
-          const url = URL.createObjectURL(file);
-          const img = new window.Image();
-          img.src = url;
-          img.onload = () => {
-            imageRatios.current[file.name] = img.width / img.height;
-          };
-          imageUrls.current[file.name] = url;
-          return {
-            id: `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`,
-            name: file.name,
-            url,
-            file,
-            width: 100,
-            height: 100,
-            alignment: 'center',
-          };
-        });
-        setImages((prev) => [...prev, ...newImages]);
-        newImages.forEach((image) => {
-          const imgHtml = `<div class="image-container image-align-${image.alignment}" data-image-id="${image.id}" contenteditable="false"><img src="${image.url}" alt="Blog Image" style="width: ${image.width}%; height: auto; max-width: 100%;" class="my-2.5" /></div>`;
-          if (editorRef.current) {
-            const selection = window.getSelection();
-            let range;
-            if (selection.rangeCount > 0) {
-              range = selection.getRangeAt(0);
-            } else {
-              range = document.createRange();
-              range.selectNodeContents(editorRef.current);
-              range.collapse(false);
-            }
-
-            const imgNode = document.createElement('div');
-            imgNode.innerHTML = imgHtml;
-            const imageContainer = imgNode.firstChild;
-            range.insertNode(imageContainer);
-
-            const newP = document.createElement('p');
-            newP.innerHTML = '<br>';
-            if (imageContainer) {
-              imageContainer.insertAdjacentElement('afterend', newP);
-            } else {
-              console.error('Failed to insert image container');
-              return;
-            }
-
-            range.setStart(newP, 0);
-            range.setEnd(newP, 0);
-
-            selection.removeAllRanges();
-            selection.addRange(range);
-            debouncedSetContent(editorRef.current.innerHTML);
-          }
-        });
-        setHasUnsavedChanges(true);
-        restoreCursorPosition(position);
-        e.target.value = null;
-      }
-    }
-  };
-
-  const updateImageSize = (imageId, dimension, value) => {
-    if (isAdmin) {
-      const position = saveCursorPosition();
-      const parsedValue = parseFloat(value);
-      const isValid = !isNaN(parsedValue) && parsedValue >= 0;
-      const newValue = isValid ? parsedValue : 100;
-
-      setInputErrors((prev) => ({
-        ...prev,
-        [`${imageId}-${dimension}`]: !isValid,
-      }));
-
-      const updatedImages = images.map((img) => {
-        if (img.id === imageId) {
-          return { ...img, [dimension]: newValue };
-        }
-        return img;
-      });
-      setImages(updatedImages);
-
-      if (editorRef.current) {
-        const imageContainers = editorRef.current.querySelectorAll(`.image-container[data-image-id="${imageId}"]`);
-        imageContainers.forEach((container) => {
-          const img = container.querySelector('img');
-          if (img) {
-            const updatedImg = updatedImages.find((i) => i.id === imageId);
-            img.style.width = `${updatedImg.width}%`;
-            img.style.height = `auto`;
-            img.style.maxWidth = '100%';
-          }
-        });
-        debouncedSetContent(editorRef.current.innerHTML);
-      }
+      debouncedSetContent(editorRef.current.innerHTML);
       setHasUnsavedChanges(true);
       restoreCursorPosition(position);
     }
   };
 
   const updateImageAlignment = (alignment) => {
-    if (isAdmin && editorRef.current) {
-      const position = saveCursorPosition();
-      const selection = window.getSelection();
-      if (!selection.rangeCount) {
-        alert('Please select an image to align.');
-        return;
-      }
-
-      const range = selection.getRangeAt(0);
-      let selectedNode = range.commonAncestorContainer;
-      if (selectedNode.nodeType !== 1) {
-        selectedNode = selectedNode.parentNode;
-      }
-
-      let imageContainer = selectedNode.closest('.image-container');
-      if (!imageContainer) {
-        const imgNode = selectedNode.querySelector('img') || (selectedNode.tagName === 'IMG' ? selectedNode : null);
-        if (imgNode) {
-          imageContainer = imgNode.closest('.image-container');
-        }
-      }
-
-      if (!imageContainer) {
-        alert('No image selected. Please click or select an image in the editor.');
-        return;
-      }
-
-      const imageId = imageContainer.getAttribute('data-image-id');
-      if (!imageId) {
-        alert('Error: Image ID not found.');
-        return;
-      }
-
+    if (!isAdmin || !editorRef.current || viewOnly) return;
+    const position = saveCursorPosition();
+    const selection = window.getSelection();
+    let node = selection.focusNode;
+    if (node.nodeType !== 1) {
+      node = node.parentNode;
+    }
+    const imageContainer = node.closest('.image-container');
+    if (imageContainer) {
       imageContainer.classList.remove('image-align-left', 'image-align-center', 'image-align-right');
       imageContainer.classList.add(`image-align-${alignment}`);
+      debouncedSetContent(editorRef.current.innerHTML);
+      setHasUnsavedChanges(true);
+      restoreCursorPosition(position);
+    }
+  };
 
-      const updatedImages = images.map((img) => {
-        if (img.id === imageId) {
-          return { ...img, alignment };
-        }
-        return img;
+  const handleContentChange = () => {
+    if (isAdmin && editorRef.current && !viewOnly) {
+      debouncedSetContent(editorRef.current.innerHTML);
+      setHasUnsavedChanges(true);
+      updateActiveFormattingStates();
+    }
+  };
+
+  const handleImageUpload = (e) => {
+    if (!isAdmin || viewOnly) return;
+    const position = saveCursorPosition();
+    const files = Array.from(e.target.files);
+    const newImages = files.map((file, index) => {
+      const id = `${Date.now()}-${index}`;
+      const url = URL.createObjectURL(file);
+      imageUrls.current[id] = url;
+
+      return new Promise((resolve) => {
+        const img = new window.Image();
+        img.src = url;
+        img.onload = () => {
+          const ratio = img.width / img.height;
+          imageRatios.current[id] = ratio;
+          resolve({
+            id,
+            file,
+            url,
+            width: 100,
+            height: 100 / ratio,
+          });
+        };
       });
-      setImages(updatedImages);
+    });
+
+    Promise.all(newImages).then((resolvedImages) => {
+      setImages((prevImages) => [...prevImages, ...resolvedImages]);
+      resolvedImages.forEach((image) => {
+        const imgHtml = `<div class="image-container image-align-center" contenteditable="false"><img src="${image.url}" alt="Blog Image" style="width: ${image.width}%; height: auto; max-width: 100%;" class="my-2.5" /></div>`;
+        const selection = window.getSelection();
+        let range;
+        if (selection.rangeCount > 0) {
+          range = selection.getRangeAt(0);
+        } else {
+          range = document.createRange();
+          range.selectNodeContents(editorRef.current);
+          range.collapse(false);
+        }
+
+        const imgNode = document.createElement('div');
+        imgNode.innerHTML = imgHtml;
+        const imageContainer = imgNode.firstChild;
+        range.insertNode(imageContainer);
+
+        const newP = document.createElement('p');
+        newP.innerHTML = '<br>';
+        imageContainer.insertAdjacentElement('afterend', newP);
+
+        range.setStart(newP, 0);
+        range.setEnd(newP, 0);
+
+        selection.removeAllRanges();
+        selection.addRange(range);
+      });
 
       debouncedSetContent(editorRef.current.innerHTML);
       setHasUnsavedChanges(true);
       restoreCursorPosition(position);
-    }
+      e.target.value = '';
+    });
   };
 
-  const removeImage = (imageId) => {
-    if (isAdmin) {
-      const position = saveCursorPosition();
-      const image = images.find((img) => img.id === imageId);
-      if (image) {
-        if (imageRatios.current[image.name]) {
-          delete imageRatios.current[image.name];
-        }
-        if (imageUrls.current[image.name]) {
-          URL.revokeObjectURL(imageUrls.current[image.name]);
-          delete imageUrls.current[image.name];
-        }
-        setInputErrors((prev) => {
-          const newErrors = { ...prev };
-          delete newErrors[`${imageId}-width`];
-          delete newErrors[`${imageId}-height`];
-          return newErrors;
-        });
-      }
-      setImages(images.filter((img) => img.id !== imageId));
-      if (editorRef.current) {
-        const imageContainers = editorRef.current.querySelectorAll(`.image-container[data-image-id="${imageId}"]`);
-        imageContainers.forEach((container) => {
-          container.remove();
-        });
-        debouncedSetContent(editorRef.current.innerHTML);
-      }
-      setHasUnsavedChanges(true);
-      restoreCursorPosition(position);
+  const updateImageSize = (id, dimension, value) => {
+    if (!isAdmin || viewOnly) return;
+    const parsedValue = parseFloat(value);
+    if (isNaN(parsedValue) || parsedValue <= 0) {
+      setInputErrors((prev) => ({
+        ...prev,
+        [`${id}-${dimension}`]: 'Value must be a positive number.',
+      }));
+      return;
     }
+
+    setInputErrors((prev) => {
+      const newErrors = { ...prev };
+      delete newErrors[`${id}-${dimension}`];
+      return newErrors;
+    });
+
+    setImages((prevImages) =>
+      prevImages.map((img) => {
+        if (img.id !== id) return img;
+        let newWidth = img.width;
+        let newHeight = img.height;
+
+        if (dimension === 'width') {
+          newWidth = parsedValue;
+          if (lockAspectRatio && imageRatios.current[id]) {
+            newHeight = newWidth / imageRatios.current[id];
+          }
+        } else {
+          newHeight = parsedValue;
+          if (lockAspectRatio && imageRatios.current[id]) {
+            newWidth = newHeight * imageRatios.current[id];
+          }
+        }
+
+        return { ...img, width: newWidth, height: newHeight };
+      })
+    );
+
+    const imageContainers = editorRef.current.querySelectorAll(`.image-container img`);
+    imageContainers.forEach((img) => {
+      const src = img.getAttribute('src');
+      const matchingImage = images.find((image) => image.url === src);
+      if (matchingImage && matchingImage.id === id) {
+        img.style.width = `${dimension === 'width' ? parsedValue : matchingImage.width}%`;
+        img.style.height = lockAspectRatio ? 'auto' : `${dimension === 'height' ? parsedValue : matchingImage.height}%`;
+      }
+    });
+
+    debouncedSetContent(editorRef.current.innerHTML);
+    setHasUnsavedChanges(true);
   };
 
-  const insertImageAtCursor = (image) => {
-    if (isAdmin && editorRef.current) {
-      const position = saveCursorPosition();
-      const imgHtml = `<div class="image-container image-align-${image.alignment}" data-image-id="${image.id}" contenteditable="false"><img src="${image.url}" alt="Blog Image" style="width: ${image.width}%; height: auto; max-width: 100%;" class="my-2.5" /></div>`;
-      
-      const selection = window.getSelection();
-      let range;
-      if (selection.rangeCount > 0) {
-        range = selection.getRangeAt(0);
-      } else {
-        range = document.createRange();
-        range.selectNodeContents(editorRef.current);
-        range.collapse(false);
-      }
-
-      const imgNode = document.createElement('div');
-      imgNode.innerHTML = imgHtml;
-      const imageContainer = imgNode.firstChild;
-      range.insertNode(imageContainer);
-
-      const newP = document.createElement('p');
-      newP.innerHTML = '<br>';
-      imageContainer.insertAdjacentElement('afterend', newP);
-
-      range.setStart(newP, 0);
-      range.setEnd(newP, 0);
-
-      selection.removeAllRanges();
-      selection.addRange(range);
-      debouncedSetContent(editorRef.current.innerHTML);
-      setHasUnsavedChanges(true);
-      restoreCursorPosition(position);
+  const removeImage = (id) => {
+    if (!isAdmin || viewOnly) return;
+    const image = images.find((img) => img.id === id);
+    if (image && imageUrls.current[id]) {
+      URL.revokeObjectURL(imageUrls.current[id]);
+      delete imageUrls.current[id];
+      delete imageRatios.current[id];
     }
+    setImages((prevImages) => prevImages.filter((img) => img.id !== id));
+    const imageContainers = editorRef.current.querySelectorAll(`.image-container img[src="${image.url}"]`);
+    imageContainers.forEach((img) => {
+      const container = img.closest('.image-container');
+      if (container) container.remove();
+    });
+    debouncedSetContent(editorRef.current.innerHTML);
+    setHasUnsavedChanges(true);
   };
 
   const toggleAspectRatioLock = () => {
-    if (isAdmin) {
+    if (isAdmin && !viewOnly) {
       setLockAspectRatio(!lockAspectRatio);
       setHasUnsavedChanges(true);
     }
   };
 
   const handleKeyDown = (e) => {
-    if (isAdmin) {
+    if (isAdmin && !viewOnly) {
       if (e.key === 'Tab') {
         e.preventDefault();
         document.execCommand('insertHTML', false, '    ');
@@ -589,13 +491,13 @@ function EditorContent({
   };
 
   const handleEditorClick = () => {
-    if (isAdmin) {
+    if (isAdmin && !viewOnly) {
       updateActiveFormattingStates();
     }
   };
 
   const updateActiveFormattingStates = () => {
-    if (isAdmin && editorRef.current) {
+    if (isAdmin && editorRef.current && !viewOnly) {
       const selection = window.getSelection();
       let bulletList = false;
       let numberedList = false;
@@ -661,16 +563,29 @@ function EditorContent({
   };
 
   const handleSaveWithJSON = () => {
-    if (isAdmin && editorRef.current) {
+    if (isAdmin && editorRef.current && !viewOnly) {
       const htmlContent = editorRef.current.innerHTML;
       const jsonContent = parseEditorContentToJSON(htmlContent);
-      console.log('Parsed JSON content:', jsonContent); // Debugging log
+      console.log('Parsed JSON content:', jsonContent);
       handleSave({ htmlContent, jsonContent });
     }
   };
 
+  const handleUpdateWithJSON = () => {
+    if (isAdmin && editorRef.current && !viewOnly) {
+      const htmlContent = editorRef.current.innerHTML;
+      const jsonContent = parseEditorContentToJSON(htmlContent);
+      console.log('Parsed JSON content for update:', jsonContent);
+      handleUpdate({ htmlContent, jsonContent });
+    }
+  };
+
+  const handleDashboardRedirect = () => {
+    navigate('/dashboard');
+  };
+
   return (
-    <div className="flex flex-col md:flex-row h-screen w-full bg-[#FCF0F8]">
+    <div className="flex flex-col md:flex-row h-screen w-full bg-[#FCF0F8]" style={{ fontFamily: 'Arial, sans-serif' }}>
       <style>
         {`
           .image-container {
@@ -769,6 +684,10 @@ function EditorContent({
           }
           .sidebar-ul li button {
             transition: background-color 0.2s ease;
+            font-family: Arial, sans-serif;
+          }
+          .mobile-menu-nav button {
+            font-family: Arial, sans-serif;
           }
           .group:hover .group-hover\\:block {
             display: block;
@@ -844,7 +763,7 @@ function EditorContent({
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6"
             fill="none"
-            viewBox="0 24 24"
+            viewBox="0 0 24 24"
             stroke="currentColor"
           >
             <path
@@ -863,9 +782,18 @@ function EditorContent({
             <ul className="sidebar-ul list-none p-0 m-0">
               <li className="mb-2">
                 <button
+                  onClick={handleDashboardRedirect}
+                  className="flex items-center px-4 py-3 rounded-md w-full text-left hover:bg-[#9E0B7F]/80"
+                >
+                  <LayoutDashboard className="mr-2" size={20} />
+                  <span>Dashboard</span>
+                </button>
+              </li>
+              <li className="mb-2">
+                <button
                   onClick={() => setSection('Blog Editor')}
                   className={`flex items-center px-4 py-3 rounded-md w-full text-left ${
-                    activeSection === 'Blog Editor' ? 'bg-[#ADD01C] text-white' : 'hover:bg-opacity-80'
+                    activeSection === 'Blog Editor' ? 'bg-[#ADD01C] text-[#333333]' : 'hover:bg-[#9E0B7F]/80'
                   }`}
                 >
                   <Edit className="mr-2" size={20} />
@@ -876,7 +804,7 @@ function EditorContent({
                 <button
                   onClick={() => setSection('Preview')}
                   className={`flex items-center px-4 py-3 rounded-md w-full text-left ${
-                    activeSection === 'Preview' ? 'bg-[#ADD01C] text-white' : 'hover:bg-opacity-80'
+                    activeSection === 'Preview' ? 'bg-[#ADD01C] text-[#333333]' : 'hover:bg-[#9E0B7F]/80'
                   }`}
                 >
                   <Eye className="mr-2" size={20} />
@@ -887,7 +815,7 @@ function EditorContent({
                 <button
                   onClick={() => setSection('Published')}
                   className={`flex items-center px-4 py-3 rounded-md w-full text-left ${
-                    activeSection === 'Published' ? 'bg-[#ADD01C] text-white' : 'hover:bg-opacity-80'
+                    activeSection === 'Published' ? 'bg-[#ADD01C] text-[#333333]' : 'hover:bg-[#9E0B7F]/80'
                   }`}
                 >
                   <CheckSquare className="mr-2" size={20} />
@@ -898,7 +826,7 @@ function EditorContent({
                 <button
                   onClick={() => setSection('Drafts')}
                   className={`flex items-center px-4 py-3 rounded-md w-full text-left ${
-                    activeSection === 'Drafts' ? 'bg-[#ADD01C] text-white' : 'hover:bg-opacity-80'
+                    activeSection === 'Drafts' ? 'bg-[#ADD01C] text-[#333333]' : 'hover:bg-[#9E0B7F]/80'
                   }`}
                 >
                   <Clock className="mr-2" size={20} />
@@ -917,11 +845,20 @@ function EditorContent({
         </div>
         <nav>
           <ul className="sidebar-ul list-none p-0 m-0">
+            {/* <li className="mb-2">
+              <button
+                onClick={handleDashboardRedirect}
+                className="flex items-center px-4 py-3 rounded-md w-full text-left hover:bg-[#9E0B7F]/80"
+              >
+                <LayoutDashboard className="mr-2" size={20} />
+                <span>Dashboard</span>
+              </button>
+            </li> */}
             <li className="mb-2">
               <button
                 onClick={() => setSection('Blog Editor')}
                 className={`flex items-center px-4 py-3 rounded-md w-full text-left ${
-                  activeSection === 'Blog Editor' ? 'bg-[#ADD01C] text-white' : 'hover:bg-opacity-80'
+                  activeSection === 'Blog Editor' ? 'bg-[#ADD01C] text-[#333333]' : 'hover:bg-[#9E0B7F]/80'
                 }`}
               >
                 <Edit className="mr-2" size={20} />
@@ -932,7 +869,7 @@ function EditorContent({
               <button
                 onClick={() => setSection('Preview')}
                 className={`flex items-center px-4 py-3 rounded-md w-full text-left ${
-                  activeSection === 'Preview' ? 'bg-[#ADD01C] text-white' : 'hover:bg-opacity-80'
+                  activeSection === 'Preview' ? 'bg-[#ADD01C] text-[#333333]' : 'hover:bg-[#9E0B7F]/80'
                 }`}
               >
                 <Eye className="mr-2" size={20} />
@@ -943,7 +880,7 @@ function EditorContent({
               <button
                 onClick={() => setSection('Published')}
                 className={`flex items-center px-4 py-3 rounded-md w-full text-left ${
-                  activeSection === 'Published' ? 'bg-[#ADD01C] text-white' : 'hover:bg-opacity-80'
+                  activeSection === 'Published' ? 'bg-[#ADD01C] text-[#333333]' : 'hover:bg-[#9E0B7F]/80'
                 }`}
               >
                 <CheckSquare className="mr-2" size={20} />
@@ -954,7 +891,7 @@ function EditorContent({
               <button
                 onClick={() => setSection('Drafts')}
                 className={`flex items-center px-4 py-3 rounded-md w-full text-left ${
-                  activeSection === 'Drafts' ? 'bg-[#ADD01C] text-white' : 'hover:bg-opacity-80'
+                  activeSection === 'Drafts' ? 'bg-[#ADD01C] text-[#333333]' : 'hover:bg-[#9E0B7F]/80'
                 }`}
               >
                 <Clock className="mr-2" size={20} />
@@ -969,28 +906,70 @@ function EditorContent({
         <header className="bg-white p-4 border-b flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <img src="/Logo1.png" alt="NutriDietMitra Logo" className="w-10 h-10" />
-            <h1 className="text-2xl font-bold text-[#9E0B7F]">NutriDiet {activeSection}</h1>
+            <h1 className="text-2xl font-bold text-[#9E0B7F]">
+              NutriDiet {viewOnly ? 'Blog' : activeSection}
+            </h1>
           </div>
-          <div className="flex items-center">
-            {hasUnsavedChanges && (
+          <div className="flex items-center space-x-2">
+            {hasUnsavedChanges && !viewOnly && (
               <span className="mr-4 flex items-center text-[#718096]">
                 <span className="w-3 h-3 bg-yellow-400 rounded-full mr-2"></span>
                 Unsaved changes
               </span>
             )}
-            {activeSection === 'Blog Editor' && isAdmin && (
+            {activeSection === 'Blog Editor' && isAdmin && !viewOnly && (
               <button
                 onClick={handleSaveWithJSON}
                 className="px-4 py-2 rounded-md flex items-center bg-[#ADD01C] text-white hover:bg-opacity-90"
               >
                 <Save className="mr-2" size={16} />
-                <span className="hidden sm:inline">Save</span>
+                <span className="hidden sm:inline">{selectedPostId ? 'Update' : 'Save'}</span>
               </button>
             )}
-            {!isAdmin && activeSection === 'Blog Editor' && (
+            {activeSection === 'Blog Editor' && (!isAdmin || viewOnly) && (
               <button className="px-4 py-2 rounded-md flex items-center disabled-button" disabled>
                 <Save className="mr-2" size={16} />
                 <span className="hidden sm:inline">Save (Admin Only)</span>
+              </button>
+            )}
+            {activeSection === 'Preview' && isAdmin && selectedPostId && !viewOnly && (
+              <>
+                <button
+                  onClick={handleUpdateWithJSON}
+                  className="px-4 py-2 rounded-md flex items-center bg-[#ADD01C] text-white hover:bg-opacity-90"
+                >
+                  <Edit className="mr-2" size={16} />
+                  <span className="hidden sm:inline">Update</span>
+                </button>
+                <button
+                  onClick={() => handleDelete(selectedPostId)}
+                  className={`px-4 py-2 rounded-md flex items-center bg-red-600 text-white hover:bg-opacity-90 ${isDeleting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  disabled={isDeleting}
+                >
+                  <Trash2 className="mr-2" size={16} />
+                  <span className="hidden sm:inline">Delete</span>
+                </button>
+              </>
+            )}
+            {activeSection === 'Preview' && (!isAdmin || viewOnly) && selectedPostId && (
+              <>
+                <button className="px-4 py-2 rounded-md flex items-center disabled-button" disabled>
+                  <Edit className="mr-2" size={16} />
+                  <span className="hidden sm:inline">Update (Admin Only)</span>
+                </button>
+                <button className="px-4 py-2 rounded-md flex items-center disabled-button" disabled>
+                  <Trash2 className="mr-2" size={16} />
+                  <span className="hidden sm:inline">Delete (Admin Only)</span>
+                </button>
+              </>
+            )}
+            {!viewOnly && (
+              <button
+                onClick={handleDashboardRedirect}
+                className="px-4 py-2 rounded-md flex items-center bg-[#9E0B7F] text-white hover:bg-opacity-90"
+              >
+                <LayoutDashboard className="mr-2" size={16} />
+                <span className="hidden sm:inline">Dashboard</span>
               </button>
             )}
           </div>
@@ -1001,7 +980,7 @@ function EditorContent({
         )}
 
         <div className="flex flex-col md:flex-row flex-grow overflow-auto">
-          {activeSection === 'Blog Editor' && (
+          {activeSection === 'Blog Editor' && !viewOnly && (
             <div className="flex flex-col md:flex-row w-full overflow-auto">
               <div className="w-full md:w-1/2 p-4 md:p-6 overflow-auto">
                 <div className="bg-white rounded-md p-4 md:p-6 mb-6 shadow-sm">
@@ -1014,15 +993,15 @@ function EditorContent({
                       id="title"
                       value={title}
                       onChange={handleTitleChange}
-                      className={`w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#D93BB1] ${
-                        !isAdmin ? 'disabled-input' : ''
-                      }`}
+                      className={`w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#D93BB1] ${
+                        inputErrors.title ? 'border-red-500' : 'border-gray-300'
+                      } ${!isAdmin ? 'disabled-input' : ''}`}
                       placeholder={isAdmin ? 'Enter blog title' : 'View-only (Admin Only)'}
                       disabled={!isAdmin}
                       autoComplete="off"
                     />
+                    {inputErrors.title && <p className="text-red-500 text-xs mt-1">{inputErrors.title}</p>}
                   </div>
-
                   <div className="mb-6">
                     <label htmlFor="description" className="block mb-2 font-medium text-[#333333]">
                       Description
@@ -1031,16 +1010,18 @@ function EditorContent({
                       id="description"
                       value={description}
                       onChange={handleDescriptionChange}
-                      className={`w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#D93BB1] ${
-                        !isAdmin ? 'disabled-input' : ''
-                      }`}
+                      className={`w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#D93BB1] ${
+                        inputErrors.description ? 'border-red-500' : 'border-gray-300'
+                      } ${!isAdmin ? 'disabled-input' : ''}`}
                       placeholder={isAdmin ? 'Enter blog description' : 'View-only (Admin Only)'}
                       disabled={!isAdmin}
-                      autoComplete="off"
+                      rows={4}
                     />
+                    {inputErrors.description && (
+                      <p className="text-red-500 text-xs mt-1">{inputErrors.description}</p>
+                    )}
                   </div>
-
-                  <div className="flex flex-col md:flex-row gap-6 mb-6">
+                  <div className="flex flex-col md:flex-row gap-4 mb-6">
                     <div className="flex-1">
                       <label htmlFor="slug" className="block mb-2 font-medium text-[#333333]">
                         URL Slug
@@ -1050,475 +1031,396 @@ function EditorContent({
                         id="slug"
                         value={slug}
                         onChange={handleSlugChange}
-                        className={`w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#D93BB1] ${
-                          !isAdmin ? 'disabled-input' : ''
-                        }`}
+                        className={`w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#D93BB1] ${
+                          inputErrors.slug ? 'border-red-500' : 'border-gray-300'
+                        } ${!isAdmin ? 'disabled-input' : ''}`}
                         placeholder={isAdmin ? 'enter-slug-here' : 'View-only (Admin Only)'}
                         disabled={!isAdmin}
                         autoComplete="off"
                       />
+                      {inputErrors.slug && <p className="text-red-500 text-xs mt-1">{inputErrors.slug}</p>}
                     </div>
                     <div className="flex-1">
                       <label htmlFor="publishDate" className="block mb-2 font-medium text-[#333333]">
                         Publish Date
                       </label>
-                      <div className="relative flex border border-gray-300 rounded-md">
-                        <div className="border-r border-gray-300 p-2 bg-gray-100 flex items-center justify-center">
-                          <Calendar size={20} className="text-[#718096]" />
-                        </div>
+                      <div className="relative">
                         <input
                           type="date"
                           id="publishDate"
                           value={publishDate}
                           onChange={handleDateChange}
-                          className={`flex-grow px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#D93BB1] rounded-r-md bg-white ${
-                            !isAdmin ? 'disabled-input' : ''
-                          }`}
-                          style={{ colorScheme: 'light' }}
+                          className={`w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#D93BB1] ${
+                            inputErrors.publishDate ? 'border-red-500' : 'border-gray-300'
+                          } ${!isAdmin ? 'disabled-input' : ''}`}
                           disabled={!isAdmin}
-                          autoComplete="off"
                         />
+                        <Calendar className="absolute right-3 top-2.5 text-[#718096]" size={20} />
                       </div>
+                      {inputErrors.publishDate && (
+                        <p className="text-red-500 text-xs mt-1">{inputErrors.publishDate}</p>
+                      )}
                     </div>
                   </div>
-
                   <div className="mb-6">
-                    <label className="block mb-2 font-medium text-[#333333]">Categories</label>
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      {categories.map((category) => (
-                        <div
-                          key={category}
-                          className="px-3 py-1 rounded-full flex items-center bg-[#FCF0F8] text-[#9E0B7F]"
-                        >
-                          {category}
-                          {isAdmin && (
-                            <button
-                              onClick={() => handleRemoveCategory(category)}
-                              className="ml-2 hover:opacity-80 text-[#9E0B7F]"
-                            >
-                              ×
-                            </button>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                    <div className="flex">
-                      <div className="relative flex flex-1 border border-gray-300 rounded-l-md">
-                        <div className="border-r border-gray-300 p-2 bg-gray-100 flex items-center justify-center">
-                          <Tag size={20} className="text-[#718096]" />
-                        </div>
-                        <input
-                          type="text"
-                          placeholder={isAdmin ? 'Add category' : 'View-only (Admin Only)'}
-                          value={newCategory}
-                          onChange={(e) => isAdmin && setNewCategory(e.target.value)}
-                          className={`flex-grow px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#D93BB1] ${
-                            !isAdmin ? 'disabled-input' : ''
-                          }`}
-                          onKeyPress={(e) => {
-                            if (isAdmin && e.key === 'Enter') {
-                              handleAddCategory();
-                              e.preventDefault();
-                            }
-                          }}
-                          disabled={!isAdmin}
-                          autoComplete="off"
-                        />
-                      </div>
+                    <label htmlFor="categories" className="block mb-2 font-medium text-[#333333]">
+                      Categories
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        id="categories"
+                        value={newCategory}
+                        onChange={(e) => setNewCategory(e.target.value)}
+                        className={`w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#D93BB1] ${
+                          inputErrors.categories ? 'border-red-500' : 'border-gray-300'
+                        } ${!isAdmin ? 'disabled-input' : ''}`}
+                        placeholder={isAdmin ? 'Add a category' : 'View-only (Admin Only)'}
+                        disabled={!isAdmin}
+                        autoComplete="off"
+                      />
                       {isAdmin && (
                         <button
                           onClick={handleAddCategory}
-                          className="px-4 md:px-6 py-2 rounded-r-md bg-[#9E0B7F] text-white hover:bg-opacity-90"
+                          className="px-4 py-2 rounded-md bg-[#ADD01C] text-white hover:bg-opacity-90"
                         >
                           Add
                         </button>
                       )}
                       {!isAdmin && (
-                        <button className="px-4 md:px-6 py-2 rounded-r-md disabled-button" disabled>
+                        <button className="px-4 py-2 rounded-md disabled-button" disabled>
                           Add
                         </button>
                       )}
                     </div>
-                  </div>
-                </div>
-
-                <div className="border border-gray-200 rounded-md overflow-hidden mb-6">
-                  <div className="p-2 flex flex-wrap items-center gap-2 bg-gradient-to-r from-[#D93BB1] via-[#9E0B7F] to-[#ADD01C]">
-                    <div className="flex gap-1 md:gap-2">
-                      <button
-                        className={`p-1 md:p-2 rounded hover:bg-white/20 relative group ${!isAdmin ? 'disabled-button' : ''}`}
-                        onClick={() => isAdmin && document.execCommand('undo')}
-                        title="Undo"
-                        disabled={!isAdmin}
-                      >
-                        <ArrowLeft size={16} className="text-white" />
-                        <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block text-xs bg-black text-white px-2 py-1 rounded">
-                          Undo
-                        </span>
-                      </button>
-                      <button
-                        className={`p-1 md:p-2 rounded hover:bg-white/20 relative group ${!isAdmin ? 'disabled-button' : ''}`}
-                        onClick={() => isAdmin && document.execCommand('redo')}
-                        title="Redo"
-                        disabled={!isAdmin}
-                      >
-                        <ArrowRight size={16} className="text-white" />
-                        <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block text-xs bg-black text-white px-2 py-1 rounded">
-                          Redo
-                        </span>
-                      </button>
-                    </div>
-                    <div className="hidden md:block w-px h-6 bg-white/30"></div>
-                    <div className="hidden md:block">
-                      <select
-                        className="bg-white rounded px-2 py-1 text-sm w-32"
-                        onChange={(e) => isAdmin && handleFormat('fontName', e.target.value)}
-                        disabled={!isAdmin}
-                        autoComplete="off"
-                      >
-                        <option value="Arial">Arial</option>
-                        <option value="Times New Roman">Times New Roman</option>
-                        <option value="Courier New">Courier New</option>
-                        <option value="Georgia">Georgia</option>
-                        <option value="Verdana">Verdana</option>
-                      </select>
-                    </div>
-                    <div className="hidden md:block w-px h-6 bg-white/30"></div>
-                    <div className="hidden md:block">
-                      <select
-                        className="bg-white rounded px-2 py-1 text-sm w-32"
-                        onChange={(e) => isAdmin && handleFormat('formatBlock', e.target.value)}
-                        disabled={!isAdmin}
-                        autoComplete="off"
-                      >
-                        <option value="p">Paragraph</option>
-                        <option value="h1">Heading 1</option>
-                        <option value="h2">Heading 2</option>
-                        <option value="h3">Heading 3</option>
-                        <option value="h4">Heading 4</option>
-                        <option value="h5">Heading 5</option>
-                        <option value="h6">Heading 6</option>
-                      </select>
-                    </div>
-                    <div className="w-px h-6 bg-white/30"></div>
-                    <div className="flex gap-1 md:gap-2">
-                      <button
-                        className={`p-1 md:p-2 rounded hover:bg-white/20 relative group ${
-                          activeFormatButtons.bold && isAdmin ? 'bg-white/30' : ''
-                        } ${!isAdmin ? 'disabled-button' : ''}`}
-                        onClick={() => isAdmin && handleFormat('bold')}
-                        title="Bold"
-                        disabled={!isAdmin}
-                      >
-                        <Bold size={16} className="text-white" />
-                        <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block text-xs bg-black text-white px-2 py-1 rounded">
-                          Bold
-                        </span>
-                      </button>
-                      <button
-                        className={`p-1 md:p-2 rounded hover:bg-white/20 relative group ${
-                          activeFormatButtons.italic && isAdmin ? 'bg-white/30' : ''
-                        } ${!isAdmin ? 'disabled-button' : ''}`}
-                        onClick={() => isAdmin && handleFormat('italic')}
-                        title="Italic"
-                        disabled={!isAdmin}
-                      >
-                        <Italic size={16} className="text-white" />
-                        <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block text-xs bg-black text-white px-2 py-1 rounded">
-                          Italic
-                        </span>
-                      </button>
-                      <button
-                        className={`p-1 md:p-2 rounded hover:bg-white/20 relative group ${
-                          activeFormatButtons.underline && isAdmin ? 'bg-white/30' : ''
-                        } ${!isAdmin ? 'disabled-button' : ''}`}
-                        onClick={() => isAdmin && handleFormat('underline')}
-                        title="Underline"
-                        disabled={!isAdmin}
-                      >
-                        <Underline size={16} className="text-white" />
-                        <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block text-xs bg-black text-white px-2 py-1 rounded">
-                          Underline
-                        </span>
-                      </button>
-                    </div>
-                    <div className="w-px h-6 bg-white/30"></div>
-                    <div className="flex gap-1 md:gap-2">
-                      <button
-                        className={`p-1 md:p-2 rounded hover:bg-white/20 relative group ${
-                          activeFormatButtons.bulletList && isAdmin ? 'bg-white/30' : ''
-                        } ${!isAdmin ? 'disabled-button' : ''}`}
-                        onClick={() => isAdmin && handleFormat('insertUnorderedList')}
-                        title="Bullet List"
-                        disabled={!isAdmin}
-                      >
-                        <List size={16} className="text-white" />
-                        <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block text-xs bg-black text-white px-2 py-1 rounded">
-                          Bullet List
-                        </span>
-                      </button>
-                      <button
-                        className={`p-1 md:p-2 rounded hover:bg-white/20 relative group ${
-                          activeFormatButtons.numberedList && isAdmin ? 'bg-white/30' : ''
-                        } ${!isAdmin ? 'disabled-button' : ''}`}
-                        onClick={() => isAdmin && handleFormat('insertOrderedList')}
-                        title="Numbered List"
-                        disabled={!isAdmin}
-                      >
-                        <List size={16} className="text-white" />
-                        <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block text-xs bg-black text-white px-2 py-1 rounded">
-                          Numbered List
-                        </span>
-                      </button>
-                      <button
-                        className={`p-1 md:p-2 rounded hover:bg-white/20 relative group ${
-                          activeFormatButtons.alignLeft && isAdmin ? 'bg-white/30' : ''
-                        } ${!isAdmin ? 'disabled-button' : ''}`}
-                        onClick={() => isAdmin && handleFormat('justifyLeft')}
-                        title="Align Text Left"
-                        disabled={!isAdmin}
-                      >
-                        <AlignLeft size={16} className="text-white" />
-                        <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block text-xs bg-black text-white px-2 py-1 rounded">
-                          Align Text Left
-                        </span>
-                      </button>
-                      <button
-                        className={`p-1 md:p-2 rounded hover:bg-white/20 relative group ${
-                          activeFormatButtons.alignCenter && isAdmin ? 'bg-white/30' : ''
-                        } ${!isAdmin ? 'disabled-button' : ''}`}
-                        onClick={() => isAdmin && handleFormat('justifyCenter')}
-                        title="Align Text Center"
-                        disabled={!isAdmin}
-                      >
-                        <AlignCenter size={16} className="text-white" />
-                        <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block text-xs bg-black text-white px-2 py-1 rounded">
-                          Align Text Center
-                        </span>
-                      </button>
-                      <button
-                        className={`p-1 md:p-2 rounded hover:bg-white/20 relative group ${
-                          activeFormatButtons.alignRight && isAdmin ? 'bg-white/30' : ''
-                        } ${!isAdmin ? 'disabled-button' : ''}`}
-                        onClick={() => isAdmin && handleFormat('justifyRight')}
-                        title="Align Text Right"
-                        disabled={!isAdmin}
-                      >
-                        <AlignRight size={16} className="text-white" />
-                        <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block text-xs bg-black text-white px-2 py-1 rounded">
-                          Align Text Right
-                        </span>
-                      </button>
-                    </div>
-                    <div className="w-px h-6 bg-white/30"></div>
-                    <div className="flex gap-1 md:gap-2">
-                      <button
-                        className={`p-1 md:p-2 rounded hover:bg-white/20 relative group ${!isAdmin ? 'disabled-button' : ''}`}
-                        onClick={() => isAdmin && updateImageAlignment('left')}
-                        title="Align Image Left"
-                        disabled={!isAdmin}
-                      >
-                        <AlignLeft size={16} className="text-white" />
-                        <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block text-xs bg-black text-white px-2 py-1 rounded">
-                          Align Image Left
-                        </span>
-                      </button>
-                      <button
-                        className={`p-1 md:p-2 rounded hover:bg-white/20 relative group ${!isAdmin ? 'disabled-button' : ''}`}
-                        onClick={() => isAdmin && updateImageAlignment('center')}
-                        title="Align Image Center"
-                        disabled={!isAdmin}
-                      >
-                        <AlignCenter size={16} className="text-white" />
-                        <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block text-xs bg-black text-white px-2 py-1 rounded">
-                          Align Image Center
-                        </span>
-                      </button>
-                      <button
-                        className={`p-1 md:p-2 rounded hover:bg-white/20 relative group ${!isAdmin ? 'disabled-button' : ''}`}
-                        onClick={() => isAdmin && updateImageAlignment('right')}
-                        title="Align Image Right"
-                        disabled={!isAdmin}
-                      >
-                        <AlignRight size={16} className="text-white" />
-                        <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block text-xs bg-black text-white px-2 py-1 rounded">
-                          Align Image Right
-                        </span>
-                      </button>
-                    </div>
-                    <div className="w-px h-6 bg-white/30"></div>
-                    <div className="flex gap-1 md:gap-2 ml-auto">
-                      <button
-                        className={`p-1 md:p-2 rounded hover:bg-white/20 relative group ${!isAdmin ? 'disabled-button' : ''}`}
-                        onClick={() => isAdmin && fileInputRef.current?.click()}
-                        title="Insert Image"
-                        disabled={!isAdmin}
-                      >
-                        <Image size={16} className="text-white" />
-                        <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block text-xs bg-black text-white px-2 py-1 rounded">
-                          Insert Image
-                        </span>
-                        <input
-                          type="file"
-                          ref={fileInputRef}
-                          className="hidden"
-                          onChange={handleImageUpload}
-                          multiple
-                          accept="image/*"
-                          disabled={!isAdmin}
-                          autoComplete="off"
-                        />
-                      </button>
-                      <button
-                        className={`p-1 md:p-2 rounded hover:bg-white/20 relative group ${!isAdmin ? 'disabled-button' : ''}`}
-                        onClick={() => {
-                          if (isAdmin) {
-                            const url = prompt('Enter link URL:');
-                            if (url) handleFormat('createLink', url);
-                          }
-                        }}
-                        title="Insert Link"
-                        disabled={!isAdmin}
-                      >
-                        <Link size={16} className="text-white" />
-                        <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block text-xs bg-black text-white px-2 py-1 rounded">
-                          Insert Link
-                        </span>
-                      </button>
-                    </div>
-                  </div>
-
-                  <div
-                    className={`bg-white p-4 min-h-64 ${!isAdmin ? 'disabled-input' : ''}`}
-                    ref={editorRef}
-                    contentEditable={isAdmin}
-                    onInput={handleContentChange}
-                    onKeyDown={handleKeyDown}
-                    onClick={handleEditorClick}
-                    onMouseUp={updateActiveFormattingStates}
-                    style={{ minHeight: '300px', whiteSpace: 'pre-wrap', wordWrap: 'break-word', paddingLeft: '20px' }}
-                  />
-                </div>
-
-                {images.length > 0 && (
-                  <div className="mb-6">
-                    <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-lg font-medium text-[#333333]">Uploaded Images</h3>
-                      <button
-                        onClick={toggleAspectRatioLock}
-                        className={`p-2 rounded ${
-                          lockAspectRatio ? 'bg-[#9E0B7F] text-white' : 'bg-gray-200 text-[#333333]'
-                        } hover:opacity-90 ${!isAdmin ? 'disabled-button' : ''}`}
-                        title={lockAspectRatio ? 'Unlock Aspect Ratio' : 'Lock Aspect Ratio'}
-                        disabled={!isAdmin}
-                      >
-                        {lockAspectRatio ? <Lock size={16} /> : <Unlock size={16} />}
-                      </button>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {images.map((image) => (
-                        <div key={image.id} className="border rounded-md p-2 relative group">
-                          <img src={image.url} alt="Blog Image" className="w-full h-32 object-cover rounded" />
-                          <div className="mt-2 flex flex-col gap-2">
-                            <div className="flex justify-between items-center">
-                              <span className="text-sm truncate flex-1 text-[#718096]">Image {image.id}</span>
-                              <button
-                                onClick={() => isAdmin && removeImage(image.id)}
-                                className="text-red-500 hover:text-red-700"
-                                disabled={!isAdmin}
-                              >
-                                <Trash2 size={16} />
-                              </button>
-                            </div>
-                            <div className="flex gap-2">
-                              <div className="flex-1">
-                                <label className="text-xs text-[#333333]">Width (%)</label>
-                                <input
-                                  type="number"
-                                  step="0.1"
-                                  value={image.width}
-                                  onChange={(e) => isAdmin && updateImageSize(image.id, 'width', e.target.value)}
-                                  className={`w-full border rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#D93BB1] ${
-                                    inputErrors[`${image.id}-width`] ? 'border-red-500' : 'border-gray-300'
-                                  } ${!isAdmin ? 'disabled-input' : ''}`}
-                                  placeholder="Enter width"
-                                  disabled={!isAdmin}
-                                  autoComplete="off"
-                                />
-                              </div>
-                              <div className="flex-1">
-                                <label className="text-xs text-[#333333]">Height (%)</label>
-                                <input
-                                  type="number"
-                                  step="0.1"
-                                  value={image.height}
-                                  onChange={(e) => isAdmin && updateImageSize(image.id, 'height', e.target.value)}
-                                  className={`w-full border rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#D93BB1] ${
-                                    inputErrors[`${image.id}-height`] ? 'border-red-500' : 'border-gray-300'
-                                  } ${!isAdmin ? 'disabled-input' : ''}`}
-                                  placeholder="Enter height"
-                                  disabled={!isAdmin}
-                                  autoComplete="off"
-                                />
-                              </div>
-                            </div>
-                          </div>
-                          <button
-                            className={`absolute top-2 right-2 p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity bg-[#9E0B7F] text-white ${
-                              !isAdmin ? 'disabled-button' : ''
-                            }`}
-                            onClick={() => isAdmin && insertImageAtCursor(image)}
-                            title="Insert Image into Editor"
-                            disabled={!isAdmin}
-                          >
-                            <Image size={16} />
-                          </button>
+                    {inputErrors.categories && (
+                      <p className="text-red-500 text-xs mt-1">{inputErrors.categories}</p>
+                    )}
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {categories.map((category) => (
+                        <div
+                          key={category}
+                          className="flex items-center px-3 py-1 rounded-full bg-[#FCF0F8] text-[#9E0B7F]"
+                        >
+                          <span>{category}</span>
+                          {isAdmin && (
+                            <button
+                              onClick={() => handleRemoveCategory(category)}
+                              className="ml-2 text-[#9E0B7F] hover:text-red-600"
+                            >
+                              &times;
+                            </button>
+                          )}
                         </div>
                       ))}
                     </div>
                   </div>
-                )}
-              </div>
-              <div className="w-full md:w-1/2 p-4 md:p-6 bg-[#FCF0F8] overflow-auto">
-                <div className="preview-container bg-white rounded-md p-6 shadow-sm">
-                  <h1 className="preview-title text-3xl font-bold text-[#9E0B7F] mb-4">{title || 'Blog Title'}</h1>
-                  <div className="preview-meta flex items-center text-[#718096] mb-4">
-                    <span className="mr-4 flex items-center">
-                      <Calendar size={16} className="mr-1" />
-                      {publishDate || 'Publish Date'}
-                    </span>
-                    <div className="preview-categories flex flex-wrap gap-2">
-                      {categories.length > 0 ? (
-                        categories.map((category) => (
-                          <span
-                            key={category}
-                            className="px-2 py-1 rounded-full bg-[#FCF0F8] text-[#9E0B7F] text-sm"
-                          >
-                            {category}
-                          </span>
-                        ))
-                      ) : (
-                        <span className="px-2 py-1 rounded-full bg-[#FCF0F8] text-[#9E0B7F] text-sm">
-                          No categories
-                        </span>
-                      )}
+                </div>
+                <div className="bg-white rounded-md p-4 md:p-6 shadow-sm">
+                  <div className="mb-4">
+                    <label className="block mb-2 font-medium text-[#333333]">Content</label>
+                    <div className="mb-2 flex flex-wrap gap-2">
+                      <button
+                        onClick={() => handleFormat('bold')}
+                        className={`p-2 rounded-md ${
+                          activeFormatButtons.bold ? 'bg-[#ADD01C] text-white' : 'bg-gray-100'
+                        } ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
+                        disabled={!isAdmin || viewOnly}
+                        title="Bold"
+                      >
+                        <Bold size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleFormat('italic')}
+                        className={`p-2 rounded-md ${
+                          activeFormatButtons.italic ? 'bg-[#ADD01C] text-white' : 'bg-gray-100'
+                        } ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
+                        disabled={!isAdmin || viewOnly}
+                        title="Italic"
+                      >
+                        <Italic size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleFormat('underline')}
+                        className={`p-2 rounded-md ${
+                          activeFormatButtons.underline ? 'bg-[#ADD01C] text-white' : 'bg-gray-100'
+                        } ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
+                        disabled={!isAdmin || viewOnly}
+                        title="Underline"
+                      >
+                        <Underline size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleFormat('insertUnorderedList')}
+                        className={`p-2 rounded-md ${
+                          activeFormatButtons.bulletList ? 'bg-[#ADD01C] text-white' : 'bg-gray-100'
+                        } ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
+                        disabled={!isAdmin || viewOnly}
+                        title="Bullet List"
+                      >
+                        <List size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleFormat('insertOrderedList')}
+                        className={`p-2 rounded-md ${
+                          activeFormatButtons.numberedList ? 'bg-[#ADD01C] text-white' : 'bg-gray-100'
+                        } ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
+                        disabled={!isAdmin || viewOnly}
+                        title="Numbered List"
+                      >
+                        <List size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleFormat('justifyLeft')}
+                        className={`p-2 rounded-md ${
+                          activeFormatButtons.alignLeft ? 'bg-[#ADD01C] text-white' : 'bg-gray-100'
+                        } ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
+                        disabled={!isAdmin || viewOnly}
+                        title="Align Left"
+                      >
+                        <AlignLeft size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleFormat('justifyCenter')}
+                        className={`p-2 rounded-md ${
+                          activeFormatButtons.alignCenter ? 'bg-[#ADD01C] text-white' : 'bg-gray-100'
+                        } ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
+                        disabled={!isAdmin || viewOnly}
+                        title="Align Center"
+                      >
+                        <AlignCenter size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleFormat('justifyRight')}
+                        className={`p-2 rounded-md ${
+                          activeFormatButtons.alignRight ? 'bg-[#ADD01C] text-white' : 'bg-gray-100'
+                        } ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
+                        disabled={!isAdmin || viewOnly}
+                        title="Align Right"
+                      >
+                        <AlignRight size={16} />
+                      </button>
+                      <button
+                        onClick={() => fileInputRef.current.click()}
+                        className={`p-2 rounded-md bg-gray-100 ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
+                        disabled={!isAdmin || viewOnly}
+                        title="Insert Image"
+                      >
+                        <Image size={16} />
+                      </button>
+                      <button
+                        onClick={() => {
+                          const url = prompt('Enter the URL:');
+                          if (url) handleFormat('createLink', url);
+                        }}
+                        className={`p-2 rounded-md bg-gray-100 ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
+                        disabled={!isAdmin || viewOnly}
+                        title="Insert Link"
+                      >
+                        <Link size={16} />
+                      </button>
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleImageUpload}
+                        accept="image/*"
+                        className="hidden"
+                        multiple
+                      />
                     </div>
+                    <div className="mb-2 flex flex-wrap gap-2">
+                      <button
+                        onClick={() => handleFormat('formatBlock', 'h1')}
+                        className={`p-2 rounded-md ${
+                          activeFormatButtons.heading1 ? 'bg-[#ADD01C] text-white' : 'bg-gray-100'
+                        } ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
+                        disabled={!isAdmin || viewOnly}
+                        title="Heading 1"
+                      >
+                        H1
+                      </button>
+                      <button
+                        onClick={() => handleFormat('formatBlock', 'h2')}
+                        className={`p-2 rounded-md ${
+                          activeFormatButtons.heading2 ? 'bg-[#ADD01C] text-white' : 'bg-gray-100'
+                        } ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
+                        disabled={!isAdmin || viewOnly}
+                        title="Heading 2"
+                      >
+                        H2
+                      </button>
+                      <button
+                        onClick={() => handleFormat('formatBlock', 'h3')}
+                        className={`p-2 rounded-md ${
+                          activeFormatButtons.heading3 ? 'bg-[#ADD01C] text-white' : 'bg-gray-100'
+                        } ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
+                        disabled={!isAdmin || viewOnly}
+                        title="Heading 3"
+                      >
+                        H3
+                      </button>
+                      <button
+                        onClick={() => handleFormat('formatBlock', 'h4')}
+                        className={`p-2 rounded-md ${
+                          activeFormatButtons.heading4 ? 'bg-[#ADD01C] text-white' : 'bg-gray-100'
+                        } ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
+                        disabled={!isAdmin || viewOnly}
+                        title="Heading 4"
+                      >
+                        H4
+                      </button>
+                    </div>
+                    <div className="mb-2 flex gap-2">
+                      <button
+                        onClick={() => updateImageAlignment('left')}
+                        className={`p-2 rounded-md bg-gray-100 ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
+                        disabled={!isAdmin || viewOnly}
+                        title="Align Image Left"
+                      >
+                        <AlignLeft size={16} />
+                      </button>
+                      <button
+                        onClick={() => updateImageAlignment('center')}
+                        className={`p-2 rounded-md bg-gray-100 ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
+                        disabled={!isAdmin || viewOnly}
+                        title="Align Image Center"
+                      >
+                        <AlignCenter size={16} />
+                      </button>
+                      <button
+                        onClick={() => updateImageAlignment('right')}
+                        className={`p-2 rounded-md bg-gray-100 ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
+                        disabled={!isAdmin || viewOnly}
+                        title="Align Image Right"
+                      >
+                        <AlignRight size={16} />
+                      </button>
+                    </div>
+                    <div
+                      ref={editorRef}
+                      contentEditable={isAdmin && !viewOnly}
+                      onInput={handleContentChange}
+                      onClick={handleEditorClick}
+                      onKeyDown={handleKeyDown}
+                      className={`w-full min-h-[400px] border rounded-md p-4 focus:outline-none focus:ring-2 focus:ring-[#D93BB1] ${
+                        inputErrors.content ? 'border-red-500' : 'border-gray-300'
+                      } ${!isAdmin || viewOnly ? 'bg-gray-50 cursor-default' : 'bg-white'}`}
+                      style={{ whiteSpace: 'pre-wrap', fontFamily: 'Arial, sans-serif' }}
+                    />
+                    {inputErrors.content && <p className="text-red-500 text-xs mt-1">{inputErrors.content}</p>}
                   </div>
-                  <p className="preview-description text-[#333333] mb-6">{description || 'Blog Description'}</p>
+                  {images.length > 0 && (
+                    <div className="mb-4">
+                      <h3 className="text-lg font-medium text-[#333333] mb-2">Image Settings</h3>
+                      <div className="flex items-center mb-2">
+                        <button
+                          onClick={toggleAspectRatioLock}
+                          className="p-2 rounded-md bg-gray-100 mr-2"
+                          disabled={!isAdmin || viewOnly}
+                        >
+                          {lockAspectRatio ? <Lock size={16} /> : <Unlock size={16} />}
+                        </button>
+                        <span className="text-[#718096]">
+                          {lockAspectRatio ? 'Unlock Aspect Ratio' : 'Lock Aspect Ratio'}
+                        </span>
+                      </div>
+                      {images.map((image) => (
+                        <div key={image.id} className="mb-4 p-4 border rounded-md">
+                          <img src={image.url} alt="Preview" className="w-32 h-auto mb-2" />
+                          <div className="flex gap-4 mb-2">
+                            <div>
+                              <label className="block text-sm text-[#333333]">Width (%)</label>
+                              <input
+                                type="number"
+                                value={image.width}
+                                onChange={(e) => updateImageSize(image.id, 'width', e.target.value)}
+                                className={`w-full border rounded-md px-2 py-1 ${
+                                  inputErrors[`${image.id}-width`] ? 'border-red-500' : 'border-gray-300'
+                                } ${!isAdmin || viewOnly ? 'disabled-input' : ''}`}
+                                disabled={!isAdmin || viewOnly}
+                              />
+                              {inputErrors[`${image.id}-width`] && (
+                                <p className="text-red-500 text-xs mt-1">{inputErrors[`${image.id}-width`]}</p>
+                              )}
+                            </div>
+                            <div>
+                              <label className="block text-sm text-[#333333]">Height</label>
+                              <input
+                                type="number"
+                                value={image.height}
+                                onChange={(e) => updateImageSize(image.id, 'height', e.target.value)}
+                                className={`w-full border rounded-md px-2 py-1 ${
+                                  inputErrors[`${image.id}-height`] ? 'border-red-500' : 'border-gray-300'
+                                } ${!isAdmin || viewOnly ? 'disabled-input' : ''}`}
+                                disabled={!isAdmin || viewOnly || lockAspectRatio}
+                              />
+                              {inputErrors[`${image.id}-height`] && (
+                                <p className="text-red-500 text-xs mt-1">{inputErrors[`${image.id}-height`]}</p>
+                              )}
+                            </div>
+                          </div>
+                          {isAdmin && !viewOnly && (
+                            <button
+                              onClick={() => removeImage(image.id)}
+                              className="px-3 py-1 rounded-md bg-red-600 text-white hover:bg-opacity-90"
+                            >
+                              Remove Image
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="w-full md:w-1/2 p-4 md:p-6 overflow-auto">
+                <div className="bg-white rounded-md p-4 md:p-6 shadow-sm preview-container">
+                  <h2 className="text-2xl md:text-3xl font-bold text-[#9E0B7F] mb-4 preview-title">{title || 'Blog Title'}</h2>
+                  <div className="flex items-center gap-2 text-sm text-[#718096] mb-4 preview-meta">
+                    <span>{publishDate || 'Publish Date'}</span>
+                    <span>|</span>
+                    <span>{categories.join(', ') || 'Categories'}</span>
+                  </div>
+                  <p className="text-base text-[#333333] mb-4 preview-description">{description || 'Blog Description'}</p>
                   <div
-                    className="preview-content prose max-w-none"
+                    className="prose preview-content"
                     dangerouslySetInnerHTML={{
-                      __html: DOMPurify.sanitize(content || '<p>No content available</p>', {
+                      __html: DOMPurify.sanitize(content || '<p>Blog content goes here...</p>', {
                         ALLOWED_TAGS: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'img', 'div', 'br', 'strong', 'em', 'u', 'a'],
-                        ALLOWED_ATTR: ['src', 'alt', 'class', 'style', 'data-image-id', 'href', 'contenteditable'],
-                        ADD_ATTR: ['src', 'href', 'contenteditable'],
-                        ADD_URI_SAFE_ATTR: ['src', 'href'],
+                        ALLOWED_ATTR: ['src', 'alt', 'class', 'style', 'href'],
                       }),
                     }}
                   />
-                  <p className="preview-url text-[#718096] mt-6">
-                    URL: <span className="text-[#9E0B7F]">{slug ? `/blog/${slug}` : '/blog/enter-slug-here'}</span>
-                  </p>
+                  <div className="flex items-center gap-2 text-sm text-[#718096] mt-4 preview-url">
+                    <span>URL:</span>
+                    <a
+                      href={`/blog/${slug || 'no-slug'}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#9E0B7F] hover:underline"
+                    >
+                      /blog/{slug || 'no-slug'}
+                    </a>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(`${window.location.origin}/blog/${slug}`);
+                        alert('URL copied to clipboard!');
+                      }}
+                      className="px-2 py-1 rounded-md bg-[#ADD01C] text-white hover:bg-opacity-90"
+                    >
+                      Copy
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mt-4 preview-categories">
+                    {categories.map((category) => (
+                      <span
+                        key={category}
+                        className="px-3 py-1 rounded-full bg-[#FCF0F8] text-[#9E0B7F] text-sm"
+                      >
+                        {category}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -1526,94 +1428,113 @@ function EditorContent({
 
           {activeSection === 'Preview' && (
             <div className="w-full p-4 md:p-6 overflow-auto">
-              <div className="preview-container bg-white rounded-md p-6 shadow-sm">
-                <h1 className="preview-title text-3xl font-bold text-[#9E0B7F] mb-4">{title || 'Blog Title'}</h1>
-                <div className="preview-meta flex items-center text-[#718096] mb-4">
-                  <span className="mr-4 flex items-center">
-                    <Calendar size={16} className="mr-1" />
-                    {publishDate || 'Publish Date'}
-                  </span>
-                  <div className="preview-categories flex flex-wrap gap-2">
-                    {categories.length > 0 ? (
-                      categories.map((category) => (
-                        <span
-                          key={category}
-                          className="px-2 py-1 rounded-full bg-[#FCF0F8] text-[#9E0B7F] text-sm"
-                        >
-                          {category}
-                        </span>
-                      ))
-                    ) : (
-                      <span className="px-2 py-1 rounded-full bg-[#FCF0F8] text-[#9E0B7F] text-sm">
-                        No categories
-                      </span>
-                    )}
-                  </div>
+              <div className="bg-white rounded-md p-4 md:p-6 shadow-sm max-w-4xl mx-auto preview-container">
+                <h2 className="text-2xl md:text-3xl font-bold text-[#9E0B7F] mb-4 preview-title">{title || 'Blog Title'}</h2>
+                <div className="flex items-center gap-2 text-sm text-[#718096] mb-4 preview-meta">
+                  <span>{publishDate || 'Publish Date'}</span>
+                  <span>|</span>
+                  <span>{categories.join(', ') || 'Categories'}</span>
                 </div>
-                <p className="preview-description text-[#333333] mb-6">{description || 'Blog Description'}</p>
+                <p className="text-base text-[#333333] mb-4 preview-description">{description || 'Blog Description'}</p>
                 <div
-                  className="preview-content prose max-w-none"
+                  className="prose preview-content"
                   dangerouslySetInnerHTML={{
-                    __html: DOMPurify.sanitize(content || '<p>No content available</p>', {
+                    __html: DOMPurify.sanitize(content || '<p>Blog content goes here...</p>', {
                       ALLOWED_TAGS: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'img', 'div', 'br', 'strong', 'em', 'u', 'a'],
-                      ALLOWED_ATTR: ['src', 'alt', 'class', 'style', 'data-image-id', 'href', 'contenteditable'],
-                      ADD_ATTR: ['src', 'href', 'contenteditable'],
-                      ADD_URI_SAFE_ATTR: ['src', 'href'],
+                      ALLOWED_ATTR: ['src', 'alt', 'class', 'style', 'href'],
                     }),
                   }}
                 />
-                <p className="preview-url text-[#718096] mt-6">
-                  URL: <span className="text-[#9E0B7F]">{slug ? `/blog/${slug}` : '/blog/enter-slug-here'}</span>
-                </p>
+                <div className="flex items-center gap-2 text-sm text-[#718096] mt-4 preview-url">
+                  <span>URL:</span>
+                  <a
+                    href={`/blog/${slug || 'no-slug'}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#9E0B7F] hover:underline"
+                  >
+                    /blog/{slug || 'no-slug'}
+                  </a>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(`${window.location.origin}/blog/${slug}`);
+                      alert('URL copied to clipboard!');
+                    }}
+                    className="px-2 py-1 rounded-md bg-[#ADD01C] text-white hover:bg-opacity-90"
+                  >
+                    Copy
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-2 mt-4 preview-categories">
+                  {categories.map((category) => (
+                    <span
+                      key={category}
+                      className="px-3 py-1 rounded-full bg-[#FCF0F8] text-[#9E0B7F] text-sm"
+                    >
+                      {category}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
           )}
 
-          {activeSection === 'Published' && (
+          {(activeSection === 'Published' || activeSection === 'Drafts') && (
             <div className="w-full p-4 md:p-6 overflow-auto">
-              <h2 className="text-2xl font-bold text-[#9E0B7F] mb-6">Published Posts</h2>
-              {publishedPosts.length === 0 ? (
-                <p className="text-[#718096]">No published posts available.</p>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {publishedPosts.map((post) => (
-                    <div key={post.id} className="bg-white rounded-md p-4 shadow-sm">
+              <div className="bg-white rounded-md p-4 md:p-6 shadow-sm">
+                <h2 className="text-xl font-bold text-[#9E0B7F] mb-4">{activeSection}</h2>
+                {activeSection === 'Published' && publishedPosts.length === 0 && (
+                  <p className="text-[#718096]">No published posts available.</p>
+                )}
+                {activeSection === 'Drafts' && draftPosts.length === 0 && (
+                  <p className="text-[#718096]">No drafts available.</p>
+                )}
+                {(activeSection === 'Published' ? publishedPosts : draftPosts).map((post) => (
+                  <div
+                    key={post.id}
+                    className="flex justify-between items-center p-4 border-b border-gray-200 hover:bg-gray-50"
+                  >
+                    <div>
                       <h3 className="text-lg font-medium text-[#333333]">{post.title}</h3>
-                      <p className="text-[#718096] text-sm mb-2">{post.date}</p>
+                      <p className="text-sm text-[#718096]">{post.date}</p>
+                    </div>
+                    <div className="flex gap-2">
                       <button
-                        onClick={() => fetchBlogById(post.id)}
-                        className="px-4 py-2 rounded-md bg-[#9E0B7F] text-white hover:bg-opacity-90"
+                        onClick={() => {
+                          fetchBlogById(post.id);
+                          setSection('Blog Editor');
+                        }}
+                        className="px-3 py-1 rounded-md bg-[#ADD01C] text-white hover:bg-opacity-90"
                       >
                         View
                       </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {activeSection === 'Drafts' && (
-            <div className="w-full p-4 md:p-6 overflow-auto">
-              <h2 className="text-2xl font-bold text-[#9E0B7F] mb-6">Draft Posts</h2>
-              {draftPosts.length === 0 ? (
-                <p className="text-[#718096]">No draft posts available.</p>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {draftPosts.map((post) => (
-                    <div key={post.id} className="bg-white rounded-md p-4 shadow-sm">
-                      <h3 className="text-lg font-medium text-[#333333]">{post.title}</h3>
-                      <p className="text-[#718096] text-sm mb-2">{post.date}</p>
                       <button
-                        onClick={() => fetchBlogById(post.id)}
-                        className="px-4 py-2 rounded-md bg-[#9E0B7F] text-white hover:bg-opacity-90"
+                        onClick={() => window.open(`/blog/${post.slug}`, '_blank')}
+                        className="px-3 py-1 rounded-md bg-[#9E0B7F] text-white hover:bg-opacity-90"
                       >
-                        View
+                        Open
                       </button>
+                      {isAdmin && (
+                        <>
+                          <button
+                            onClick={() => navigate(`/blog/${post.slug}/edit`)}
+                            className="px-3 py-1 rounded-md bg-blue-600 text-white hover:bg-opacity-90"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(post.id)}
+                            className={`px-3 py-1 rounded-md bg-red-600 text-white hover:bg-opacity-90 ${isDeleting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            disabled={isDeleting}
+                          >
+                            Delete
+                          </button>
+                        </>
+                      )}
                     </div>
-                  ))}
-                </div>
-              )}
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>

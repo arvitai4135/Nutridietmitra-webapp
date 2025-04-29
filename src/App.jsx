@@ -1,5 +1,5 @@
-import React, { useEffect, useState, lazy, Suspense, useContext } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import React, { useState, lazy, Suspense } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useParams } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CircularProgress from "@mui/material/CircularProgress";
 import "@fortawesome/fontawesome-free/css/all.min.css";
@@ -35,11 +35,11 @@ const Signup = lazy(() => import("../src/admin/components/Signup.jsx"));
 const ForgotPassword = lazy(() => import("../src/admin/components/passwords/ForgotPassword.jsx"));
 const ChangePassword = lazy(() => import("../src/admin/components/passwords/ChangePassword.jsx"));
 const ResetPassword = lazy(() => import("../src/admin/components/passwords/ResetPassword.jsx"));
-const BlogEditor = lazy(() => import("../src/admin/components/tiptapEditor/TiptapEditor.jsx"));
 const Booking = lazy(() => import("../src/admin/pages/Booking.jsx"));
 const Plans = lazy(() => import("../src/admin/components/Plans.jsx"));
 const AdminBlog = lazy(() => import("../src/pages/Blogs.jsx"));
-// const AdminContact = lazy(() => import("../src/admin/pages/Contact.jsx"));
+const TiptapEditor = lazy(() => import("../src/admin/components/tiptapEditor/TiptapEditor.jsx"));
+const BlogPost = lazy(() => import("./admin/components/tiptapEditor/BlogPost.jsx")); // New BlogPost component
 
 const theme = createTheme();
 
@@ -47,7 +47,7 @@ const theme = createTheme();
 function ScrollToTop() {
   const { pathname } = useLocation();
 
-  useEffect(() => {
+  React.useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [pathname]);
 
@@ -56,27 +56,37 @@ function ScrollToTop() {
 
 // ProtectedRoute component for admin routes
 const ProtectedRoute = ({ children }) => {
-  const { isLoggedIn, user, justSignedUp } = useContext(AuthContext);
-  
+  const { isLoggedIn, user, justSignedUp } = React.useContext(AuthContext);
+
   if (!isLoggedIn) {
-    console.log('User not logged in, redirecting to /login');
+    console.log("User not logged in, redirecting to /login");
     return <Navigate to="/login" replace />;
   }
 
-  // If user just signed up, allow them to stay on the current route (likely /)
   if (justSignedUp) {
-    console.log('User just signed up, allowing current route:', window.location.pathname);
+    console.log("User just signed up, allowing current route:", window.location.pathname);
     return children;
   }
 
-  // Restrict /dashboard to admin only
-  if (window.location.pathname.startsWith('/dashboard') && user?.email !== 'guptakishna45@gmail.com') {
-    console.log('Non-admin access to /dashboard blocked, redirecting to /');
+  // Restrict admin routes to users with role: admin
+  if (
+    (window.location.pathname.startsWith("/dashboard") ||
+      window.location.pathname.startsWith("/editor") ||
+      window.location.pathname.includes("/edit")) &&
+    user?.role !== "admin"
+  ) {
+    console.log("Non-admin access blocked, redirecting to /");
     return <Navigate to="/" replace />;
   }
 
   return children;
 };
+
+// BlogWrapper to handle slug-based viewing and editing
+function BlogWrapper({ viewOnly }) {
+  const { slug } = useParams();
+  return viewOnly ? <BlogPost slug={slug} /> : <TiptapEditor initialSlug={slug} viewOnly={viewOnly} />;
+}
 
 // Layout for public routes
 const PublicLayout = ({ children }) => (
@@ -194,6 +204,14 @@ function App() {
               }
             />
             <Route path="/order-confirmation" element={<OrderConfirmation />} />
+            <Route
+              path="/blog/:slug"
+              element={
+                <PublicLayout>
+                  <BlogWrapper viewOnly={true} />
+                </PublicLayout>
+              }
+            />
 
             {/* Admin Routes */}
             <Route
@@ -251,14 +269,23 @@ function App() {
               <Route path="booking" element={<Booking />} />
               <Route path="plans" element={<Plans />} />
               <Route path="blog" element={<AdminBlog />} />
-              {/* <Route path="contact" element={<AdminContact />} /> */}
             </Route>
             <Route
               path="/editor"
               element={
                 <ProtectedRoute>
                   <AdminLayout>
-                    <BlogEditor initialContent={blogContent} onSave={handleSaveBlog} />
+                    <TiptapEditor initialContent={blogContent} onSave={handleSaveBlog} viewOnly={false} />
+                  </AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/blog/:slug/edit"
+              element={
+                <ProtectedRoute>
+                  <AdminLayout>
+                    <BlogWrapper viewOnly={false} />
                   </AdminLayout>
                 </ProtectedRoute>
               }
