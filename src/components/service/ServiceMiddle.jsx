@@ -1,7 +1,7 @@
 import React from 'react';
-import HealthCoach1 from '/assets/Images/HealthCoach1.jpg'
-import PersonalisedNutrionist from  '/assets/Images/PersonalisedNutrionist.jpg'
-import BestFitness from '/assets/Images/BestFitness.jpg'
+import HealthCoach1 from '/assets/Images/HealthCoach1.jpg';
+import PersonalisedNutrionist from '/assets/Images/PersonalisedNutrionist.jpg';
+import BestFitness from '/assets/Images/BestFitness.jpg';
 
 const ServiceMiddle = () => {
   return (
@@ -10,80 +10,79 @@ const ServiceMiddle = () => {
         <div className="flex flex-col lg:flex-row">
           {/* Left Column - Image and Office Info */}
           <div className="w-full lg:w-1/2 mb-10 lg:mb-0">
-            <div className="relative mb-10 lg:pr-10">
+            <div className="relative lg:pr-10">
               {/* Main Image */}
               <div className="text-left">
-                <img 
-                  className="w-full rounded-lg shadow-lg" 
-                  src={HealthCoach1} 
-                  alt="Nutrition center building"
+                <img
+                  className="w-full rounded-lg shadow-lg"
+                  src={HealthCoach1}
+                  alt="Nutridietmitra Nutrition Clinic"
                 />
               </div>
-              
+
               {/* Overlaid Office Information */}
-              <div className="relative mt-8 lg:mt-0 mx-auto max-w-md">
-                <div className="bg-nutricare-primary-dark text-white p-8 rounded-lg shadow-lg text-center">
+              <div className="relative mt-6 mx-auto max-w-md">
+                <div className="bg-nutricare-primary-dark text-white p-8 rounded-lg shadow-lg text-center min-h-[200px] flex flex-col justify-center">
                   <h4 className="text-xl font-bold mb-1">Our Main Office</h4>
-                  <p className="text-white">OM RESIDENCY 93/B2 Mauji Colony, Malviya Nagar,Jaipur</p>
+                  <p className="text-white">OM RESIDENCY 93/B2 Mauji Colony, Malviya Nagar, Jaipur</p>
+                  <p className="text-white mt-2">+91-982-959-1919 | nutridietmitra@gmail.com</p>
                 </div>
               </div>
             </div>
           </div>
-          
+
           {/* Right Column - About Text and Features */}
           <div className="w-full lg:w-1/2 lg:pl-8">
             {/* Section Title */}
             <div className="mb-10">
-              <h5 className="uppercase text-nutricare-primary-light font-bold tracking-wide mb-2">about nutrition</h5>
+              <h5 className="uppercase text-nutricare-primary-light font-bold tracking-wide mb-2">OUR MISSION</h5>
               <h2 className="text-3xl lg:text-4xl font-bold text-nutricare-text-dark mb-6">
-                We Are Nice People With <br className="hidden md:block" /> A Lot Of Experience
+                Transforming Lives Through Nutrition
               </h2>
               <p className="text-nutricare-text-gray leading-relaxed">
-                Through our integrative approach, we bring together a team of nutritionists and the health-care professionals 
-                from a broad range of disciplines, combining years of an experience, diverse specialties, and wealth of 
-                knowledge plus experience.
+                Founded in 2014 by Dt. Tanu Bhargava, Nutridietmitra brings over 17 years of expertise to empower more than 5000 clients worldwide with personalized, kitchen-based nutrition plans that promote sustainable health and wellness.
               </p>
             </div>
-            
+
             {/* Features Row */}
             <div className="flex flex-col md:flex-row gap-6">
               {/* Feature 1 */}
               <div className="w-full md:w-1/2">
-                <div className="bg-nutricare-bg-light rounded-lg overflow-hidden shadow-md transition-transform duration-300 hover:shadow-lg hover:-translate-y-1">
+                <div className="bg-nutricare-bg-light rounded-lg overflow-hidden shadow-md transition-transform duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col">
                   <div className="h-48 overflow-hidden">
-                    <img 
-                      className="w-full object-cover" 
-                      src={PersonalisedNutrionist} 
-                      alt="Personalized Nutrition"
+                    <img
+                      className="w-full h-full object-cover"
+                      src={PersonalisedNutrionist}
+                      alt="Nutridietmitra Tailored Diet Plans"
                     />
                   </div>
-                  <div className="p-6">
+                  <div className="p-6 h-[220px] flex flex-col">
                     <h5 className="font-bold text-xl text-nutricare-primary-dark mb-3">
-                      Personalized Nutrition
+                      Tailored Diet Plans
                     </h5>
-                    <p className="text-nutricare-text-gray">
-                      To know where our bodies are and to maintain the desired positions.
+                    <p className="text-nutricare-text-gray text-sm">
+                      Customized, kitchen-based diets designed to address weight loss, PCOS/PCOD, diabetes, and more, without supplements or crash diets.
                     </p>
                   </div>
                 </div>
               </div>
-              
+
               {/* Feature 2 */}
               <div className="w-full md:w-1/2">
-                <div className="bg-nutricare-bg-light rounded-lg overflow-hidden shadow-md transition-transform duration-300 hover:shadow-lg hover:-translate-y-1">
+                <div className="bg-nutricare-bg-light rounded-lg overflow-hidden shadow-md transition-transform duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col">
                   <div className="h-48 overflow-hidden">
-                    <img 
-                      className="w-full object-cover" 
-                      src={BestFitness} 
-                      alt="Best Fitness"
+                    <img
+                      className="w-full h-full object-cover"
+                      src={BestFitness}
+                      alt="Nutridietmitra Holistic Wellness"
                     />
                   </div>
-                  <div className="p-6">
+                  <div className="p-6 h-[220px] flex flex-col">
                     <h5 className="font-bold text-xl text-nutricare-primary-dark mb-3">
-                      Best Fitness
+                      Holistic Wellness
                     </h5>
-                    <p className="text-nutricare-text-gray">
-                      Once you grasp a workout routine, you will get it is not too a difficult.
+                    <p className="text-nutricare-text-gray text-sm">
+                      A lifestyle-focused approach integrating nutrition, exercise, and wellness strategies to achieve sustainable health transformations for all ages.
                     </p>
                   </div>
                 </div>

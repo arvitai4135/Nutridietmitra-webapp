@@ -65,21 +65,20 @@ const ContactMiddle = () => {
               </div>
             </div>
 
-            {/* Updated heading with better typography */}
+            {/* Updated heading */}
             <div>
               <h2 className="text-4xl md:text-5xl font-bold mb-3 leading-tight" style={{ color: colors.primaryDark }}>
-                Transform Your Life <br /> With NutriDiet Coaching
+                Achieve Your Health Goals <br /> with Nutridietmitra
               </h2>
               <div className="w-24 h-1 mb-6" style={{ backgroundColor: colors.green }}></div>
             </div>
 
             {/* Updated paragraph text */}
             <p className="text-lg mb-2" style={{ color: colors.textGray }}>
-              Discover a holistic approach to health that nourishes your body, mind, and spirit. Our personalized coaching
-              programs empower you to create sustainable habits for lasting vitality.
+              Led by Dt. Tanu Bhargava with 17+ years of expertise, Nutridietmitra offers personalized, kitchen-based nutrition plans to transform your health sustainably, without supplements.
             </p>
 
-            {/* Feature points */}
+            {/* Updated feature points */}
             <div className="space-y-3 mb-8">
               <div className="flex items-center gap-3">
                 <div
@@ -88,7 +87,7 @@ const ContactMiddle = () => {
                 >
                   <div className="w-2 h-2 rounded-full" style={{ backgroundColor: colors.green }}></div>
                 </div>
-                <p style={{ color: colors.textDark }}>Custom nutrition plans based on your unique needs</p>
+                <p style={{ color: colors.textDark }}>Tailored diet plans for your medical and lifestyle needs</p>
               </div>
               <div className="flex items-center gap-3">
                 <div
@@ -97,7 +96,7 @@ const ContactMiddle = () => {
                 >
                   <div className="w-2 h-2 rounded-full" style={{ backgroundColor: colors.green }}></div>
                 </div>
-                <p style={{ color: colors.textDark }}>Mindfulness practices for stress management</p>
+                <p style={{ color: colors.textDark }}>Expert guidance from a trusted dietitian</p>
               </div>
               <div className="flex items-center gap-3">
                 <div
@@ -106,18 +105,18 @@ const ContactMiddle = () => {
                 >
                   <div className="w-2 h-2 rounded-full" style={{ backgroundColor: colors.green }}></div>
                 </div>
-                <p style={{ color: colors.textDark }}>1-on-1 coaching sessions with certified experts</p>
+                <p style={{ color: colors.textDark }}>Healthy salad and fruit bouquet delivery in Jaipur</p>
               </div>
             </div>
 
-            {/* Enhanced buttons with navigation */}
+            {/* Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
               <button
                 className="px-8 py-4 text-white font-medium rounded-full shadow-md hover:shadow-lg transform hover:-translate-y-1 transition duration-300 hover:bg-[#D93BB1]"
                 style={{ backgroundColor: colors.primaryDark }}
                 onClick={openAppointmentModal}
               >
-                Start Your Journey
+                Book Free Consultation
               </button>
               <button
                 className="px-8 py-4 border-2 font-medium rounded-full transition-all duration-300 hover:bg-[#ADD01C] hover:text-white"
@@ -127,12 +126,12 @@ const ContactMiddle = () => {
                 }}
                 onClick={handleExplorePrograms}
               >
-                Explore Programs
+                Explore Services
               </button>
             </div>
           </div>
 
-          {/* Right image area with enhanced styling */}
+          {/* Right image area */}
           <div className="lg:w-1/2">
             <div className="relative">
               {/* Decorative elements */}
@@ -141,12 +140,12 @@ const ContactMiddle = () => {
                 style={{ borderColor: colors.primaryLight }}
               ></div>
 
-              {/* Main image container with better styling */}
+              {/* Main image container */}
               <div className="relative rounded-2xl overflow-hidden shadow-xl">
                 <img src={HealthyEating} alt="Healthy Eating" className="w-full h-auto object-cover" />
               </div>
 
-              {/* Floating card element for visual interest */}
+              {/* Floating card element */}
               <div className="absolute -bottom-10 -left-10 bg-white p-5 rounded-xl shadow-lg max-w-xs">
                 <div className="flex items-center gap-3 mb-2">
                   <div
@@ -168,11 +167,11 @@ const ContactMiddle = () => {
                     </svg>
                   </div>
                   <span className="font-medium" style={{ color: colors.textDark }}>
-                    Certified Programs
+                    Trusted Expertise
                   </span>
                 </div>
                 <p className="text-sm" style={{ color: colors.textGray }}>
-                  Our coaching is backed by science and delivered with compassion.
+                  Over 5000 clients transformed with compassionate, science-backed nutrition care.
                 </p>
               </div>
             </div>

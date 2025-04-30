@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
   Salad,
-  Clock,
+  Users,
   Shield,
   HeartPulse,
   ArrowRight,
@@ -35,20 +35,20 @@ const AboutUs = () => {
   const nutritionFeatures = [
     {
       icon: Salad,
-      title: "Personalized Nutrition",
-      description: "Custom diet plans for your needs",
+      title: "Personalized Diet Plans",
+      description: "Tailored, kitchen-based nutrition plans for your unique needs",
       color: "text-[#9E0B7F]",
     },
     {
       icon: HeartPulse,
-      title: "Lifestyle Wellness",
-      description: "Holistic health and lifestyle support",
+      title: "Holistic Wellness",
+      description: "Comprehensive support for health and lifestyle balance",
       color: "text-[#D93BB1]",
     },
     {
       icon: Shield,
-      title: "Sports Nutrition",
-      description: "Expert guidance for active lifestyles",
+      title: "Specialized Nutrition",
+      description: "Expert plans for PCOS, diabetes, thyroid, and more",
       color: "text-[#ADD01C]",
     },
   ];
@@ -67,16 +67,11 @@ const AboutUs = () => {
             </div>
 
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#333333] leading-tight">
-              Empowering Health <br /> Through Nutrition
+              Transforming Lives <br /> Through Nutrition
             </h1>
 
             <p className="text-[#718096] text-lg leading-relaxed">
-              Founded in 2014 by Dt. Tanu Bhargava, a dietitian with over{" "}
-              {maxYears} years of experience, Nutridietmitra in Jaipur is
-              dedicated to making everyone healthy and happy through
-              personalized diet and lifestyle plans. With a global reach,
-              she’s consulted over 5,000 clients to manage weight, obesity,
-              Thyroid, PCOD/S, Diabetes, and more.
+              Founded in 2014 by Dt. Tanu Bhargava, a Jaipur-based dietitian with over {maxYears}+  years of experience, Nutridietmitra empowers over 5000+ clients globally with personalized, kitchen-based nutrition plans. Specializing in weight management, PCOS/PCOD, diabetes, thyroid, and child nutrition, we offer sustainable, science-backed solutions without supplements or crash diets.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -100,7 +95,7 @@ const AboutUs = () => {
               onClick={openModal}
               className="flex items-center bg-[#D93BB1] hover:bg-[#9E0B7F] text-white px-6 py-3 rounded-full transition duration-300 group"
             >
-              Explore Our Services
+              Book Free Consultation
               <ArrowRight
                 className="ml-2 group-hover:translate-x-1 transition"
                 size={20}
@@ -114,12 +109,12 @@ const AboutUs = () => {
             <div className="relative z-10 bg-white p-4 rounded-2xl shadow-2xl overflow-hidden">
               <img
                 src={img1}
-                alt="Dt. Tanu Bhargava"
+                alt="Nutridietmitra Nutrition Expertise"
                 className="rounded-xl object-cover w-full max-h-[500px]"
               />
               <div className="absolute bottom-0 right-0 md:-bottom-6 md:-right-6 bg-[#9E0B7F] text-white p-4 md:p-6 rounded-xl shadow-lg w-fit">
                 <div className="flex items-center space-x-4">
-                  <div className="text-4xl md:text-5xl font-bold">{years}</div>
+                  <div className="text-4xl md:text-5xl font-bold">{years}+</div>
                   <div>
                     <div className="font-semibold text-sm md:text-base">Years</div>
                     <div className="text-xs md:text-sm opacity-80">of Expertise</div>
@@ -134,18 +129,18 @@ const AboutUs = () => {
         <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6">
           {[
             {
-              icon: Clock,
-              title: "Timely Consultations",
+              icon: Users,
+              title: "5000+ Healthy Clients",
               color: "text-[#8CA417]",
             },
             {
               icon: Shield,
-              title: "Global Support",
+              title: "Global Online Consultations",
               color: "text-[#D93BB1]",
             },
             {
               icon: HeartPulse,
-              title: "Certified Expertise",
+              title: "Evidence-Based Nutrition",
               color: "text-[#9E0B7F]",
             },
           ].map((item, index) => (

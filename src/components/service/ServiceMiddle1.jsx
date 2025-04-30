@@ -22,63 +22,63 @@ const NutritionServices = () => {
     {
       id: 1,
       title: "Weight Loss Plan",
-      description: "Customized nutrition plans designed to help you shed excess weight sustainably through balanced meals and healthy habits.",
+      description: "Personalized diet plans to shed excess weight sustainably using kitchen-based meals, no supplements, and no fad diets.",
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
           <path d="M16.2 3.8a2.7 2.7 0 0 0 -3.81 0l-10.6 10.59a2.7 2.7 0 0 0 0 3.82l7 7a2.7 2.7 0 0 0 3.81 0l10.6 -10.59a2.7 2.7 0 0 0 0 -3.82l-7 -7" />
           <path d="M4.9 19.1l7 -7" />
         </svg>
       ),
-      benefits: ["Sustainable fat loss", "Metabolic boost", "Healthy eating habits"],
+      benefits: ["Sustainable weight loss", "Improved metabolism", "Healthy eating habits"],
       color: "from-pink-500 to-pink-600",
       category: "weight"
     },
     {
       id: 2,
       title: "Weight Gain Plan",
-      description: "Tailored meal plans to help you gain weight healthily, focusing on muscle growth and nutrient-dense foods.",
+      description: "Customized plans for healthy weight gain, ideal for low appetite or recovery, using nutrient-dense, kitchen-based meals.",
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
           <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
           <path d="M14 6a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-4a2 2 0 0 1 -2 -2v-6a2 2 0 0 1 2 -2h4z" />
         </svg>
       ),
-      benefits: ["Muscle growth", "Balanced nutrition", "Energy optimization"],
+      benefits: ["Healthy weight gain", "Muscle growth", "Energy optimization"],
       color: "from-blue-500 to-blue-600",
       category: "weight"
     },
     {
       id: 3,
-      title: "PCOS Management",
-      description: "Specialized nutrition strategies to manage PCOS symptoms, balance hormones, and improve overall well-being.",
+      title: "PCOS/PCOD Management",
+      description: "Tailored diet and lifestyle strategies to balance hormones, improve menstrual health, and reduce PCOS symptoms.",
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
           <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
           <path d="M10 12h4" />
         </svg>
       ),
-      benefits: ["Hormone balance", "Weight management", "Symptom relief"],
+      benefits: ["Hormone balance", "Symptom relief", "Menstrual health"],
       color: "from-emerald-500 to-emerald-600",
       category: "hormonal"
     },
     {
       id: 4,
-      title: "Pre and Post Pregnancy Plan",
-      description: "Nutrition guidance for a healthy pregnancy and postpartum recovery, supporting both mother and baby.",
+      title: "Pre and Post-Pregnancy Plan",
+      description: "Expert maternal nutrition guidance for a healthy pregnancy and postpartum recovery using kitchen-based diets.",
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
           <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
           <path d="M3 12h1m8 -9v1m8 8h1m-9 8v1" />
         </svg>
       ),
-      benefits: ["Fetal development", "Postpartum recovery", "Energy support"],
+      benefits: ["Healthy pregnancy", "Postpartum recovery", "Maternal nutrition"],
       color: "from-purple-500 to-purple-600",
       category: "hormonal"
     },
     {
       id: 5,
       title: "Diabetes Management",
-      description: "Meal plans to regulate blood sugar levels, improve insulin sensitivity, and maintain overall health.",
+      description: "Kitchen-based meal plans to control blood sugar levels naturally, enhance insulin function, and boost energy.",
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
           <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
@@ -86,56 +86,56 @@ const NutritionServices = () => {
           <path d="M15 15l.01 0" />
         </svg>
       ),
-      benefits: ["Blood sugar control", "Energy stability", "Complication prevention"],
+      benefits: ["Blood sugar control", "Insulin support", "Energy stability"],
       color: "from-teal-500 to-teal-600",
       category: "chronic"
     },
     {
       id: 6,
-      title: "Thyroid Plan",
-      description: "Nutrition support to optimize thyroid function, manage symptoms, and enhance metabolism.",
+      title: "Thyroid Management",
+      description: "Natural, kitchen-based diets to support thyroid function, boost metabolism, and reduce fatigue.",
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
           <path d="M7 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
           <path d="M17 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
         </svg>
       ),
-      benefits: ["Metabolism support", "Hormone regulation", "Fatigue reduction"],
+      benefits: ["Thyroid support", "Metabolism boost", "Fatigue reduction"],
       color: "from-amber-500 to-amber-600",
       category: "hormonal"
     },
     {
       id: 7,
-      title: "Kids Nutrition",
-      description: "Age-appropriate meal plans to support growth, development, and healthy eating habits for children.",
+      title: "Child Nutrition",
+      description: "Fun, healthy meal plans for kids to support growth, immunity, and lifelong healthy eating habits.",
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
           <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
           <path d="M3 12h1m8 -9v1m8 8h1" />
         </svg>
       ),
-      benefits: ["Growth support", "Immunity boost", "Picky eater solutions"],
+      benefits: ["Growth support", "Immunity boost", "Healthy habits"],
       color: "from-orange-500 to-orange-600",
       category: "lifestyle"
     },
     {
       id: 8,
       title: "Immunity Boosting Plan",
-      description: "Nutrition plans rich in vitamins and antioxidants to strengthen your immune system and fight illness.",
+      description: "Antioxidant-rich, kitchen-based diets to strengthen immunity and protect against illness naturally.",
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
           <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
           <path d="M12 8v4l3 3" />
         </svg>
       ),
-      benefits: ["Immune enhancement", "Infection resistance", "Energy boost"],
+      benefits: ["Immune strength", "Illness resistance", "Energy boost"],
       color: "from-yellow-500 to-yellow-600",
       category: "wellness"
     },
     {
       id: 9,
-      title: "Athletes Diet Plan",
-      description: "Performance-focused nutrition for athletes to enhance strength, endurance, and recovery.",
+      title: "Sports Nutrition",
+      description: "Performance-focused nutrition to fuel athletes, enhance endurance, and support muscle recovery.",
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
           <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
@@ -143,42 +143,42 @@ const NutritionServices = () => {
           <path d="M5.5 8.5l2.5 2.5" />
         </svg>
       ),
-      benefits: ["Performance boost", "Muscle recovery", "Energy optimization"],
+      benefits: ["Enhanced performance", "Muscle recovery", "Endurance support"],
       color: "from-indigo-500 to-indigo-600",
       category: "lifestyle"
     },
     {
       id: 10,
-      title: "Arthritis Plan",
-      description: "Anti-inflammatory meals to reduce joint pain and improve mobility for arthritis management.",
+      title: "Arthritis Management",
+      description: "Nutrient-rich, anti-inflammatory diets to reduce joint pain and support mobility.",
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
           <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
           <path d="M9 15l3 -3l3 3" />
         </svg>
       ),
-      benefits: ["Pain reduction", "Joint support", "Inflammation control"],
+      benefits: ["Pain reduction", "Joint mobility", "Inflammation control"],
       color: "from-red-500 to-red-600",
       category: "chronic"
     },
     {
       id: 11,
-      title: "Anti-inflammatory Diet Plan",
-      description: "Nutrition to reduce inflammation, improve gut health, and support overall wellness.",
+      title: "Anti-Inflammatory Diet",
+      description: "Gut-friendly meals to reduce inflammation, alleviate chronic issues, and promote overall wellness.",
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
           <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
           <path d="M12 9v6" />
         </svg>
       ),
-      benefits: ["Inflammation reduction", "Gut health", "Energy improvement"],
+      benefits: ["Inflammation reduction", "Gut health", "Chronic issue relief"],
       color: "from-green-500 to-green-600",
       category: "wellness"
     },
     {
       id: 12,
-      title: "Heart Health Plan",
-      description: "Heart-friendly meals to lower cholesterol, manage blood pressure, and promote cardiovascular health.",
+      title: "Healthy Heart Plan",
+      description: "Heart-friendly, kitchen-based meals to balance cholesterol and boost cardiovascular health.",
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
           <path d="M12 20a2 2 0 0 1 -2 -2v-6a2 2 0 0 1 2 -2a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2" />
@@ -186,28 +186,28 @@ const NutritionServices = () => {
           <path d="M15 13l3 -3l-3 -3" />
         </svg>
       ),
-      benefits: ["Cholesterol control", "Blood pressure support", "Heart strength"],
+      benefits: ["Cholesterol balance", "Heart health", "Blood pressure support"],
       color: "from-rose-500 to-rose-600",
       category: "chronic"
     },
     {
       id: 13,
-      title: "Post Menopause Diet Plan",
-      description: "Nutrition to manage menopausal symptoms, support bone health, and maintain vitality.",
+      title: "Post-Menopause Management",
+      description: "Nutritional plans to balance hormones, support bone health, and manage menopausal symptoms.",
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
           <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
           <path d="M9 9l6 6" />
         </svg>
       ),
-      benefits: ["Bone health", "Symptom relief", "Energy balance"],
+      benefits: ["Hormone balance", "Bone health", "Symptom management"],
       color: "from-violet-500 to-violet-600",
       category: "hormonal"
     },
     {
       id: 14,
-      title: "Glowing Skin Plan",
-      description: "Antioxidant-rich nutrition to promote radiant skin, reduce blemishes, and enhance complexion.",
+      title: "Glowing Skin Diet",
+      description: "Antioxidant-rich meals and hydration plans for radiant, clear, and glowing skin.",
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
           <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
@@ -215,14 +215,14 @@ const NutritionServices = () => {
           <path d="M12 18v3" />
         </svg>
       ),
-      benefits: ["Skin radiance", "Blemish reduction", "Hydration support"],
+      benefits: ["Radiant skin", "Blemish reduction", "Hydration support"],
       color: "from-fuchsia-500 to-fuchsia-600",
       category: "wellness"
     },
     {
       id: 15,
-      title: "Detox Plan",
-      description: "Cleansing nutrition to eliminate toxins, boost energy, and revitalize your body.",
+      title: "Detox Diet",
+      description: "Natural, fiber-rich meals to gently cleanse the body and boost energy levels.",
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
           <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
@@ -230,51 +230,79 @@ const NutritionServices = () => {
           <path d="M8 12h8" />
         </svg>
       ),
-      benefits: ["Toxin elimination", "Energy boost", "Digestive health"],
+      benefits: ["Body cleansing", "Energy boost", "Digestive health"],
       color: "from-lime-500 to-lime-600",
       category: "wellness"
     },
     {
       id: 16,
-      title: "Celiac Disease Plan",
-      description: "Gluten-free nutrition to manage celiac disease, support gut healing, and maintain wellness.",
+      title: "Celiac Disease Management",
+      description: "Delicious gluten-free diets to manage celiac disease and support gut healing.",
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
           <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
           <path d="M15 9l-6 6" />
         </svg>
       ),
-      benefits: ["Gluten-free living", "Gut healing", "Nutrient balance"],
+      benefits: ["Gluten-free nutrition", "Gut healing", "Symptom relief"],
       color: "from-cyan-500 to-cyan-600",
       category: "chronic"
     },
     {
       id: 17,
-      title: "Fatty Liver Diet",
-      description: "Liver-supportive meals to reduce fat buildup, improve liver function, and enhance detoxification.",
+      title: "Fatty Liver Management",
+      description: "Low-fat, liver-supportive meals to reverse fatty liver symptoms and enhance detoxification.",
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
           <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
           <path d="M9 15l6 -6" />
         </svg>
       ),
-      benefits: ["Liver detox", "Fat reduction", "Energy support"],
+      benefits: ["Liver detox", "Symptom reversal", "Fat reduction"],
       color: "from-emerald-600 to-emerald-700",
       category: "chronic"
     },
     {
       id: 18,
-      title: "Acid Reflux Diet Plan",
-      description: "Gentle nutrition to reduce acid reflux symptoms, soothe digestion, and promote gut comfort.",
+      title: "Acid Reflux Management",
+      description: "Stomach-friendly diets to soothe digestion and eliminate acid reflux triggers.",
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
           <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
           <path d="M12 9l3 3l-3 3" />
         </svg>
       ),
-      benefits: ["Reflux relief", "Digestive comfort", "Balanced pH"],
+      benefits: ["Reflux relief", "Digestive comfort", "Trigger elimination"],
       color: "from-blue-600 to-blue-700",
       category: "chronic"
+    },
+    {
+      id: 19,
+      title: "Fresh Fruit Bouquet Delivery",
+      description: "Customizable, visually appealing fresh fruit bouquets as a healthy gift for any occasion, delivered to your doorstep.",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
+          <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+          <path d="M9 9l6 6" />
+        </svg>
+      ),
+      benefits: ["Healthy gifting", "Customizable options", "Visual appeal"],
+      color: "from-pink-600 to-pink-700",
+      category: "wellness"
+    },
+    {
+      id: 20,
+      title: "Healthy Salad Delivery",
+      description: "Customized, organic salads designed by experts, rich in fiber and nutrients, delivered in Jaipur.",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-full h-full">
+          <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+          <path d="M9 12h6" />
+        </svg>
+      ),
+      benefits: ["Nutrient-rich meals", "Digestive health", "Weight management"],
+      color: "from-green-600 to-green-700",
+      category: "wellness"
     }
   ];
 
@@ -293,11 +321,10 @@ const NutritionServices = () => {
       <section className="py-20 bg-gradient-to-b from-nutricare-bg-light to-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <div className="inline-block px-4 py-1 bg-nutricare-green bg-opacity-20 rounded-full text-nutricare-green-dark font-semibold text-sm mb-3">WHAT WE OFFER</div>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-nutricare-primary-dark mb-6">Nutrition Services <span className="text-nutricare-green">Designed for You</span></h2>
+            <div className="inline-block px-4 py-1 bg-nutricare-green bg-opacity-20 rounded-full text-nutricare-green-dark font-semibold text-sm mb-3">OUR SERVICES</div>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-nutricare-primary-dark mb-6">Personalized Nutrition <span className="text-nutricare-green">by Nutridietmitra</span></h2>
             <p className="max-w-2xl mx-auto text-nutricare-text-gray text-lg">
-              Our evidence-based approach combines clinical expertise with personalized care to help you 
-              achieve sustainable results and transform your relationship with food and fitness.
+              Founded by Dt. Tanu Bhargava, Nutridietmitra offers 17+ years of expertise with 5000+ clients, providing 100% personalized, kitchen-based nutrition plans with no supplements for sustainable health.
             </p>
           </div>
 
@@ -397,9 +424,9 @@ const NutritionServices = () => {
               ))}
             </div>
             <div className="relative z-10">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Transform Your Nutrition?</h2>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">Join the Nutridietmitra Family</h2>
               <p className="text-lg max-w-2xl mx-auto mb-8 opacity-90">
-                Book a free consultation to discuss your goals and discover how our personalized approach can help you achieve lasting results.
+                Book your free consultation to start your journey toward a healthier lifestyle with personalized, science-backed nutrition plans.
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4">
                 <button 
@@ -411,12 +438,6 @@ const NutritionServices = () => {
                 >
                   Book Free Consultation
                 </button>
-                {/* <a 
-                  href="/faq" 
-                  className="border border-white text-white py-3 px-8 rounded-full font-medium hover:bg-white hover:text-nutricare-primary-dark transition-colors"
-                >
-                  Learn More
-                </a> */}
               </div>
             </div>
           </div>
@@ -428,13 +449,6 @@ const NutritionServices = () => {
         onClose={() => setAppointmentOpen(false)}
         selectedService={selectedService} 
       />
-
-      {/* <a 
-        href="#top" 
-        className="fixed bottom-6 right-6 bg-nutricare-green hover:bg-nutricare-green-dark text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110"
-      >
-        <ChevronUp size={24} />
-      </a> */}
     </div>
   );
 };

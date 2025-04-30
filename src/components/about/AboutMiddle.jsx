@@ -33,13 +33,10 @@ const WhoWeAreSection = () => {
                   </h5>
                 </div>
                 <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                  Meet Dt. Tanu Bhargava & Nutridietmitra
+                  Dt. Tanu Bhargava & Nutridietmitra
                 </h2>
                 <p className="text-gray-300">
-                  Founded in 2014 by Dt. Tanu Bhargava, a dietitian with over 17
-                  years of experience, Nutridietmitra is a Jaipur-based clinic
-                  dedicated to transforming lives through healthy eating and
-                  lifestyle habits.
+                  Established in 2014 by Dt. Tanu Bhargava, a Jaipur-based dietitian with over 17+ years of experience, Nutridietmitra transforms lives through personalized, kitchen-based nutrition plans, empowering over 5000 clients globally.
                 </p>
               </div>
 
@@ -53,13 +50,10 @@ const WhoWeAreSection = () => {
                   </div>
                   <div>
                     <h5 className="text-xl font-semibold text-white mb-2">
-                      Expert Nutrition Guidance
+                      Science-Backed Nutrition
                     </h5>
                     <p className="text-gray-300">
-                      With experience in hospitals, fitness centers, and
-                      corporate consulting, Dt. Tanu offers evidence-based
-                      solutions for weight, obesity, Thyroid, PCOD/S, Diabetes,
-                      and more.
+                      Dt. Tanu Bhargava’s expertise spans hospitals, fitness centers, and corporate wellness, delivering evidence-based solutions for weight management, PCOS/PCOD, diabetes, thyroid, and more.
                     </p>
                   </div>
                 </div>
@@ -74,12 +68,10 @@ const WhoWeAreSection = () => {
                   </div>
                   <div>
                     <h5 className="text-xl font-semibold text-white mb-2">
-                      Personalized Wellness Plans
+                      Tailored Wellness Plans
                     </h5>
                     <p className="text-gray-300">
-                      Serving over 5,000 clients worldwide, our tailored diet
-                      and lifestyle plans are customized to your preferences,
-                      needs, and goals.
+                      Serving over 5000 clients worldwide, our customized diet and lifestyle plans are sustainable, kitchen-based, and free of supplements or crash diets, tailored to your unique needs.
                     </p>
                   </div>
                 </div>
@@ -90,7 +82,7 @@ const WhoWeAreSection = () => {
                   onClick={openAppointmentModal}
                   className="group inline-flex items-center text-white font-medium text-lg hover:text-nutricare-green transition-colors duration-300"
                 >
-                  <span>Schedule a Consultation</span>
+                  <span>Book Free Consultation</span>
                   <div className="ml-3 w-8 h-8 rounded-full bg-nutricare-green flex items-center justify-center group-hover:bg-white transition-colors duration-300">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -118,7 +110,7 @@ const WhoWeAreSection = () => {
             <div className="h-full relative z-10 rounded-2xl overflow-hidden shadow-xl">
               <img
                 src={NutrionistPreparing}
-                alt="Dt. Tanu Bhargava preparing nutrition plans"
+                alt="Nutridietmitra Personalized Nutrition Plans"
                 className="w-full h-full object-cover"
               />
 
@@ -141,12 +133,12 @@ const WhoWeAreSection = () => {
                       5000+
                     </h3>
                     <p className="text-nutricare-text-gray text-sm">
-                      Happy Clients
+                      Healthy Clients
                     </p>
                   </div>
                   <div className="text-center">
                     <h3 className="text-3xl font-bold text-nutricare-primary-dark">
-                      10+
+                      6
                     </h3>
                     <p className="text-nutricare-text-gray text-sm">
                       Awards Won

@@ -1,55 +1,49 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Dumbbell, Apple, Scale, Users, Salad } from 'lucide-react';
 
-// Corrected image paths assuming they are in the public/assets/images directory
-const SportsNutrionist = '/assets/Images/SportsNutrionist.jpg';
-const PersonalisedNutrionist = '/assets/Images/PersonalisedNutrionist.jpg';
+// Image paths (retained as placeholders; update if specific images are provided)
+const SportsNutrition = '/assets/Images/SportsNutrionist.jpg';
+const PCOSManagement = '/assets/Images/PersonalisedNutrionist.jpg';
 const WeightLoss = '/assets/Images/WeightLoss.jpg';
-const IndividualCoaching = '/assets/Images/IndividualCoaching.jpg';
+const DiabetesDiet = '/assets/Images/IndividualCoaching.jpg';
 const ChildNutrition = '/assets/Images/ChildNutrition.jpg';
-
 
 const services = [
   {
     id: 1,
-    image: SportsNutrionist,
-    icon: 'bicycle',
-    title: 'Sports Nutritionist',
-    description: 'We are specializing in sports nutrition. Our sports nutrition team love the benefits of exercise brings.',
-    link: 'sports-nutritionist.html',
+    image: SportsNutrition,
+    icon: Dumbbell,
+    title: 'Sports Nutrition',
+    description: 'Fuel your performance with tailored, kitchen-based nutrition plans designed to enhance endurance, recovery, and strength, without supplements.',
   },
   {
     id: 2,
-    image: PersonalisedNutrionist,
-    icon: 'fruits',
-    title: 'Personalized Nutrition',
-    description: 'Our personalized nutrition foods are right for you & supplements should be taking with diet plan.',
-    link: 'personalized-nutrition.html',
+    image: PCOSManagement,
+    icon: Apple,
+    title: 'PCOS/PCOD Management',
+    description: 'Balance hormones and reduce symptoms with personalized diet and lifestyle plans, crafted to support menstrual health and overall wellness.',
   },
   {
     id: 3,
     image: WeightLoss,
-    icon: 'reduce',
-    title: 'Weight Loss Programs',
-    description: "Weight loss process doesn't mean strive to body but make the eating process healthy and fully exotic.",
-    link: 'weight-loss-programs.html',
+    icon: Scale,
+    title: 'Weight Loss',
+    description: 'Achieve sustainable weight loss with delicious, kitchen-based meal plans that nourish your body and fit your lifestyle, no starvation diets.',
   },
   {
     id: 4,
-    image: IndividualCoaching,
-    icon: 'meditation',
-    title: 'Individual Coaching',
-    description: 'We provide comprehensive coaching to help you achieve your fitness and nutrition goals.',
-    link: 'individual-coaching.html',
+    image: DiabetesDiet,
+    icon: Users,
+    title: 'Diabetes Diet',
+    description: 'Manage blood sugar levels naturally with customized, nutrient-rich diets that balance energy and insulin function, free of supplements.',
   },
   {
     id: 5,
     image: ChildNutrition,
-    icon: 'nutritionist-1',
+    icon: Salad,
     title: 'Child Nutrition',
-    description: 'Our main goal for the child nutrition is to provide a healthy and nutritious breakfast to child for better health.',
-    link: 'child-nutrition.html',
+    description: 'Lay the foundation for lifelong health with fun, healthy, and nutrient-dense meals tailored for your growing child’s needs.',
   },
 ];
 
@@ -69,10 +63,10 @@ const Work = () => {
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-12">
-          <h5 className="text-nutricare-primary-light font-bold mb-2 text-sm uppercase tracking-wider">What We Offers</h5>
-          <h2 className="text-3xl md:text-4xl font-bold text-nutricare-text-dark mb-4">How It Works?</h2>
+          <h5 className="text-nutricare-primary-light font-bold mb-2 text-sm uppercase tracking-wider">Our Nutrition Services</h5>
+          <h2 className="text-3xl md:text-4xl font-bold text-nutricare-text-dark mb-4">Tailored Nutrition Plans</h2>
           <p className="text-nutricare-text-gray text-sm md:text-base max-w-2xl mx-auto">
-            If you're looking for a fast-paced, collaborative environment You'll enjoy an innovative & results-oriented culture driven by the facts.
+            Led by Dt. Tanu Bhargava, Nutridietmitra offers personalized, kitchen-based nutrition plans to support your health goals, from weight management to managing PCOS, diabetes, and more, without supplements or crash diets.
           </p>
         </div>
 
@@ -108,7 +102,7 @@ const Work = () => {
               <div className="relative rounded-lg overflow-hidden shadow-lg order-2 md:order-1">
                 <img
                   src={services[currentIndex].image}
-                  alt={services[currentIndex].title}
+                  alt={`${services[currentIndex].title} by Nutridietmitra`}
                   className="w-full h-64 md:h-96 object-cover"
                 />
                 {/* Hidden on mobile, shown on larger screens */}
@@ -122,7 +116,7 @@ const Work = () => {
                 <div>
                   <div className="flex items-center mb-4 md:mb-6">
                     <div className="bg-nutricare-primary-light text-white p-3 md:p-4 rounded-full mr-4">
-                      <i className={`flaticon flaticon-${services[currentIndex].icon} text-xl md:text-2xl`}></i>
+                      {React.createElement(services[currentIndex].icon, { className: "text-xl md:text-2xl" })}
                     </div>
                     <h3 className="text-2xl md:text-3xl font-bold text-nutricare-text-dark">
                       {services[currentIndex].title}
@@ -135,12 +129,12 @@ const Work = () => {
                 </div>
 
                 <div className="flex justify-between items-center">
-                  <a
-                    href={services[currentIndex].link}
+                  <button
+                    onClick={() => window.location.href = '/consultation'}
                     className="inline-block px-4 md:px-6 py-2 md:py-3 bg-nutricare-green text-white rounded-full hover:bg-nutricare-green-dark transition text-sm md:text-base"
                   >
-                    Read More
-                  </a>
+                    Book Free Consultation
+                  </button>
                   {/* Page Indicator */}
                   <div className="text-nutricare-text-gray text-sm">
                     {currentIndex + 1} / {services.length}

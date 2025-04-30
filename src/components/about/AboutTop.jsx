@@ -32,7 +32,7 @@ const AboutTop = () => {
 
               {/* Accent Elements */}
               <div className="absolute -top-4 -left-4 w-24 h-24 bg-nutricare-green rounded-full opacity-30 z-0"></div>
-              <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-nutricare-primary-light rounded-full opacity-20 z-0"></div>
+              <div className="absolute -bottommooth-6 -right-6 w-32 h-32 bg-nutricare-primary-light rounded-full opacity-20 z-0"></div>
             </div>
           </div>
 
@@ -46,18 +46,14 @@ const AboutTop = () => {
                   About Nutridietmitra
                 </h5>
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-nutricare-text-dark leading-tight">
-                  Leading Nutrition Experts in India
+                  India’s Trusted Nutrition Experts
                 </h2>
               </div>
 
               {/* Content */}
               <div className="mt-6 text-nutricare-text-gray">
                 <p className="leading-relaxed">
-                  Led by Dt. Tanu Bhargava, a renowned dietitian with over 17
-                  years of experience, Nutridietmitra was founded in 2014 in
-                  Jaipur. We’re committed to empowering individuals worldwide
-                  with personalized nutrition and lifestyle solutions,
-                  serving over 5,000 clients.
+                  Founded in 2014 by Dt. Tanu Bhargava, a Jaipur-based dietitian with over 17 years of experience, Nutridietmitra empowers individuals globally with personalized, kitchen-based nutrition plans. Serving 5000+ clients, we focus on sustainable, science-backed solutions for weight management, PCOS, diabetes, and more, without supplements or crash diets.
                 </p>
               </div>
 
@@ -77,7 +73,7 @@ const AboutTop = () => {
                     <h3 className="text-4xl font-bold text-nutricare-primary-dark">
                       5000+
                     </h3>
-                    <p className="text-nutricare-text-gray">Happy Clients</p>
+                    <p className="text-nutricare-text-gray">Healthy Clients</p>
                   </div>
                 </div>
 
@@ -90,7 +86,7 @@ const AboutTop = () => {
                   </div>
                   <div>
                     <h3 className="text-4xl font-bold text-nutricare-primary-dark">
-                      10+
+                      6
                     </h3>
                     <p className="text-nutricare-text-gray">Awards Won</p>
                   </div>
@@ -113,19 +109,8 @@ const AboutTop = () => {
               </h3>
             </div>
             <p className="text-nutricare-text-gray">
-              To make everyone healthy and happy by promoting healthy eating
-              and lifestyle habits through personalized diet plans tailored to
-              individual needs and preferences.
+              To empower individuals with health, energy, and confidence through personalized, delicious diet plans that support, heal, and promote holistic living.
             </p>
-            {/* <div className="mt-6">
-              <a
-                href="#learn-more"
-                className="inline-flex items-center text-nutricare-primary-dark group-hover:text-nutricare-green transition-colors duration-300"
-              >
-                Learn more
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </a>
-            </div> */}
           </div>
 
           {/* Vision Card */}
@@ -139,19 +124,8 @@ const AboutTop = () => {
               </h3>
             </div>
             <p className="text-nutricare-text-gray">
-              To innovate and implement cutting-edge nutrition solutions,
-              healing society by addressing lifestyle disorders and promoting
-              wellness globally.
+              To be India’s most trusted nutrition expert, inspiring holistic living with empathetic, evidence-based care and sustainable outcomes globally.
             </p>
-            {/* <div className="mt-6">
-              <a
-                href="#learn-more"
-                className="inline-flex items-center text-nutricare-primary-dark group-hover:text-nutricare-green transition-colors duration-300"
-              >
-                Learn more
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </a>
-            </div> */}
           </div>
 
           {/* History Card */}
@@ -165,19 +139,8 @@ const AboutTop = () => {
               </h3>
             </div>
             <p className="text-nutricare-text-gray">
-              Since its founding in 2014 by Dt. Tanu Bhargava, Nutridietmitra
-              has grown from a Jaipur-based clinic to a global leader in
-              personalized nutrition.
+              Established in 2014 by Dt. Tanu Bhargava, Nutridietmitra has grown from a Jaipur-based practice to a global leader, serving 5000+ clients with personalized nutrition.
             </p>
-            {/* <div className="mt-6">
-              <a
-                href="#learn-more"
-                className="inline-flex items-center text-nutricare-primary-dark group-hover:text-nutricare-green transition-colors duration-300"
-              >
-                Learn more
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </a>
-            </div> */}
           </div>
         </div>
       </div>

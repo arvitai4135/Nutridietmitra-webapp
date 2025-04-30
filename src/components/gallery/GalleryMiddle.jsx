@@ -3,66 +3,66 @@ import React, { useState } from 'react';
 const PortfolioGallery = () => {
   const [activeTab, setActiveTab] = useState('All');
   
-  // Portfolio item data
+  // Portfolio item data updated based on Nutridietmitra.pdf
   const portfolioItems = [
     {
       id: 1,
-      title: "Pilates Exercises",
-      categories: ["Fitness"],
-      image: "/assets/Images/gallery/PilatesExercises.jpg",
+      title: "Weight Loss Program",
+      categories: ["Weight Management", "Diet"],
+      image: "/assets/Images/WeightLoss.jpg",
     },
     {
       id: 2,
-      title: "Athletic Leg Exercise",
-      categories: ["Fitness", "Weight lose"],
-      image: "/assets/Images/gallery/AthleticLegExercise.jpg",
+      title: "PCOS/PCOD Nutrition",
+      categories: ["Hormonal Health", "Diet"],
+      image: "/assets/Images/PCOSNutrition.jpg",
     },
     {
       id: 3,
-      title: "Diet Old People",
-      categories: ["Diet"],
-      image: "/assets/Images/gallery/DietOldPeople.jpg",
+      title: "Diabetes Management",
+      categories: ["Chronic Conditions", "Diet"],
+      image: "/assets/Images/DiabetesManagement.jpg",
     },
     {
       id: 4,
-      title: "Children Diet Management",
-      categories: ["Diet", "Supplement"],
-      image: "/assets/Images/gallery/ChildrenDietManagement.jpg",
+      title: "Child Nutrition Plan",
+      categories: ["Lifestyle Support", "Diet"],
+      image: "/assets/Images/ChildNutrition.jpg",
     },
     {
       id: 5,
-      title: "Diabetes Drinks",
-      categories: ["Supplement"],
-      image: "/assets/Images/gallery/DiabetesDrinks.jpg",
+      title: "Sports Nutrition",
+      categories: ["Lifestyle Support", "Diet"],
+      image: "/assets/Images/SportsNutrition.jpg",
     },
     {
       id: 6,
-      title: "Daily Exercise Program",
-      categories: ["Health", "Diet"],
-      image: "/assets/Images/gallery/DailyExerciseProgram.jpg",
+      title: "Glowing Skin Diet",
+      categories: ["General Wellness", "Diet"],
+      image: "/assets/Images/GlowingSkinDiet.jpg",
     },
     {
       id: 7,
-      title: "Training For Senior",
-      categories: ["Health"],
-      image: "/assets/Images/gallery/TrainingForSenior.jpg",
+      title: "Thyroid Management",
+      categories: ["Hormonal Health", "Diet"],
+      image: "/assets/Images/ThyroidManagement.jpg",
     },
     {
       id: 8,
-      title: "Genub Workout Sessions",
-      categories: ["Fitness", "Health"],
-      image: "/assets/Images/gallery/GenubWorkoutSessions.jpg",
+      title: "Healthy Salad Delivery",
+      categories: ["General Wellness", "Food Delivery"],
+      image: "/assets/Images/HealthyFood.jpg",
     },
     {
       id: 9,
-      title: "Athletic Training",
-      categories: ["Supplement"],
-      image: "/assets/Images/gallery/AthleticTraining.jpg",
+      title: "Fresh Fruit Bouquet",
+      categories: ["General Wellness", "Food Delivery"],
+      image: "/assets/Images/FruitBouquet.jpg",
     }
   ];
   
-  // Available categories for filtering
-  const categories = ['All', 'Fitness', 'Weight lose', 'Diet', 'Supplement', 'Health'];
+  // Updated categories for filtering based on Nutridietmitra services
+  const categories = ['All', 'Weight Management', 'Hormonal Health', 'Chronic Conditions', 'Lifestyle Support', 'General Wellness', 'Food Delivery'];
   
   // Filter portfolio items based on active tab
   const filteredItems = activeTab === 'All'
@@ -75,11 +75,11 @@ const PortfolioGallery = () => {
         {/* Portfolio Header */}
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-nutricare-primary-dark mb-2">
-            Our Programs
+            Nutridietmitra Programs & Services
           </h2>
           <div className="w-24 h-1 bg-nutricare-green mx-auto mb-4"></div>
           <p className="text-nutricare-text-gray max-w-2xl mx-auto">
-            Explore our specialized health and fitness programs
+            Discover our personalized, kitchen-based nutrition programs and food delivery services designed for your health goals.
           </p>
         </div>
         

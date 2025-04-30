@@ -65,7 +65,7 @@ const PricingCard = ({
           <div className={`bg-nutricare-bg-light rounded-full py-2 px-4 mb-8 inline-block mx-auto transition-all duration-500 ${
             isHovered ? 'bg-nutricare-primary-light bg-opacity-10' : ''
           }`}>
-            <p className="text-nutricare-primary-light font-medium text-sm">7 Days Free Trial</p>
+            <p className="text-nutricare-primary-light font-medium text-sm">{period === 'meal' ? '10% Gym Member Discount' : 'Free Consultation'}</p>
           </div>
           
           <ul className="space-y-4 mb-8 flex-grow">
@@ -107,7 +107,7 @@ const PricingCard = ({
                   : 'bg-gray-800'
             } hover:shadow-lg relative overflow-hidden group`}
           >
-            <span className="relative z-10">Get Started</span>
+            <span className="relative z-10">{period === 'meal' || period === 'week' ? 'Order Now' : 'Get Started'}</span>
             <div className={`absolute top-0 left-0 w-full h-full bg-gradient-to-r ${
               isFeatured 
                 ? 'from-nutricare-primary-light to-nutricare-primary-dark'

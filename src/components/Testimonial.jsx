@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import HealthCoach from '/assets/Images/HealthCoach.jpg'; // Corrected path
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import HealthCoach from '/assets/Images/HealthCoach.jpg';
 
 const Testimonial = () => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -22,26 +23,26 @@ const Testimonial = () => {
     {
       id: 1,
       quote:
-        'Following a sports nutrition plan for the past 4 months has completely transformed my performance. Before, I struggled with low energy and early fatigue. Now, I feel consistently energized through my workouts and recovery is much faster!',
-      name: 'Michael Reynolds',
-      location: 'Toronto, Canada',
-      image: '/assets/Images/img1.jpg',
+        'The weight loss plan from Nutridietmitra transformed my life! I lost 12 kg in 4 months with delicious, kitchen-based meals that fit my lifestyle. Dt. Tanu’s guidance made it sustainable and enjoyable.',
+      name: 'Priya Sharma',
+      location: 'Jaipur, India',
+      image: '/assets/Images/client1.jpg',
     },
     {
       id: 2,
       quote:
-        'As a marathon runner, proper nutrition is everything. The customized plan I received addressed all my specific needs and has helped me shave 15 minutes off my personal best. The guidance on timing my nutrients has been game-changing.',
-      name: 'Sarah Chen',
-      location: 'Seattle, USA',
-      image: '/assets/Images/img1.jpg',
+        'Managing my PCOS was a struggle until I joined Nutridietmitra. The personalized diet plan balanced my hormones and improved my energy levels. I feel healthier and more confident now!',
+      name: 'Aisha Khan',
+      location: 'Dubai, UAE',
+      image: '/assets/Images/client2.jpg',
     },
     {
       id: 3,
       quote:
-        "After years of trying different approaches, I finally found a nutrition plan that works with my body instead of against it. My endurance has doubled and I'm setting new personal records every month. The difference is remarkable!",
-      name: 'James Wilson',
-      location: 'Melbourne, Australia',
-      image: '/assets/Images/img1.jpg',
+        'Nutridietmitra’s diabetes diet helped me control my blood sugar naturally. The tailored meals were easy to follow, and Dt. Tanu’s support kept me motivated. My health has improved significantly!',
+      name: 'David Patel',
+      location: 'London, UK',
+      image: '/assets/Images/client3.jpg',
     },
   ];
 
@@ -64,20 +65,23 @@ const Testimonial = () => {
           {/* Left column with image */}
           <div className="hidden md:block md:w-5/12 lg:w-5/12 relative">
             <div className="bg-nutricare-bg-light p-4 rounded-lg shadow-xl transform hover:scale-105 transition-transform duration-300">
-              <img src={HealthCoach} alt="Healthy nutrition" className="w-full h-auto rounded" />
+              <img src={HealthCoach} alt="Nutridietmitra Nutrition Success" className="w-full h-auto rounded" />
             </div>
             <div className="absolute -bottom-6 -right-6 bg-nutricare-primary-light h-24 w-24 rounded-full flex items-center justify-center shadow-lg animate-pulse">
-              <span className="text-white font-bold text-2xl">4.9★</span>
+              <span className="text-white font-bold text-2xl">5.0★</span>
             </div>
           </div>
 
           {/* Right column with testimonials */}
           <div className="w-full md:w-7/12 lg:w-7/12 md:pl-12">
             <div className="mb-8">
-              <h5 className="text-nutricare-primary-dark font-medium text-lg mb-2">Client Success Stories</h5>
+              <h5 className="text-nutricare-primary-dark font-medium text-lg mb-2">What Our Clients Say</h5>
               <h2 className="text-nutricare-primary-dark text-4xl md:text-5xl font-bold">
                 Transforming Lives Through Nutrition
               </h2>
+              <p className="text-nutricare-text-gray text-base mt-4">
+                With over 5000 clients worldwide, Nutridietmitra’s personalized, kitchen-based nutrition plans have empowered countless individuals to achieve their health goals.
+              </p>
             </div>
 
             {/* Testimonial slider */}
@@ -94,13 +98,13 @@ const Testimonial = () => {
 
               {/* Author info */}
               <div className="flex items-center">
-                <div className="w-16 h-16 rounded-full overflow-hidden border-4 border-nutricare-green flex-shrink-0">
+                {/* <div className="w-16 h-16 rounded-full overflow-hidden border-4 border-nutricare-green flex-shrink-0">
                   <img
                     src={testimonials[activeIndex].image}
-                    alt={testimonials[activeIndex].name}
+                    alt={`${testimonials[activeIndex].name}, Nutridietmitra Client`}
                     className="w-full h-full object-cover"
                   />
-                </div>
+                </div> */}
                 <div className="ml-4">
                   <h6 className="font-bold text-xl text-nutricare-primary-dark">
                     {testimonials[activeIndex].name}
@@ -133,38 +137,14 @@ const Testimonial = () => {
                 className="bg-nutricare-bg-light text-nutricare-primary-dark h-12 w-12 rounded-full flex items-center justify-center shadow-md hover:bg-nutricare-primary-dark hover:text-nutricare-bg-light transition-colors duration-300"
                 aria-label="Previous testimonial"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M15 18l-6-6 6-6" />
-                </svg>
+                <ChevronLeft size={24} />
               </button>
               <button
                 onClick={nextTestimonial}
                 className="bg-nutricare-primary-dark text-nutricare-bg-light h-12 w-12 rounded-full flex items-center justify-center shadow-md hover:bg-nutricare-bg-light hover:text-nutricare-primary-dark transition-colors duration-300"
                 aria-label="Next testimonial"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M9 18l6-6-6-6" />
-                </svg>
+                <ChevronRight size={24} />
               </button>
             </div>
           </div>

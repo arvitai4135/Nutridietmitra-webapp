@@ -42,20 +42,44 @@ const PricingSection = () => {
   }, [user]);
 
   const features = {
-    regular: ["Fresh Daily Meals", "Customizable Menu", "Free Delivery", "Nutrition Tracking", "Customer Support"],
-    monthly: ["24 Meals per Month", "Fresh Daily Delivery", "Balanced Nutrition", "Meal Customization", "Support Included"],
-    singleMeal: ["Nutritionally Balanced", "Chef-Crafted Recipe", "Premium Ingredients", "Calorie Controlled", "Same-Day Delivery"],
-    weeklyMeal: ["7 Fresh Meals", "Variety of Options", "Nutritionist Approved", "Free Delivery", "Flexible Scheduling"],
+    regular: [
+      "Personalized Diet Plans",
+      "Weekly Progress Tracking",
+      "Chat/Call Support",
+      "Kitchen-Based Recipes",
+      "Lifestyle Tips"
+    ],
+    monthly: [
+      "24 Fresh Meals",
+      "Customized Nutrition",
+      "Organic Ingredients",
+      "Dietitian-Designed",
+      "Free Delivery in Jaipur"
+    ],
+    singleMeal: [
+      "Nutrient-Dense",
+      "Fresh Ingredients",
+      "Customized for Health",
+      "Calorie-Controlled",
+      "Same-Day Delivery"
+    ],
+    weeklyMeal: [
+      "7 Customized Meals",
+      "Variety of Salads",
+      "Nutritionist-Approved",
+      "Free Delivery in Jaipur",
+      "Flexible Scheduling"
+    ],
   };
 
   const highlightedFeatures = {
-    "1 Month": ["Fresh Daily Meals", "Free Delivery"],
-    "2 Months": ["Fresh Daily Meals", "Free Delivery", "Nutrition Tracking"],
-    "3 Months": ["Fresh Daily Meals", "Customizable Menu", "Free Delivery", "Nutrition Tracking"],
-    "6 Months": ["Fresh Daily Meals", "Customizable Menu", "Free Delivery", "Nutrition Tracking", "Customer Support"],
-    "Monthly Meal Plan": ["24 Meals per Month", "Fresh Daily Delivery", "Balanced Nutrition"],
-    "Single Meal": ["Nutritionally Balanced", "Premium Ingredients"],
-    "Weekly Meal Plan": ["7 Fresh Meals", "Free Delivery", "Nutritionist Approved"],
+    "1 Month": ["Personalized Diet Plans", "Weekly Progress Tracking"],
+    "2 Months": ["Personalized Diet Plans", "Weekly Progress Tracking", "Chat/Call Support"],
+    "3 Months": ["Personalized Diet Plans", "Weekly Progress Tracking", "Chat/Call Support", "Kitchen-Based Recipes"],
+    "6 Months": ["Personalized Diet Plans", "Weekly Progress Tracking", "Chat/Call Support", "Kitchen-Based Recipes", "Lifestyle Tips"],
+    "Monthly Meal Plan": ["24 Fresh Meals", "Customized Nutrition", "Organic Ingredients"],
+    "Single Meal": ["Nutrient-Dense", "Fresh Ingredients"],
+    "Weekly Meal Plan": ["7 Customized Meals", "Free Delivery in Jaipur", "Nutritionist-Approved"],
   };
 
   const openCustomModal = () => setIsCustomModalOpen(true);
@@ -113,8 +137,7 @@ const PricingSection = () => {
       ? formData.customer_phone.slice(3)
       : formData.customer_phone;
 
-    // Include order_id or reference in payload for webhook tracking
-    const orderId = `ORDER_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`; // Generate unique order ID
+    const orderId = `ORDER_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     const payload = {
       amount,
@@ -127,8 +150,8 @@ const PricingSection = () => {
       start_date: formData.start_date,
       end_date: formData.end_date,
       address: formData.address,
-      order_id: orderId, // Pass order_id to backend for webhook association
-      return_url: `${window.location.origin}/payment-callback?order_id=${orderId}`, // Cashfree return URL
+      order_id: orderId,
+      return_url: `${window.location.origin}/payment-callback?order_id=${orderId}`,
     };
 
     try {
@@ -166,10 +189,10 @@ const PricingSection = () => {
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="inline-block px-4 py-1 rounded-full bg-nutricare-primary-light bg-opacity-10 text-nutricare-primary-dark font-medium mb-4">Pricing Plans</span>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-nutricare-text-dark">Nutrition Plans That Fit Your Lifestyle</h2>
+          <span className="inline-block px-4 py-1 rounded-full bg-nutricare-primary-light bg-opacity-10 text-nutricare-primary-dark font-medium mb-4">Nutridietmitra Plans</span>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-nutricare-text-dark">Tailored Nutrition Plans for Your Health</h2>
           <p className="text-xl text-nutricare-text-gray mb-10">
-            Choose from our carefully designed meal plans, tailored to meet your nutritional needs and budget.
+            Discover our subscription and food delivery plans, designed by Dt. Tanu Bhargava to support your health goals with kitchen-based, no-supplement nutrition.
           </p>
 
           <div className="inline-flex bg-white p-1 rounded-full shadow-md mb-8">
@@ -294,9 +317,9 @@ const PricingSection = () => {
               />
             </svg>
           </div>
-          <h4 className="text-xl font-bold text-nutricare-primary-dark mb-2">Need a custom nutrition plan?</h4>
+          <h4 className="text-xl font-bold text-nutricare-primary-dark mb-2">Need a Custom Nutrition Plan?</h4>
           <p className="text-nutricare-text-gray mb-4">
-            Our nutrition experts can create a personalized meal plan tailored to your specific health goals and dietary requirements.
+            Our experts at Nutridietmitra craft personalized, kitchen-based plans tailored to your medical history, lifestyle, and health goals.
           </p>
           <button
             onClick={openCustomModal}
@@ -321,8 +344,7 @@ const PricingSection = () => {
 
         <div className="mt-16 text-center">
           <p className="text-nutricare-text-gray">
-            <span className="font-medium text-nutricare-primary-dark">100% Satisfaction Guarantee</span> - If you're not completely satisfied within your
-            first 7 days, we'll give you a full refund.
+            <span className="font-medium text-nutricare-primary-dark">Trusted by 5000+ Clients</span> - Join Nutridietmitra for science-backed, compassionate nutrition care.
           </p>
         </div>
       </div>

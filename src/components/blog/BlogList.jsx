@@ -1,13 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, MessageSquare, User } from 'lucide-react';
-import HealthyFood from '/assets/Images/HealthyFood.jpg'; // Corrected path
-import HealthyGlutenFree from '/assets/Images/HealthyGlutenFree.jpg'; // Corrected path
-import HealthLifestyle from '/assets/Images/HealthLifestyle.jpg'; // Corrected path
-import BloodSugar from '/assets/Images/BloodSugar.jpg'; // Corrected path
-import BrainBoost from '/assets/Images/BrainBoost.jpg'; // Corrected path
-import SustainableEating from '/assets/Images/SustainableEating.jpg'; // Corrected path
-// import Testimonial from '../components/Testimonial';
-
+import WeightLossDiet from '/assets/Images/WeightLoss.jpg';
+import PCOSNutrition from '/assets/Images/PCOSNutrition.jpg';
+import DiabetesDiet from '/assets/Images/DiabetesManagement.jpg';
+import ChildNutrition from '/assets/Images/ChildNutrition.jpg';
+import ThyroidDiet from '/assets/Images/ThyroidManagement.jpg';
+import SportsNutrition from '/assets/Images/SportsNutrition.jpg';
 
 const BlogList = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -19,57 +17,57 @@ const BlogList = () => {
   const blogPosts = [
     {
       id: 1,
-      title: "Nutrition Essentials: How Much Do You Really Need Each Day?",
-      image: HealthyFood,
-      date: { day: "14", month: "MAR" },
-      comments: 3,
-      author: "Alex",
-      excerpt: "Discover the optimal daily nutritional intake based on your lifestyle and fitness goals."
+      title: "Effective Weight Loss: Sustainable Nutrition Strategies",
+      image: WeightLossDiet,
+      date: { day: "10", month: "JAN" },
+      comments: 5,
+      author: "Dt. Tanu Bhargava",
+      excerpt: "Learn how to achieve sustainable weight loss with kitchen-based, no-supplement diet plans tailored to your lifestyle."
     },
     {
       id: 2,
-      title: "7 Simple & Healthy Gluten-Free Recipes for Energy",
-      image: HealthyGlutenFree,
-      date: { day: "05", month: "JUN" },
-      comments: 6,
-      author: "Maria",
-      excerpt: "Delicious gluten-free alternatives that boost your energy levels throughout the day."
+      title: "Managing PCOS with Nutrition and Lifestyle",
+      image: PCOSNutrition,
+      date: { day: "22", month: "APR" },
+      comments: 7,
+      author: "Dt. Tanu Bhargava",
+      excerpt: "Discover dietary strategies to balance hormones and reduce PCOS symptoms naturally."
     },
     {
       id: 3,
-      title: "Essential Tips For Staying Healthy While Traveling",
-      image: HealthLifestyle,
-      date: { day: "11", month: "NOV" },
-      comments: 3,
-      author: "Nuclies",
-      excerpt: "Maintain your health routines even when you're away from home with these simple strategies."
+      title: "Controlling Diabetes with a Balanced Diet",
+      image: DiabetesDiet,
+      date: { day: "15", month: "JUL" },
+      comments: 4,
+      author: "Dt. Tanu Bhargava",
+      excerpt: "Explore kitchen-based meal plans to stabilize blood sugar levels and improve energy."
     },
     {
       id: 4,
-      title: "5 Natural Ways to Maintain Healthy Blood Sugar Levels",
-      image: BloodSugar,
-      date: { day: "20", month: "AUG" },
-      comments: 2,
-      author: "Vorbo",
-      excerpt: "Stabilize your blood sugar naturally with diet, exercise, and lifestyle modifications."
+      title: "Building Healthy Eating Habits for Kids",
+      image: ChildNutrition,
+      date: { day: "08", month: "SEP" },
+      comments: 6,
+      author: "Dt. Tanu Bhargava",
+      excerpt: "Fun and nutritious meal ideas to support your child’s growth and immunity."
     },
     {
       id: 5,
-      title: "The Mind-Diet Connection: Foods That Boost Brain Health",
-      image: BrainBoost,
-      date: { day: "03", month: "FEB" },
-      comments: 8,
-      author: "Julia",
-      excerpt: "Explore the powerful connection between nutrition and cognitive function."
+      title: "Optimizing Thyroid Health Through Diet",
+      image: ThyroidDiet,
+      date: { day: "12", month: "NOV" },
+      comments: 3,
+      author: "Dt. Tanu Bhargava",
+      excerpt: "Support thyroid function with nutrient-rich, kitchen-based diets to boost metabolism."
     },
     {
       id: 6,
-      title: "Sustainable Eating: Good For You And The Planet",
-      image: SustainableEating,
-      date: { day: "17", month: "APR" },
-      comments: 4,
-      author: "Marcus",
-      excerpt: "How making environmentally conscious food choices benefits both your health and the earth."
+      title: "Fueling Performance with Sports Nutrition",
+      image: SportsNutrition,
+      date: { day: "25", month: "FEB" },
+      comments: 5,
+      author: "Dt. Tanu Bhargava",
+      excerpt: "Enhance endurance and recovery with tailored nutrition plans for athletes."
     }
   ];
 
@@ -102,7 +100,6 @@ const BlogList = () => {
 
   const nextSlide = () => {
     if (currentIndex >= blogPosts.length - 1) {
-      // Fast-forward to the beginning (using duplicate set)
       setCurrentIndex(0);
     } else {
       setCurrentIndex(currentIndex + 1);
@@ -111,7 +108,6 @@ const BlogList = () => {
 
   const prevSlide = () => {
     if (currentIndex <= 0) {
-      // Fast-backward to the end (using duplicate set)
       setCurrentIndex(blogPosts.length - 1);
     } else {
       setCurrentIndex(currentIndex - 1);
@@ -128,15 +124,14 @@ const BlogList = () => {
         {/* Section Header */}
         <div className="text-center mb-12 max-w-3xl mx-auto">
           <div className="inline-block relative mb-2">
-            <span className="text-[#ADD01C] font-medium relative z-10">Our Blogs</span>
+            <span className="text-[#ADD01C] font-medium relative z-10">Nutridietmitra Insights</span>
             <div className="absolute h-1 w-full bg-[#ADD01C] bg-opacity-30 bottom-0 left-0"></div>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold text-[#333333] mb-4 relative">
-            Our Latest <span className="text-[#9E0B7F]">Insights</span>
+            Nutrition <span className="text-[#9E0B7F]">Wisdom</span>
           </h2>
           <p className="text-[#718096] max-w-2xl mx-auto text-base md:text-lg">
-            Top stories featured on Health & Medicine, Mind & Brain, and Living Well sections.
-            Your source for the latest nutrition research and wellness advice.
+            Expert advice from Dt. Tanu Bhargava on personalized, science-backed nutrition to empower your health journey.
           </p>
         </div>
 
@@ -230,7 +225,7 @@ const BlogList = () => {
                       </div>
                     </div>
 
-                    {/* Highlight Border on Hover (separate from content to prevent overflow) */}
+                    {/* Highlight Border on Hover */}
                     <div className="absolute inset-0 rounded-xl border-2 border-[#ADD01C] opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"></div>
                   </div>
                 </div>
@@ -259,8 +254,7 @@ const BlogList = () => {
       {/* Decorative Elements */}
       <div className="hidden md:block absolute -bottom-10 left-1/4 bg-[#D93BB1] bg-opacity-10 h-20 w-20 rounded-full"></div>
       <div className="hidden md:block absolute top-20 right-10 bg-[#ADD01C] bg-opacity-10 h-16 w-16 rounded-full"></div>
-      <div className="hidden lg:block absolute top-1/3 left-10 bg-[#FCF0F8] h-32 w-32 rounded-full"></div>
-      {/* <Testimonial/> */}
+      {/* <div className="hidden lg:block absolute top-1/3 left-10 bg-[#FCF0F8] h-32 w-32 rounded-full"></div> */}
     </section>
   );
 };

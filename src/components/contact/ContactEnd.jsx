@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -8,6 +9,7 @@ const ContactPage = () => {
     subject: '',
     message: ''
   });
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,6 +32,10 @@ const ContactPage = () => {
     alert('Message sent successfully!');
   };
 
+  const handleBookConsultation = () => {
+    navigate('/appointment');
+  };
+
   return (
     <div className="font-sans text-nutricare-text-dark">
       {/* Hero Section */}
@@ -37,8 +43,8 @@ const ContactPage = () => {
         <div className="absolute inset-0 opacity-10 bg-pattern"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">Get in Touch</h1>
-            <p className="text-white text-xl opacity-90 mb-8">We're here to help and answer any questions you might have</p>
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">Connect with Nutridietmitra</h1>
+            <p className="text-white text-xl opacity-90 mb-8">Reach out to Dt. Tanu Bhargava and her team for personalized nutrition guidance and support.</p>
             <div className="flex flex-wrap justify-center gap-4">
               <a href="#contact-form" className="bg-nutricare-green hover:bg-nutricare-green-dark text-white font-medium py-3 px-8 rounded-full transition duration-300 inline-flex items-center">
                 Send Message
@@ -46,12 +52,15 @@ const ContactPage = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
               </a>
-              <a href="tel:+917568153534" className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-medium py-3 px-8 rounded-full transition duration-300 inline-flex items-center">
+              <button
+                onClick={handleBookConsultation}
+                className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-medium py-3 px-8 rounded-full transition duration-300 inline-flex items-center"
+              >
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                 </svg>
-                Call Us
-              </a>
+                Book Free Consultation
+              </button>
             </div>
           </div>
         </div>
@@ -78,7 +87,7 @@ const ContactPage = () => {
               <p className="text-nutricare-text-gray mb-4">
                 OM RESIDENCY 93/B2 Mauji Colony, Malviya Nagar, Jaipur, Rajasthan
               </p>
-              <a href="#" className="inline-block text-nutricare-primary-light hover:text-nutricare-primary-dark font-medium transition duration-300">
+              <a href="https://maps.google.com/?q=OM+RESIDENCY+93/B2+Mauji+Colony,+Malviya+Nagar,+Jaipur,+Rajasthan" target="_blank" rel="noopener noreferrer" className="inline-block text-nutricare-primary-light hover:text-nutricare-primary-dark font-medium transition duration-300">
                 Get Directions
               </a>
             </div>
@@ -92,8 +101,8 @@ const ContactPage = () => {
               </div>
               <h3 className="text-xl font-bold text-nutricare-primary-dark mb-4">Email Us</h3>
               <p className="text-nutricare-text-gray mb-4">
-                Feel free to reach out to us<br />
-                via email anytime
+                Reach out for nutrition guidance or inquiries<br />
+                anytime
               </p>
               <a href="mailto:Nutridietmitra@gmail.com" className="inline-block text-nutricare-primary-light hover:text-nutricare-primary-dark font-medium transition duration-300">
                 Nutridietmitra@gmail.com
@@ -109,7 +118,7 @@ const ContactPage = () => {
               </div>
               <h3 className="text-xl font-bold text-nutricare-primary-dark mb-4">Call Us</h3>
               <p className="text-nutricare-text-gray mb-4">
-                Mon-Fri from 9am to 6pm
+                Mon-Sat from 9am to 6pm
               </p>
               <a href="tel:+917568153534" className="inline-block text-nutricare-primary-light hover:text-nutricare-primary-dark font-medium transition duration-300">
                 +91-7568153534
@@ -126,9 +135,9 @@ const ContactPage = () => {
             {/* Left Side */}
             <div className="w-full lg:w-1/2 px-4 mb-12 lg:mb-0">
               <div className="max-w-lg">
-                <h2 className="text-3xl font-bold text-nutricare-primary-dark mb-4">Department Contacts</h2>
+                <h2 className="text-3xl font-bold text-nutricare-primary-dark mb-4">Reach Our Team</h2>
                 <p className="text-nutricare-text-gray mb-10">
-                  For specific inquiries, please contact the relevant department directly.
+                  Contact Dt. Tanu Bhargava directly for personalized nutrition plans or inquiries about our services.
                 </p>
                 
                 <div className="bg-white rounded-xl shadow-md p-8 mb-8">
@@ -136,12 +145,13 @@ const ContactPage = () => {
                     <div className="flex-shrink-0 mr-6">
                       <div className="w-14 h-14 bg-nutricare-primary-light bg-opacity-10 rounded-lg flex items-center justify-center">
                         <svg className="w-6 h-6 text-nutricare-primary-light" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                         </svg>
                       </div>
                     </div>
                     <div>
-                      <h4 className="text-xl font-bold text-nutricare-primary-dark mb-2">Career Inquiries</h4>
+                      <h4 className="text-xl font-bold text-nutricare-primary-dark mb-2">Nutrition Consultations</h4>
                       <h5 className="text-lg font-medium mb-3">Dt. Tanu Bhargava</h5>
                       <ul className="space-y-2">
                         <li className="flex items-center text-nutricare-text-gray">
@@ -168,13 +178,13 @@ const ContactPage = () => {
                     <div className="flex-shrink-0 mr-6">
                       <div className="w-14 h-14 bg-nutricare-green bg-opacity-10 rounded-lg flex items-center justify-center">
                         <svg className="w-6 h-6 text-nutricare-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
                         </svg>
                       </div>
                     </div>
                     <div>
-                      <h4 className="text-xl font-bold text-nutricare-primary-dark mb-2">Marketing Department</h4>
-                      <h5 className="text-lg font-medium mb-3">Dt. Tanu Bhargava</h5>
+                      <h4 className="text-xl font-bold text-nutricare-primary-dark mb-2">Food Delivery Inquiries</h4>
+                      <h5 className="text-lg font-medium mb-3">Nutridietmitra Team</h5>
                       <ul className="space-y-2">
                         <li className="flex items-center text-nutricare-text-gray">
                           <svg className="w-4 h-4 mr-2 text-nutricare-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -202,7 +212,7 @@ const ContactPage = () => {
               <div className="bg-white rounded-xl shadow-lg p-8 lg:p-10">
                 <h2 className="text-3xl font-bold text-nutricare-primary-dark mb-6">Send Your Message</h2>
                 <p className="text-nutricare-text-gray mb-8">
-                  Don't hesitate to reach out. Our team is here to help you 24/7.
+                  Have questions about our nutrition plans or food delivery? We're here to assist you!
                 </p>
                 
                 <form onSubmit={handleSubmit}>
@@ -230,7 +240,7 @@ const ContactPage = () => {
                         onChange={handleChange}
                         required
                         className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-nutricare-primary-light focus:border-transparent transition"
-                        placeholder="(123) 456-7890"
+                        placeholder="+91 123 456 7890"
                       />
                     </div>
                   </div>
@@ -259,7 +269,7 @@ const ContactPage = () => {
                       onChange={handleChange}
                       required
                       className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-nutricare-primary-light focus:border-transparent transition"
-                      placeholder="How can we help you?"
+                      placeholder="E.g., Nutrition Plan Inquiry"
                     />
                   </div>
                   
@@ -273,7 +283,7 @@ const ContactPage = () => {
                       rows="5"
                       required
                       className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-nutricare-primary-light focus:border-transparent transition"
-                      placeholder="Tell us about your business needs..."
+                      placeholder="Tell us how we can assist you..."
                     ></textarea>
                   </div>
                   
