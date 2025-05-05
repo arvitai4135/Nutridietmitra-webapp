@@ -9,16 +9,14 @@ import {
   FaPhone,
   FaCalendarAlt,
 } from "react-icons/fa";
-import api from "../admin/services/api"; // Import the configured Axios instance
+import api from "../admin/services/api";
 import Appointment from "./form/Appointment";
-import { toast } from "react-toastify"; // Optional: For toast notifications
+import { toast } from "react-toastify";
 
-// Component to render the green dot icon
 const LinkIcon = () => (
   <span className="w-2 h-2 bg-nutricare-green mr-2 inline-block rounded-full"></span>
 );
 
-// Modal component to display blog details
 const BlogModal = ({ isOpen, onClose, blog }) => {
   if (!isOpen || !blog) return null;
 
@@ -109,17 +107,6 @@ const BlogModal = ({ isOpen, onClose, blog }) => {
           <FaCalendarAlt className="mr-1 text-nutricare-green" size={12} />
           <span>{blog.date}</span>
         </div>
-        {blog.image && (
-          <img
-            src={blog.image}
-            alt={blog.title}
-            className="w-full h-auto rounded-md max-w-full sm:max-w-md mx-auto mb-3 sm:mb-4"
-            onError={(e) => {
-              console.error(`Failed to load modal image: ${blog.image}`);
-              e.target.src = "https://via.placeholder.com/150";
-            }}
-          />
-        )}
         <div>
           {blog.body.length > 0 ? (
             blog.body.map((item, index) => renderBodyContent(item, index))
@@ -146,9 +133,8 @@ const Footer = () => {
   const [loading, setLoading] = useState(true);
   const [selectedBlog, setSelectedBlog] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const isFetching = useRef(false); // Prevent concurrent API calls
+  const isFetching = useRef(false);
 
-  // Fetch recent blogs on component mount
   useEffect(() => {
     const fetchRecentBlogs = async () => {
       if (isFetching.current) {
@@ -164,7 +150,6 @@ const Footer = () => {
         console.log("API Response:", response.data);
 
         if (response.data.success && Array.isArray(response.data.data)) {
-          // Sort blogs by created_at (most recent first) and take top 3
           const sortedBlogs = response.data.data
             .filter((blog) => {
               const isValid =
@@ -187,14 +172,11 @@ const Footer = () => {
 
           console.log("Sorted Blogs:", sortedBlogs);
 
-          // Map API data to the format expected by the UI
           const formattedBlogs = sortedBlogs.map((blog) => {
-            // Find the first image in the body array
             const imageObj = blog.body.find((item) => item.type === "image");
             const imageUrl = imageObj?.url || "https://via.placeholder.com/150";
             console.log(`Blog ${blog.id} image URL:`, imageUrl);
 
-            // Ensure valid date
             let formattedDate;
             try {
               formattedDate = new Date(blog.publish_date || blog.created_at).toLocaleDateString(
@@ -239,9 +221,8 @@ const Footer = () => {
     };
 
     fetchRecentBlogs();
-  }, []); // Empty dependency array ensures single execution
+  }, []);
 
-  // Handle blog click to fetch and open modal
   const handleBlogClick = async (blogId) => {
     try {
       console.log(`Fetching blog ID ${blogId}...`);
@@ -250,9 +231,6 @@ const Footer = () => {
 
       if (response.data.success && response.data.data) {
         const blogData = response.data.data;
-        // Format the blog data for the modal
-        const imageObj = blogData.body.find((item) => item.type === "image");
-        const imageUrl = imageObj?.url || "https://via.placeholder.com/150";
         let formattedDate;
         try {
           formattedDate = new Date(blogData.publish_date || blogData.created_at).toLocaleDateString(
@@ -272,7 +250,6 @@ const Footer = () => {
           id: blogData.id,
           title: blogData.title || "Untitled",
           date: formattedDate,
-          image: imageUrl,
           body: blogData.body || [],
         };
 
@@ -293,7 +270,6 @@ const Footer = () => {
     }
   };
 
-  // Close modal
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedBlog(null);
@@ -305,7 +281,6 @@ const Footer = () => {
     <footer className="bg-nutricare-text-dark text-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
-          {/* Company Info Column */}
           <div>
             <div className="mb-4 sm:mb-6">
               <div className="flex items-center mb-3 sm:mb-4">
@@ -365,7 +340,6 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Quick Links Column */}
           <div>
             <h3 className="text-base sm:text-lg lg:text-xl font-semibold mb-3 sm:mb-4 relative">
               <span className="relative z-10">Quick Links</span>
@@ -447,7 +421,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Recent Posts Column */}
           <div>
             <h3 className="text-base sm:text-lg lg:text-xl font-semibold mb-3 sm:mb-4 relative">
               <span className="relative z-10">Recent Posts</span>
@@ -456,8 +429,7 @@ const Footer = () => {
             {loading ? (
               <p className="text-gray-400 text-xs sm:text-sm">Loading posts...</p>
             ) : error ? (
-              <p className="text-red-500 text-xs smව
-              sm:text-sm lg:text-base">Failed to load recent posts. Please try again later.</p>
+              <p className="text-red-500 text-xs sm:text-sm lg:text-base">Failed to load recent posts. Please try again later.</p>
             ) : recentPosts.length > 0 ? (
               recentPosts.map((post) => (
                 <div key={post.id} className="flex space-x-2 sm:space-x-3 mb-3 sm:mb-4">
@@ -494,7 +466,6 @@ const Footer = () => {
             )}
           </div>
 
-          {/* Newsletter Column */}
           <div>
             <h3 className="text-base sm:text-lg lg:text-xl font-semibold mb-3 sm:mb-4 relative">
               <span className="relative z-10">Newsletter</span>
@@ -523,7 +494,6 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Bottom Footer */}
       <div className="border-t border-gray-700">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
@@ -579,21 +549,18 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Appointment Modal */}
       <Appointment
         isOpen={isAppointmentOpen}
         onClose={() => setIsAppointmentOpen(false)}
         selectedService="General Appointment"
       />
 
-      {/* Blog Modal */}
       <BlogModal
         isOpen={isModalOpen}
         onClose={closeModal}
         blog={selectedBlog}
       />
 
-      {/* Scroll to top button */}
       <button
         className="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-nutricare-green flex items-center justify-center shadow-lg hover:bg-nutricare-green-dark transition duration-300"
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
