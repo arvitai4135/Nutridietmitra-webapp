@@ -92,7 +92,7 @@ function BlogWrapper({ viewOnly }) {
 const PublicLayout = ({ children }) => (
   <div className="flex flex-col min-h-screen">
     <TopBar />
-    <Header />
+    {/* <Header /> */}
     <Navbar />
     <ScrollToTop />
     <ErrorBoundary>

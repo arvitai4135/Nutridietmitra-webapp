@@ -23,26 +23,90 @@ const Testimonial = () => {
     {
       id: 1,
       quote:
-        'The weight loss plan from Nutridietmitra transformed my life! I lost 12 kg in 4 months with delicious, kitchen-based meals that fit my lifestyle. Dt. Tanu’s guidance made it sustainable and enjoyable.',
-      name: 'Priya Sharma',
-      location: 'Jaipur, India',
-      image: '/assets/Images/client1.jpg',
+        "This 10 day challenge actually helped me a lot. Both in losing weight and in feeling more healthy and energetic. I've been more productive and I've also seen a difference in my skin. Thanks to Miss. Tanu for helping me.",
+      name: "Muskan",
+      // location: "Not specified",
+      image: "/assets/Images/client1.jpg",
     },
     {
       id: 2,
       quote:
-        'Managing my PCOS was a struggle until I joined Nutridietmitra. The personalized diet plan balanced my hormones and improved my energy levels. I feel healthier and more confident now!',
-      name: 'Aisha Khan',
-      location: 'Dubai, UAE',
-      image: '/assets/Images/client2.jpg',
+        "It should not be called 'Diet with Tanu', it should be called 'Eating healthy with Tanu'. I have been following her meal plan for the past 5 months and didn't starve even a single day! There have been weeks when I told her it's a lot for me to eat, can I eat less? I also like the innovative meal plan she shared which never makes you feel bored. She even shares the recipe links to make it easier for you. All the meals are easy to make from the ingredients readily available in our kitchens. I have lost 8kgs in 3.5-4 months (with a few cheat meals) but continue to follow her plan to make up for my cheat meals over weekends. I would recommend Tanu for a healthy lifestyle.",
+      name: "Priyanka Jain",
+      // location: "Not specified",
+      image: "/assets/Images/client2.jpg",
     },
     {
       id: 3,
       quote:
-        'Nutridietmitra’s diabetes diet helped me control my blood sugar naturally. The tailored meals were easy to follow, and Dt. Tanu’s support kept me motivated. My health has improved significantly!',
-      name: 'David Patel',
-      location: 'London, UK',
-      image: '/assets/Images/client3.jpg',
+        "I would like to thank Tanu Bhargava for all the advice. She planned my mom's diet chart, during her 3 months phase of Cancer Treatment. There are very few dieticians who provide such personal attention. I remember the treatment was going on at Mahavir Cancer Hospital, Tanu would send food from her kitchen and sometimes visit mom personally. The food was high quality, packed properly and was very tasty. Mom won't eat food provided by the hospital and she would gladly eat the food from Tanu's kitchen. With her advice in diet, mom's progress has been excellent. After radiation therapy mom is gaining weight and has no side effects. Better diet is the key for improvements in health and Tanu has made sure mom's diet plan is top notch. I would recommend Tanu to any Cancer Patient! God bless!",
+      name: "Pallav Bhargava",
+      // location: "Not specified",
+      image: "/assets/Images/client3.jpg",
+    },
+    {
+      id: 4,
+      quote:
+        "My name is Kusum Choudhary and I'm 42 yrs old. On 20th of May I started following the diet plans provided by Tanu dietician and it has been very effective. I lost 10.5Kgs within the three next months as my weight decreased from 83.5 to 73 kg. I'm feeling very positive and happy with the results and for that I'm incredibly thankful to Tanu dietician.",
+      name: "Kusum Choudhary",
+      // location: "Not specified",
+      image: "/assets/Images/client4.jpg",
+    },
+    {
+      id: 5,
+      quote:
+        "Thank you ma'am for being the part of my weight loss journey and your 24*7 guidance throughout the plan. Your diet plan made me eat my favorite Indian delicacies but yes in balanced proportion. I learnt that loosing weight doesn't mean you need to starve. Eat everything but you only need to count your calories and calories deficit is the only way to loose excess fat. Your support and guidance is really valuable ma'am and I feel motivated since the time I am associated with you. We started loving our bodies :-) You have made a positive difference in our lives. Thank you so much for everything !! I am your proud happy client :-)",
+      name: "Renu Kabra",
+      // location: "Not specified",
+      image: "/assets/Images/client5.jpg",
+    },
+    {
+      id: 6,
+      quote:
+        "Dt Tanu is one of the best dietician in Jaipur, I consulted her three months back to reduce my weight. Within three months, I have reduced 14 kg. I found her very supportive and helpfull I strongly recommend to all to visit her clinic if you are really want change in your personality. In short, I can say that she is the best in Jaipur. Please feel free take my personal opinion my cell 7023988286. Hope you do visit her for your health check-up.",
+      name: "Surendar Nandha",
+      // location: "Jaipur, India",
+      image: "/assets/Images/client6.jpg",
+    },
+    {
+      id: 7,
+      quote:
+        "I have known Tanu for more than 10 years now and I must say she is super talented with her diet & nutrition skills, she has always helped me shed extra kilos within a quick span of time that too without loosing the glow of my skin. She has been a go to person for me whenever I feel that I am deviating from the healthy lifestyle. The best part of her diet charts that I have noticed is that she will not make you starve in order to loose weight infact she will balance the calories in such manner so you don't feel hungry at all and you still end up loose weight on the other hand. The amazing and high rich nutritious drinks that she included in my diet chart were so mouth watering and healthy that I always looked upto 11AM slot of my diet so I can have it :-) I highly recommend this extremely experience lady if any of you are looking for a dietician to help you get back to a healthy lifestyle. Many thanks Tanu for showing me the significance of healthy lifestyle!",
+      name: "Jatin",
+      // location: "Not specified",
+      image: "/assets/Images/client7.jpg",
+    },
+    {
+      id: 8,
+      quote:
+        "Usually the word 'diet' is misinterpreted and leads one to think of starving! I had severe migraine issues for the last so many years and they were so frequent and intensely painful. I never knew that a little tweaks with the diet would help me beat them. So grateful for having known and following the regime with Dr. Tanu.",
+      name: "Suvidha Malhotra",
+      // location: "Not specified",
+      image: "/assets/Images/client8.jpg",
+    },
+    {
+      id: 9,
+      quote:
+        "been under guidance of dr tanu for almost 3 months and it had been wonderful experience as when you hear of diet it simply understood as you are skipping meals but with dr tanu it's never been that I have enjoy ample of dishes and seasonal fruits and results are there I have almost lost 10 kgs in 3 months without skipping or leaving any food.",
+      name: "Sumit Jakhodia",
+      // location: "Not specified",
+      image: "/assets/Images/client9.jpg",
+    },
+    {
+      id: 10,
+      quote:
+        "I have struggled with my weight for most of my life. I was athletic, played sports and spent a lot of time in the gym, but the weight never wanted to come down. I tried and struggled with different diets. Every diet I tried failed. Each time I found that I was ALWAYS hungry and felt deprived then I came to know about nutri diet mitra through one of my friend,after getting consult from dr tanu I came to know the importance of diet and nutrition,after following the diet given by Dr tanu I dropped a good percentage of body fat which I was not able to reduce earlier,I never thought that fat can be reduce by eating tasty and wonderful foods,the diet offered is not a boring or tasteless. now I feel very energetic plus eating all those foods which I love to eat. Thank u so much dr tanu for this wonderful guidance and diet",
+      name: "Abhie Vashisth",
+      // location: "Not specified",
+      image: "/assets/Images/client10.jpg",
+    },
+    {
+      id: 11,
+      quote:
+        "She has offered me healthy and yummy diet plans to reduce weight :-)",
+      name: "Pratima Bhargava",
+      // location: "Not specified",
+      image: "/assets/Images/client11.jpg",
     },
   ];
 

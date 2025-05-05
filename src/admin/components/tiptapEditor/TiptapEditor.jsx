@@ -73,21 +73,24 @@ function TiptapEditor({ initialSlug, viewOnly }) {
       activeSection,
       selectedPostId,
       content: content.substring(0, 100) + (content.length > 100 ? '...' : ''),
+      publishDate,
       errorMessage,
     });
-    if (initialSlug && !viewOnly) {
+    if (initialSlug) {
       fetchBlogBySlug(initialSlug);
     }
   }, [initialSlug, viewOnly]);
 
   useEffect(() => {
-    fetchAllBlogs();
+    if (!viewOnly) {
+      fetchAllBlogs();
+    }
     return () => {
       Object.values(imageUrls.current).forEach((url) => URL.revokeObjectURL(url));
       imageUrls.current = {};
       imageRatios.current = {};
     };
-  }, []);
+  }, [viewOnly]);
 
   useEffect(() => {
     if (editorRef.current && content && !viewOnly) {
@@ -125,6 +128,7 @@ function TiptapEditor({ initialSlug, viewOnly }) {
       const allBlogs = blogs.map((post) => ({
         id: post.id,
         title: post.title || 'Untitled',
+        description: post.description || 'No description available',
         date: isValidDate(post.publish_date) ? new Date(post.publish_date).toISOString().split('T')[0] : '',
         status: post.status !== undefined ? post.status : true,
         slug: post.slug || '',
@@ -164,16 +168,28 @@ function TiptapEditor({ initialSlug, viewOnly }) {
       setTitle(blog.title || '');
       setDescription(blog.description || '');
       setSlug(blog.slug || '');
-      setPublishDate(
-        blog.publish_date && isValidDate(blog.publish_date)
-          ? new Date(blog.publish_date).toISOString().split('T')[0]
-          : new Date().toISOString().split('T')[0]
-      );
+      const date = blog.publish_date && isValidDate(blog.publish_date)
+        ? new Date(blog.publish_date).toISOString().split('T')[0]
+        : '';
+      setPublishDate(date);
+      console.log('Setting publishDate in fetchBlogById:', date);
       setCategories(blog.categories || []);
+
+      const fetchedImages = (blog.body || [])
+        .filter((item) => item.type === 'image')
+        .map((item, index) => ({
+          id: `${blog.id}-image-${index}`,
+          url: item.url,
+          file: null,
+          width: 100,
+          height: 'auto',
+          caption: item.caption || 'Blog Image',
+        }));
+      setImages(fetchedImages);
+
       const generatedContent = constructEditorContent(blog.body || []);
       console.log('Generated content:', generatedContent);
       setContent(generatedContent);
-      setImages([]);
       setHasUnsavedChanges(false);
       setSelectedPostId(blogId);
       setActiveSection('Blog Editor');
@@ -191,35 +207,45 @@ function TiptapEditor({ initialSlug, viewOnly }) {
   };
 
   const fetchBlogBySlug = async (slug) => {
-    if (!token || !isValidToken(token)) {
-      setErrorMessage('Invalid or missing authentication token. Please log in again.');
-      return;
-    }
     try {
       const response = await api.get(`/blogs/slug/${slug}`);
       const blog = response.data.data;
       console.log('Blog fetched by slug:', blog);
       setTitle(blog.title || '');
-      setDescription(blog.description || '');
+      setDescription(blog.title || '');
       setSlug(blog.slug || '');
-      setPublishDate(
-        blog.publish_date && isValidDate(blog.publish_date)
-          ? new Date(blog.publish_date).toISOString().split('T')[0]
-          : new Date().toISOString().split('T')[0]
-      );
+      const date = blog.publish_date && isValidDate(blog.publish_date)
+        ? new Date(blog.publish_date).toISOString().split('T')[0]
+        : '';
+      setPublishDate(date);
+      console.log('Setting publishDate in fetchBlogBySlug:', date);
       setCategories(blog.categories || []);
+
+      const fetchedImages = (blog.body || [])
+        .filter((item) => item.type === 'image')
+        .map((item, index) => ({
+          id: `${blog.id}-image-${index}`,
+          url: item.url,
+          file: null,
+          width: 100,
+          height: 'auto',
+          caption: item.caption || 'Blog Image',
+        }));
+      setImages(fetchedImages);
+
       const generatedContent = constructEditorContent(blog.body || []);
       setContent(generatedContent);
-      setImages([]);
       setHasUnsavedChanges(false);
       setSelectedPostId(blog.id);
-      setActiveSection('Blog Editor');
+      setActiveSection(viewOnly ? 'Preview' : 'Blog Editor');
       setErrorMessage('');
     } catch (error) {
       console.error('Error fetching blog by slug:', error);
       setErrorMessage(
         error.response?.status === 404
           ? 'Blog not found.'
+          : error.response?.status === 422
+          ? `Validation Error: ${error.response.data.detail?.map((err) => err.msg).join(', ') || 'Invalid slug.'}`
           : 'Failed to fetch blog.'
       );
     }
@@ -229,10 +255,9 @@ function TiptapEditor({ initialSlug, viewOnly }) {
     console.log('Body array:', bodyArray);
     let htmlContent = '';
     bodyArray.forEach((item) => {
-      if (item.type === 'image' && item.url && typeof item.url === 'string') {
-        const widthStyle = item.width ? `width: ${item.width}%;` : 'width: 100%;';
-        const heightStyle = item.height === 'auto' ? 'height: auto;' : item.height ? `height: ${item.height}%;` : 'height: auto;';
-        htmlContent += `<div class="image-container image-align-center" contenteditable="false"><img src="${item.url}" alt="${item.caption || 'Blog Image'}" style="${widthStyle} ${heightStyle} max-width: 100%;" class="my-2.5" /></div><p><br></p>`;
+      if (item.type === 'image') {
+        const imageUrl = item.url || '/placeholder.png';
+        htmlContent += `<div class="image-container image-align-center" contenteditable="false"><img src="${imageUrl}" alt="${item.caption || 'Blog Image'}" style="width: 100%; height: auto; max-width: 100%;" class="my-2.5" onerror="this.src='/placeholder.png'" /></div><p><br></p>`;
       } else if (item.type === 'heading') {
         htmlContent += `<h${item.level}>${item.content}</h${item.level}>`;
       } else if (item.type === 'paragraph') {
@@ -269,43 +294,52 @@ function TiptapEditor({ initialSlug, viewOnly }) {
       let newSlug = e.target.value
         .toLowerCase()
         .trim()
-        .replace(/[^a-z0-9-]/g, '-') // Replace special characters with hyphens
-        .replace(/-+/g, '-') // Replace multiple hyphens with a single hyphen
-        .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+        .replace(/[^a-z0-9-]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
       setSlug(newSlug);
       setHasUnsavedChanges(true);
 
-      // Check for slug uniqueness
       if (newSlug) {
-        checkSlugUniqueness(newSlug);
+        const allBlogs = [...publishedPosts, ...draftPosts];
+        const isSlugTaken = allBlogs.some(
+          (blog) => blog.slug === newSlug && blog.id !== selectedPostId
+        );
+        if (isSlugTaken) {
+          setErrorMessage('This slug is already in use. Please choose a different one.');
+          setInputErrors((prev) => ({ ...prev, slug: 'Slug already exists' }));
+        } else {
+          setErrorMessage('');
+          setInputErrors((prev) => {
+            const newErrors = { ...prev };
+            delete newErrors.slug;
+            return newErrors;
+          });
+        }
       }
-    }
-  };
-
-  const checkSlugUniqueness = async (slug) => {
-    try {
-      const response = await api.get(`/blogs/check-slug/${slug}`);
-      if (response.data.exists && response.data.blogId !== selectedPostId) {
-        setErrorMessage('This slug is already in use. Please choose a different one.');
-        setInputErrors((prev) => ({ ...prev, slug: 'Slug already exists' }));
-      } else {
-        setErrorMessage('');
-        setInputErrors((prev) => {
-          const newErrors = { ...prev };
-          delete newErrors.slug;
-          return newErrors;
-        });
-      }
-    } catch (error) {
-      console.error('Error checking slug uniqueness:', error);
-      setErrorMessage('Failed to validate slug uniqueness.');
     }
   };
 
   const handleDateChange = (e) => {
     if (isAdmin) {
-      setPublishDate(e.target.value);
+      const newDate = e.target.value;
+      console.log('handleDateChange in TiptapEditor - New date:', newDate);
+      if (newDate && !isValidDate(newDate)) {
+        setErrorMessage('Invalid date format. Please use YYYY-MM-DD.');
+        setInputErrors((prev) => ({
+          ...prev,
+          publishDate: 'Invalid date format.',
+        }));
+        return;
+      }
+      setPublishDate(newDate);
       setHasUnsavedChanges(true);
+      setInputErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors.publishDate;
+        return newErrors;
+      });
+      setErrorMessage('');
     }
   };
 
@@ -358,17 +392,8 @@ function TiptapEditor({ initialSlug, viewOnly }) {
           }
           break;
         case 'image':
-          if (!item.url || typeof item.url !== 'string' || !item.url.trim()) {
-            return { valid: false, error: 'Image URL must be a non-empty string.' };
-          }
           if (item.caption && typeof item.caption !== 'string') {
             return { valid: false, error: 'Image caption must be a string if provided.' };
-          }
-          if (typeof item.width !== 'number' || item.width <= 0) {
-            return { valid: false, error: 'Image width must be a positive number.' };
-          }
-          if (item.height !== 'auto' && (typeof item.height !== 'number' || item.height <= 0)) {
-            return { valid: false, error: 'Image height must be a positive number or "auto".' };
           }
           break;
         default:
@@ -386,52 +411,73 @@ function TiptapEditor({ initialSlug, viewOnly }) {
     }
     if (!title.trim()) {
       setErrorMessage('Title is required.');
+      setInputErrors((prev) => ({ ...prev, title: 'Title is required.' }));
       return;
     }
     if (!description.trim()) {
       setErrorMessage('Description is required.');
+      setInputErrors((prev) => ({ ...prev, description: 'Description is required.' }));
       return;
     }
     if (!slug.trim() || !/^[a-z0-9-]+$/.test(slug.trim())) {
       setErrorMessage('Slug is required and must contain only lowercase letters, numbers, and hyphens.');
+      setInputErrors((prev) => ({ ...prev, slug: 'Invalid slug format.' }));
+      return;
+    }
+    const allBlogs = [...publishedPosts, ...draftPosts];
+    const isSlugTaken = allBlogs.some(
+      (blog) => blog.slug === slug.trim() && blog.id !== selectedPostId
+    );
+    if (isSlugTaken) {
+      setErrorMessage('This slug is already in use. Please choose a different one.');
+      setInputErrors((prev) => ({ ...prev, slug: 'Slug already exists' }));
       return;
     }
     if (!publishDate || !isValidDate(publishDate)) {
       setErrorMessage('Invalid or missing publish date. Use YYYY-MM-DD format.');
+      setInputErrors((prev) => ({ ...prev, publishDate: 'Invalid date format.' }));
       return;
     }
     if (!Array.isArray(categories) || categories.some((cat) => !cat.trim())) {
       setErrorMessage('Categories must be a valid array of non-empty strings.');
+      setInputErrors((prev) => ({ ...prev, categories: 'Invalid categories.' }));
       return;
     }
-    const filteredJsonContent = jsonContent.map((item) => {
-      if (item.type === 'paragraph') {
-        return item.content && typeof item.content === 'string' && item.content.trim().length > 0
-          ? item
-          : null;
-      }
-      if (item.type === 'list') {
-        const normalizedStyle = item.style === 'ordered' ? 'numbered' : item.style;
-        return { ...item, style: normalizedStyle };
-      }
-      return item;
-    }).filter((item) => item !== null);
+    const filteredJsonContent = jsonContent
+      .map((item) => {
+        if (item.type === 'paragraph') {
+          return item.content && typeof item.content === 'string' && item.content.trim().length > 0
+            ? item
+            : null;
+        }
+        if (item.type === 'list') {
+          const normalizedStyle = item.style === 'ordered' ? 'numbered' : item.style;
+          return { ...item, style: normalizedStyle };
+        }
+        if (item.type === 'image') {
+          return { type: 'image', caption: item.caption || 'Blog Image' };
+        }
+        return item;
+      })
+      .filter((item) => item !== null);
     console.log('Original jsonContent:', JSON.stringify(jsonContent, null, 2));
     console.log('Filtered jsonContent:', JSON.stringify(filteredJsonContent, null, 2));
     if (filteredJsonContent.length === 0) {
       setErrorMessage('Blog content cannot be empty after filtering invalid paragraphs.');
+      setInputErrors((prev) => ({ ...prev, content: 'Content cannot be empty.' }));
       return;
     }
     const bodyValidation = validateBodyContent(filteredJsonContent);
     if (!bodyValidation.valid) {
       setErrorMessage(bodyValidation.error);
+      setInputErrors((prev) => ({ ...prev, content: bodyValidation.error }));
       return;
     }
     if (!token || !isValidToken(token)) {
       setErrorMessage('Invalid or missing authentication token. Please log in again.');
       return;
     }
-    const formattedPublishDate = new Date(publishDate).toISOString().split('T')[0];
+    const formattedPublishDate = new Date(publishDate).toISOString();
     const blogData = {
       title: title.trim(),
       description: description.trim(),
@@ -441,31 +487,44 @@ function TiptapEditor({ initialSlug, viewOnly }) {
       body: filteredJsonContent,
     };
     try {
-      console.log('Sending blogData:', JSON.stringify(blogData, null, 2));
-      let response;
-      if (selectedPostId) {
-        response = await api.put(`/blogs/update/${selectedPostId}`, blogData);
-        alert('Blog post updated successfully!');
-      } else {
-        response = await api.post('/blogs/create', blogData);
-        alert('Blog post created successfully!');
+      console.log('Preparing blogData:', JSON.stringify(blogData, null, 2));
+      const formData = new FormData();
+      formData.append('blog_data', JSON.stringify(blogData));
+      if (images && images.length > 0) {
+        images.forEach((image, index) => {
+          if (image.file) {
+            const fileName = `image-${index}.${image.file.name.split('.').pop()}`;
+            formData.append('images', image.file, fileName);
+          }
+        });
       }
+      console.log('Sending FormData to /blogs/create');
+      const response = await api.post('/blogs/create', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log('Create blog response:', response.data);
+      const newBlogId = response.data.id;
       setHasUnsavedChanges(false);
       setErrorMessage('');
+      setSelectedPostId(newBlogId);
+      alert('Blog post created successfully!');
       fetchAllBlogs();
     } catch (error) {
       console.error('Error saving blog post:', error);
       console.error('Response data:', error.response?.data);
-      const errorMessage =
-        error.response?.status === 422
-          ? `Validation Error: ${error.response.data.detail?.map((err) => err.msg).join(', ') || 'Invalid data.'}`
-          : error.response?.status === 400
-          ? `Bad Request: ${error.response.data.message || JSON.stringify(error.response.data) || 'Invalid request data.'}`
-          : error.response?.status === 404
-          ? 'API endpoint not found.'
-          : error.response?.status === 403
-          ? 'Unauthorized: Only admins can save blogs.'
-          : 'Failed to save the blog post.';
+      let errorMessage = 'Failed to save the blog post.';
+      if (error.response?.status === 422) {
+        errorMessage = `Validation Error: ${error.response.data.detail?.map((err) => err.msg).join(', ') || 'Invalid data.'}`;
+      } else if (error.response?.status === 404) {
+        errorMessage = 'API endpoint not found.';
+      } else if (error.response?.status === 403) {
+        errorMessage = 'Unauthorized: Only admins can save blogs.';
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      }
       setErrorMessage(errorMessage);
     }
   };
@@ -482,50 +541,71 @@ function TiptapEditor({ initialSlug, viewOnly }) {
     }
     if (!title.trim()) {
       setErrorMessage('Title is required.');
+      setInputErrors((prev) => ({ ...prev, title: 'Title is required.' }));
       return;
     }
     if (!description.trim()) {
       setErrorMessage('Description is required.');
+      setInputErrors((prev) => ({ ...prev, description: 'Description is required.' }));
       return;
     }
     if (!slug.trim() || !/^[a-z0-9-]+$/.test(slug.trim())) {
       setErrorMessage('Slug is required and must contain only lowercase letters, numbers, and hyphens.');
+      setInputErrors((prev) => ({ ...prev, slug: 'Invalid slug format.' }));
+      return;
+    }
+    const allBlogs = [...publishedPosts, ...draftPosts];
+    const isSlugTaken = allBlogs.some(
+      (blog) => blog.slug === slug.trim() && blog.id !== selectedPostId
+    );
+    if (isSlugTaken) {
+      setErrorMessage('This slug is already in use. Please choose a different one.');
+      setInputErrors((prev) => ({ ...prev, slug: 'Slug already exists' }));
       return;
     }
     if (!publishDate || !isValidDate(publishDate)) {
       setErrorMessage('Invalid or missing publish date. Use YYYY-MM-DD format.');
+      setInputErrors((prev) => ({ ...prev, publishDate: 'Invalid date format.' }));
       return;
     }
     if (!Array.isArray(categories) || categories.some((cat) => !cat.trim())) {
       setErrorMessage('Categories must be a valid array of non-empty strings.');
+      setInputErrors((prev) => ({ ...prev, categories: 'Invalid categories.' }));
       return;
     }
-    const filteredJsonContent = jsonContent.map((item) => {
-      if (item.type === 'paragraph') {
-        return item.content && typeof item.content === 'string' && item.content.trim().length > 0
-          ? item
-          : null;
-      }
-      if (item.type === 'list') {
-        const normalizedStyle = item.style === 'ordered' ? 'numbered' : item.style;
-        return { ...item, style: normalizedStyle };
-      }
-      return item;
-    }).filter((item) => item !== null);
+    const filteredJsonContent = jsonContent
+      .map((item) => {
+        if (item.type === 'paragraph') {
+          return item.content && typeof item.content === 'string' && item.content.trim().length > 0
+            ? item
+            : null;
+        }
+        if (item.type === 'list') {
+          const normalizedStyle = item.style === 'ordered' ? 'numbered' : item.style;
+          return { ...item, style: normalizedStyle };
+        }
+        if (item.type === 'image') {
+          return { type: 'image', caption: item.caption || 'Blog Image' };
+        }
+        return item;
+      })
+      .filter((item) => item !== null);
     if (filteredJsonContent.length === 0) {
       setErrorMessage('Blog content cannot be empty after filtering invalid paragraphs.');
+      setInputErrors((prev) => ({ ...prev, content: 'Content cannot be empty.' }));
       return;
     }
     const bodyValidation = validateBodyContent(filteredJsonContent);
     if (!bodyValidation.valid) {
       setErrorMessage(bodyValidation.error);
+      setInputErrors((prev) => ({ ...prev, content: bodyValidation.error }));
       return;
     }
     if (!token || !isValidToken(token)) {
       setErrorMessage('Invalid or missing authentication token. Please log in again.');
       return;
     }
-    const formattedPublishDate = new Date(publishDate).toISOString().split('T')[0];
+    const formattedPublishDate = new Date(publishDate).toISOString();
     const blogData = {
       title: title.trim(),
       description: description.trim(),
@@ -536,7 +616,23 @@ function TiptapEditor({ initialSlug, viewOnly }) {
     };
     try {
       console.log('Updating blogData:', JSON.stringify(blogData, null, 2));
-      const response = await api.put(`/blogs/update/${selectedPostId}`, blogData);
+      const formData = new FormData();
+      formData.append('blog_data', JSON.stringify(blogData));
+      if (images && images.length > 0) {
+        images.forEach((image, index) => {
+          if (image.file) {
+            const fileName = `image-${index}.${image.file.name.split('.').pop()}`;
+            formData.append('images', image.file, fileName);
+          }
+        });
+      }
+      console.log('Sending FormData to /blogs/update');
+      const response = await api.put(`/blogs/update/${selectedPostId}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setHasUnsavedChanges(false);
       setErrorMessage('');
       alert('Blog post updated successfully!');
@@ -700,6 +796,7 @@ function TiptapEditor({ initialSlug, viewOnly }) {
       fetchBlogById={fetchBlogById}
       isDeleting={isDeleting}
       viewOnly={viewOnly}
+      setContent={setContent}
     />
   );
 }

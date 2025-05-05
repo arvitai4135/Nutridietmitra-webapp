@@ -34,6 +34,19 @@ const Navbar = () => {
     closeMenu();
   };
 
+  // Function to handle dashboard navigation
+  const handleDashboardClick = () => {
+    try {
+      console.log("Dashboard button clicked, user:", user);
+      setIsProfileModalOpen(false); // Close modal
+      navigate("/dashboard");
+      console.log("Navigation to /admin/dashboard attempted");
+    } catch (err) {
+      console.error("Navigation error:", err);
+      alert("Failed to navigate to dashboard. Please try again.");
+    }
+  };
+
   const toggleAppointment = () => {
     setIsAppointmentOpen(!isAppointmentOpen);
     // Close menu when appointment is opened on mobile
@@ -381,6 +394,17 @@ const Navbar = () => {
                     className="w-full p-2 border border-nutricare-text-gray rounded focus:outline-none bg-gray-100 font-sans text-sm"
                   />
                 </div>
+
+                {/* Dashboard Button for Admins */}
+                {user?.role === "admin" && (
+                  <button
+                    onClick={handleDashboardClick}
+                    className="w-full py-2 px-4 bg-nutricare-green text-white rounded-full hover:bg-nutricare-green-dark transition-colors duration-300 font-sans text-sm"
+                    title="Go to Dashboard"
+                  >
+                    Dashboard
+                  </button>
+                )}
 
                 {/* Change Password Button */}
                 <button

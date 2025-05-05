@@ -1,5 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useContext, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import {
   Calendar,
   Tag,
@@ -8,23 +9,13 @@ import {
   Edit,
   Trash2,
   Save,
-  ArrowLeft,
-  ArrowRight,
-  Bold,
-  Italic,
-  Underline,
-  List,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  Image,
-  Link,
-  Eye,
-  Lock,
-  Unlock,
   LayoutDashboard,
+  Eye,
+  ExternalLink,
 } from 'lucide-react';
 import DOMPurify from 'dompurify';
+import { AuthContext } from '../../context/AuthContext';
+import EditorControls from './EditorControls';
 
 function EditorContent({
   isAdmin,
@@ -32,7 +23,7 @@ function EditorContent({
   description,
   slug,
   publishDate,
-  categories,
+  categories = [],
   newCategory,
   hasUnsavedChanges,
   content,
@@ -80,22 +71,39 @@ function EditorContent({
   fetchBlogById,
   isDeleting,
   viewOnly,
+  setContent,
 }) {
-  useEffect(() => {
-    if (activeSection === 'Preview') {
-      console.log('Preview content:', content);
-    }
-  }, [activeSection, content]);
+  const { token } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const [deletingPostId, setDeletingPostId] = useState(null);
 
   useEffect(() => {
-    if (editorRef.current && activeSection === 'Blog Editor' && !viewOnly) {
-      const sanitizedContent = DOMPurify.sanitize(content || '<p>Start writing your blog post...</p>', {
+    if (!token && isAdmin) {
+      setErrorMessage('Please log in to access this feature.');
+      navigate('/login');
+    }
+  }, [token, isAdmin, navigate, setErrorMessage]);
+
+  useEffect(() => {
+    if (!editorRef.current || activeSection !== 'Blog Editor' || viewOnly) return;
+
+    try {
+      let sanitizedContent = DOMPurify.sanitize(content || '<p>Start writing your blog post...</p>', {
         ALLOWED_TAGS: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'img', 'div', 'br', 'strong', 'em', 'u', 'a'],
-        ALLOWED_ATTR: ['src', 'alt', 'class', 'style', 'data-image-id', 'href', 'contenteditable'],
-        ADD_ATTR: ['src', 'href', 'contenteditable'],
-        ADD_URI_SAFE_ATTR: ['src', 'href'],
+        ALLOWED_ATTR: ['src', 'alt', 'class', 'style', 'data-image-id', 'href']
       });
-      if (editorRef.current.innerHTML !== sanitizedContent) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(sanitizedContent, 'text/html');
+      const lists = doc.querySelectorAll('ul, ol');
+      lists.forEach((list) => {
+        const items = list.querySelectorAll('li');
+        items.forEach((li) => {
+          if (!li.textContent.trim()) li.remove();
+        });
+        if (list.children.length === 0) list.remove();
+      });
+      sanitizedContent = doc.body.innerHTML;
+      if (!editorRef.current.innerHTML.includes('image-container') || editorRef.current.innerHTML === '<p>Start writing your blog post...</p>') {
         editorRef.current.innerHTML = sanitizedContent;
         const range = document.createRange();
         const sel = window.getSelection();
@@ -104,18 +112,15 @@ function EditorContent({
         sel.removeAllRanges();
         sel.addRange(range);
       }
+    } catch (error) {
+      console.error('Error sanitizing editor content:', error);
+      setErrorMessage('Failed to load editor content. Please refresh the page.');
     }
-  }, [editorRef, content, activeSection, viewOnly]);
-
-  const navigate = useNavigate();
+  }, [editorRef, content, activeSection, viewOnly, setErrorMessage]);
 
   const saveCursorPosition = () => {
     const selection = window.getSelection();
-    if (selection.rangeCount > 0) {
-      const range = selection.getRangeAt(0);
-      return { range: range.cloneRange() };
-    }
-    return null;
+    return selection.rangeCount > 0 ? { range: selection.getRangeAt(0).cloneRange() } : null;
   };
 
   const restoreCursorPosition = (position) => {
@@ -136,90 +141,107 @@ function EditorContent({
   };
 
   const parseEditorContentToJSON = (htmlContent) => {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(htmlContent, 'text/html');
-    const elements = doc.body.childNodes;
-    const jsonContent = [];
+    try {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(htmlContent, 'text/html');
+      const elements = doc.body.childNodes;
+      const jsonContent = [];
 
-    elements.forEach((node) => {
-      if (node.nodeType === 1) {
-        const tagName = node.tagName.toLowerCase();
-        if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(tagName)) {
-          jsonContent.push({
-            type: 'heading',
-            level: parseInt(tagName.replace('h', '')),
-            content: node.textContent.trim(),
-          });
-        } else if (tagName === 'p') {
-          jsonContent.push({
-            type: 'paragraph',
-            content: node.textContent.trim(),
-          });
-        } else if (tagName === 'ul' || tagName === 'ol') {
-          const items = Array.from(node.querySelectorAll('li')).map((li) => {
-            let text = li.textContent.trim();
-            if (text.startsWith('• ') || /^\d+\.\s/.test(text)) {
-              text = text.replace(/^•\s|^\d+\.\s/, '');
-            }
-            return text;
-          });
-          jsonContent.push({
-            type: 'list',
-            style: tagName === 'ul' ? 'bullet' : 'ordered',
-            items,
-          });
-        } else if (node.classList.contains('image-container')) {
-          const img = node.querySelector('img');
-          if (img) {
-            const style = img.getAttribute('style') || '';
-            const widthMatch = style.match(/width:\s*(\d+\.?\d*)%/);
-            const heightMatch = style.match(/height:\s*(auto|\d+\.?\d*%)?/);
-            const width = widthMatch ? parseFloat(widthMatch[1]) : 100;
-            const height = heightMatch
-              ? heightMatch[1] === 'auto'
-                ? 'auto'
-                : parseFloat(heightMatch[1])
-              : 'auto';
+      elements.forEach((node) => {
+        if (node.nodeType === 1) {
+          const tagName = node.tagName.toLowerCase();
+          if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(tagName)) {
             jsonContent.push({
-              type: 'image',
-              url: img.src,
-              caption: img.alt || 'No caption',
-              width: width,
-              height: height,
+              type: 'heading',
+              level: parseInt(tagName.replace('h', '')),
+              content: node.textContent.trim(),
             });
+          } else if (tagName === 'p') {
+            jsonContent.push({
+              type: 'paragraph',
+              content: node.textContent.trim(),
+            });
+          } else if (tagName === 'ul' || tagName === 'ol') {
+            const items = Array.from(node.querySelectorAll('li'))
+              .map((li) => {
+                let text = li.textContent.trim();
+                if (text.startsWith('• ') || /^\d+\.\s/.test(text)) {
+                  text = text.replace(/^•\s|^\d+\.\s/, '');
+                }
+                return text;
+              })
+              .filter((item) => item !== '');
+            if (items.length > 0) {
+              jsonContent.push({
+                type: 'list',
+                style: tagName === 'ul' ? 'bullet' : 'ordered',
+                items,
+              });
+            }
+          } else if (node.classList.contains('image-container')) {
+            const img = node.querySelector('img');
+            if (img) {
+              const style = img.getAttribute('style') || '';
+              const widthMatch = style.match(/width:\s*(\d+\.?\d*)%/);
+              const heightMatch = style.match(/height:\s*(auto|\d+\.?\d*%)?/);
+              const width = widthMatch ? parseFloat(widthMatch[1]) : 100;
+              const height = heightMatch
+                ? heightMatch[1] === 'auto'
+                  ? 'auto'
+                  : parseFloat(heightMatch[1])
+                : 'auto';
+              jsonContent.push({
+                type: 'image',
+                url: img.src,
+                caption: img.alt || 'No caption',
+                width,
+                height,
+              });
+            }
           }
         }
-      }
-    });
+      });
 
-    return jsonContent;
+      return jsonContent;
+    } catch (error) {
+      console.error('Error parsing editor content to JSON:', error);
+      return [];
+    }
   };
 
   const handleFormat = (command, value = null) => {
-    if (isAdmin && editorRef.current && !viewOnly) {
+    if (!isAdmin || !editorRef.current || viewOnly) return;
+    try {
       editorRef.current.focus();
       const position = saveCursorPosition();
+      const selection = window.getSelection();
 
       if (command === 'insertUnorderedList' || command === 'insertOrderedList') {
+        if (selection.rangeCount === 0) {
+          setErrorMessage('Please select text to create a list.');
+          return;
+        }
+
+        const range = selection.getRangeAt(0);
         const isBulletList = command === 'insertUnorderedList';
-        const listTag = isBulletList ? 'UL' : 'OL';
+        const listTag = isBulletList ? 'ul' : 'ol';
 
-        let blockNode = window.getSelection().getRangeAt(0).commonAncestorContainer;
-        if (blockNode.nodeType !== 1) {
-          blockNode = blockNode.parentNode;
+        let parentNode = range.commonAncestorContainer;
+        if (parentNode.nodeType !== 1) parentNode = parentNode.parentNode;
+        if (['H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(parentNode.tagName)) {
+          setErrorMessage('Cannot create a list inside a heading.');
+          return;
         }
+
+        let blockNode = parentNode;
         while (blockNode && blockNode !== editorRef.current) {
-          if (['P', 'DIV', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(blockNode.tagName)) {
-            break;
-          }
+          if (['P', 'DIV', 'UL', 'OL'].includes(blockNode.tagName)) break;
           blockNode = blockNode.parentNode;
         }
 
-        let listNode = blockNode;
+        let listNode = parentNode;
         while (listNode && listNode !== editorRef.current) {
-          if (listNode.tagName === 'UL' || listNode.tagName === 'OL') {
-            break;
-          }
+          if (listNode.tagName === 'UL' || listNode.tagName === 'OL') break;
           listNode = listNode.parentNode;
         }
 
@@ -228,17 +250,18 @@ function EditorContent({
 
         if (isInList) {
           if (currentListType === listTag) {
-            const listItems = listNode.querySelectorAll('li');
             const fragment = document.createDocumentFragment();
-            let p = document.createElement('p');
-            listItems.forEach((li, index) => {
+            const listItems = listNode.querySelectorAll('li');
+            listItems.forEach((li) => {
+              const p = document.createElement('p');
               let text = li.textContent.trim();
               if (text.startsWith('• ') || /^\d+\.\s/.test(text)) {
                 text = text.replace(/^•\s|^\d+\.\s/, '');
               }
-              p.textContent += (index > 0 ? ' ' : '') + text;
+              p.textContent = text || '\u00A0';
+              fragment.appendChild(p);
             });
-            listNode.parentNode.replaceChild(p, listNode);
+            listNode.parentNode.replaceChild(fragment, listNode);
           } else {
             const newList = document.createElement(listTag);
             const listItems = listNode.querySelectorAll('li');
@@ -248,33 +271,58 @@ function EditorContent({
               if (text.startsWith('• ') || /^\d+\.\s/.test(text)) {
                 text = text.replace(/^•\s|^\d+\.\s/, '');
               }
-              newLi.textContent = text;
+              newLi.textContent = text || '\u00A0';
               newList.appendChild(newLi);
             });
             listNode.parentNode.replaceChild(newList, listNode);
           }
         } else {
-          if (!blockNode || blockNode === editorRef.current) {
-            const p = document.createElement('p');
-            const contents = window.getSelection().getRangeAt(0).extractContents();
-            p.appendChild(contents);
-            window.getSelection().getRangeAt(0).insertNode(p);
-            blockNode = p;
+          const selectedContent = range.cloneContents();
+          const tempDiv = document.createElement('div');
+          tempDiv.appendChild(selectedContent);
+          const textContent = tempDiv.textContent.trim();
+
+          if (!textContent) {
+            setErrorMessage('Please select non-empty text to create a list.');
+            return;
           }
 
-          const selectedText = window.getSelection().getRangeAt(0).toString().trim();
-          if (!selectedText) return;
+          const lines = [];
+          const nodes = tempDiv.childNodes;
+          nodes.forEach((node) => {
+            if (node.nodeType === 3) {
+              const text = node.textContent.trim();
+              if (text) lines.push(text);
+            } else if (node.nodeType === 1) {
+              const text = node.textContent.trim();
+              if (text) lines.push(text);
+            }
+          });
 
-          const lines = selectedText.split(/\r?\n/).filter((line) => line.trim() !== '');
+          if (lines.length === 0) {
+            setErrorMessage('Please select non-empty text to create a list.');
+            return;
+          }
 
           const list = document.createElement(listTag);
           lines.forEach((line) => {
             const li = document.createElement('li');
-            li.textContent = line.trim();
+            li.textContent = line || '\u00A0';
             list.appendChild(li);
           });
 
-          blockNode.parentNode.replaceChild(list, blockNode);
+          range.deleteContents();
+          range.insertNode(list);
+
+          editorRef.current.normalize();
+
+          if (!blockNode || blockNode === editorRef.current) {
+            const p = document.createElement('p');
+            p.innerHTML = '<br>';
+            list.insertAdjacentElement('afterend', p);
+          } else if (blockNode.tagName === 'P' && blockNode.textContent.trim() === '') {
+            blockNode.remove();
+          }
         }
       } else if (command === 'createLink') {
         document.execCommand(command, false, value);
@@ -287,181 +335,246 @@ function EditorContent({
       }
 
       updateActiveFormattingStates();
-      debouncedSetContent(editorRef.current.innerHTML);
+      const newContent = editorRef.current.innerHTML;
+      setContent(newContent);
+      debouncedSetContent(newContent);
       setHasUnsavedChanges(true);
       restoreCursorPosition(position);
+    } catch (error) {
+      console.error('Error applying format:', error);
+      setErrorMessage('Failed to apply formatting. Please try again.');
     }
   };
 
   const updateImageAlignment = (alignment) => {
     if (!isAdmin || !editorRef.current || viewOnly) return;
-    const position = saveCursorPosition();
-    const selection = window.getSelection();
-    let node = selection.focusNode;
-    if (node.nodeType !== 1) {
-      node = node.parentNode;
-    }
-    const imageContainer = node.closest('.image-container');
-    if (imageContainer) {
-      imageContainer.classList.remove('image-align-left', 'image-align-center', 'image-align-right');
-      imageContainer.classList.add(`image-align-${alignment}`);
-      debouncedSetContent(editorRef.current.innerHTML);
-      setHasUnsavedChanges(true);
-      restoreCursorPosition(position);
+    try {
+      const position = saveCursorPosition();
+      const selection = window.getSelection();
+      let node = selection.focusNode;
+      if (node.nodeType !== 1) node = node.parentNode;
+      const imageContainer = node.closest('.image-container');
+      if (imageContainer) {
+        imageContainer.classList.remove('image-align-left', 'image-align-center', 'image-align-right');
+        imageContainer.classList.add(`image-align-${alignment}`);
+        const newContent = editorRef.current.innerHTML;
+        setContent(newContent);
+        debouncedSetContent(newContent);
+        setHasUnsavedChanges(true);
+        restoreCursorPosition(position);
+      } else {
+        console.warn('No image selected for alignment change.');
+      }
+    } catch (error) {
+      console.error('Error updating image alignment:', error);
+      setErrorMessage('Failed to align image. Please try again.');
     }
   };
 
   const handleContentChange = () => {
-    if (isAdmin && editorRef.current && !viewOnly) {
-      debouncedSetContent(editorRef.current.innerHTML);
+    if (!isAdmin || !editorRef.current || viewOnly) return;
+    try {
+      const newContent = editorRef.current.innerHTML;
+      setContent(newContent);
+      debouncedSetContent(newContent);
       setHasUnsavedChanges(true);
       updateActiveFormattingStates();
+    } catch (error) {
+      console.error('Error handling content change:', error);
+      setErrorMessage('Failed to update content. Please try again.');
     }
   };
 
   const handleImageUpload = (e) => {
-    if (!isAdmin || viewOnly) return;
-    const position = saveCursorPosition();
-    const files = Array.from(e.target.files);
-    const newImages = files.map((file, index) => {
-      const id = `${Date.now()}-${index}`;
-      const url = URL.createObjectURL(file);
-      imageUrls.current[id] = url;
+    if (!isAdmin || viewOnly || !e.target.files) return;
+    try {
+      const position = saveCursorPosition();
+      const files = Array.from(e.target.files);
+      const maxSize = 1 * 1024 * 1024; // 1MB in bytes
 
-      return new Promise((resolve) => {
-        const img = new window.Image();
-        img.src = url;
-        img.onload = () => {
-          const ratio = img.width / img.height;
-          imageRatios.current[id] = ratio;
-          resolve({
-            id,
-            file,
-            url,
-            width: 100,
-            height: 100 / ratio,
-          });
-        };
-      });
-    });
-
-    Promise.all(newImages).then((resolvedImages) => {
-      setImages((prevImages) => [...prevImages, ...resolvedImages]);
-      resolvedImages.forEach((image) => {
-        const imgHtml = `<div class="image-container image-align-center" contenteditable="false"><img src="${image.url}" alt="Blog Image" style="width: ${image.width}%; height: auto; max-width: 100%;" class="my-2.5" /></div>`;
-        const selection = window.getSelection();
-        let range;
-        if (selection.rangeCount > 0) {
-          range = selection.getRangeAt(0);
-        } else {
-          range = document.createRange();
-          range.selectNodeContents(editorRef.current);
-          range.collapse(false);
+      // Filter out files larger than 1MB
+      const validFiles = files.filter((file) => {
+        if (file.size > maxSize) {
+          setErrorMessage(`Image "${file.name}" exceeds 1MB size limit.`);
+          return false;
         }
-
-        const imgNode = document.createElement('div');
-        imgNode.innerHTML = imgHtml;
-        const imageContainer = imgNode.firstChild;
-        range.insertNode(imageContainer);
-
-        const newP = document.createElement('p');
-        newP.innerHTML = '<br>';
-        imageContainer.insertAdjacentElement('afterend', newP);
-
-        range.setStart(newP, 0);
-        range.setEnd(newP, 0);
-
-        selection.removeAllRanges();
-        selection.addRange(range);
+        return true;
       });
 
-      debouncedSetContent(editorRef.current.innerHTML);
-      setHasUnsavedChanges(true);
-      restoreCursorPosition(position);
-      e.target.value = '';
-    });
+      if (validFiles.length === 0) {
+        setErrorMessage('No valid images uploaded. All images must be under 1MB.');
+        return;
+      }
+
+      const newImages = validFiles.map((file, index) => {
+        const id = `${Date.now()}-${index}`;
+        const url = URL.createObjectURL(file);
+        imageUrls.current[id] = url;
+
+        return new Promise((resolve) => {
+          const img = new window.Image();
+          img.src = url;
+          img.onload = () => {
+            const ratio = img.width / img.height;
+            imageRatios.current[id] = ratio;
+            resolve({ id, file, url, width: 100, height: 100 / ratio });
+          };
+          img.onerror = () => {
+            console.error('Error loading image:', url);
+            resolve({ id, file, url, width: 100, height: 100 });
+          };
+        });
+      });
+
+      Promise.all(newImages)
+        .then((resolvedImages) => {
+          setImages((prevImages) => [...prevImages, ...resolvedImages]);
+          resolvedImages.forEach((image) => {
+            const imgHtml = `<div class="image-container image-align-center" contenteditable="false"><img src="${image.url}" alt="Blog Image" style="width: ${image.width}%; height: auto; max-width: 100%;" class="my-2.5" data-image-id="${image.id}" /></div>`;
+            const selection = window.getSelection();
+            let range;
+            if (selection.rangeCount > 0 && position) {
+              range = position.range;
+            } else {
+              range = document.createRange();
+              range.selectNodeContents(editorRef.current);
+              range.collapse(false);
+            }
+
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = imgHtml;
+            const imageContainer = tempDiv.firstChild;
+            range.insertNode(imageContainer);
+
+            const newP = document.createElement('p');
+            newP.innerHTML = '<br>';
+            imageContainer.insertAdjacentElement('afterend', newP);
+
+            range.setStart(newP, 0);
+            range.setEnd(newP, 0);
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+            const newContent = editorRef.current.innerHTML;
+            setContent(newContent);
+            debouncedSetContent(newContent);
+            setHasUnsavedChanges(true);
+          });
+
+          e.target.value = '';
+        })
+        .catch((error) => {
+          console.error('Error processing image upload:', error);
+          setErrorMessage('Failed to upload image. Please try again.');
+        });
+    } catch (error) {
+      console.error('Error in handleImageUpload:', error);
+      setErrorMessage('Failed to upload image. Please try again.');
+    }
   };
 
   const updateImageSize = (id, dimension, value) => {
     if (!isAdmin || viewOnly) return;
-    const parsedValue = parseFloat(value);
-    if (isNaN(parsedValue) || parsedValue <= 0) {
-      setInputErrors((prev) => ({
-        ...prev,
-        [`${id}-${dimension}`]: 'Value must be a positive number.',
-      }));
-      return;
-    }
-
-    setInputErrors((prev) => {
-      const newErrors = { ...prev };
-      delete newErrors[`${id}-${dimension}`];
-      return newErrors;
-    });
-
-    setImages((prevImages) =>
-      prevImages.map((img) => {
-        if (img.id !== id) return img;
-        let newWidth = img.width;
-        let newHeight = img.height;
-
-        if (dimension === 'width') {
-          newWidth = parsedValue;
-          if (lockAspectRatio && imageRatios.current[id]) {
-            newHeight = newWidth / imageRatios.current[id];
-          }
-        } else {
-          newHeight = parsedValue;
-          if (lockAspectRatio && imageRatios.current[id]) {
-            newWidth = newHeight * imageRatios.current[id];
-          }
-        }
-
-        return { ...img, width: newWidth, height: newHeight };
-      })
-    );
-
-    const imageContainers = editorRef.current.querySelectorAll(`.image-container img`);
-    imageContainers.forEach((img) => {
-      const src = img.getAttribute('src');
-      const matchingImage = images.find((image) => image.url === src);
-      if (matchingImage && matchingImage.id === id) {
-        img.style.width = `${dimension === 'width' ? parsedValue : matchingImage.width}%`;
-        img.style.height = lockAspectRatio ? 'auto' : `${dimension === 'height' ? parsedValue : matchingImage.height}%`;
+    try {
+      const parsedValue = parseFloat(value);
+      if (isNaN(parsedValue) || parsedValue <= 0) {
+        setInputErrors((prev) => ({
+          ...prev,
+          [`${id}-${dimension}`]: 'Value must be a positive number.',
+        }));
+        return;
       }
-    });
 
-    debouncedSetContent(editorRef.current.innerHTML);
-    setHasUnsavedChanges(true);
+      setInputErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[`${id}-${dimension}`];
+        return newErrors;
+      });
+
+      setImages((prevImages) =>
+        prevImages.map((img) => {
+          if (img.id !== id) return img;
+          let newWidth = img.width;
+          let newHeight = img.height;
+
+          if (dimension === 'width') {
+            newWidth = parsedValue;
+            if (lockAspectRatio && imageRatios.current[id]) {
+              newHeight = newWidth / imageRatios.current[id];
+            }
+          } else {
+            newHeight = parsedValue;
+            if (lockAspectRatio && imageRatios.current[id]) {
+              newWidth = newHeight * imageRatios.current[id];
+            }
+          }
+
+          return { ...img, width: newWidth, height: newHeight };
+        })
+      );
+
+      const imageContainers = editorRef.current.querySelectorAll(`.image-container img[data-image-id="${id}"]`);
+      if (imageContainers.length === 0) {
+        console.warn(`Image with ID ${id} not found in editor.`);
+        return;
+      }
+      imageContainers.forEach((img) => {
+        img.style.width = `${dimension === 'width' ? parsedValue : images.find((image) => image.id === id).width}%`;
+        img.style.height = lockAspectRatio ? 'auto' : `${dimension === 'height' ? parsedValue : images.find((image) => image.id === id).height}%`;
+      });
+
+      const newContent = editorRef.current.innerHTML;
+      setContent(newContent);
+      debouncedSetContent(newContent);
+      setHasUnsavedChanges(true);
+    } catch (error) {
+      console.error('Error updating image size:', error);
+      setErrorMessage('Failed to resize image. Please try again.');
+    }
   };
 
   const removeImage = (id) => {
     if (!isAdmin || viewOnly) return;
-    const image = images.find((img) => img.id === id);
-    if (image && imageUrls.current[id]) {
-      URL.revokeObjectURL(imageUrls.current[id]);
-      delete imageUrls.current[id];
-      delete imageRatios.current[id];
+    try {
+      const image = images.find((img) => img.id === id);
+      if (image && imageUrls.current[id]) {
+        URL.revokeObjectURL(imageUrls.current[id]);
+        delete imageUrls.current[id];
+        delete imageRatios.current[id];
+      }
+      setImages((prevImages) => prevImages.filter((img) => img.id !== id));
+      const imageContainers = editorRef.current.querySelectorAll(`.image-container img[data-image-id="${id}"]`);
+      if (imageContainers.length === 0) {
+        console.warn(`Image with ID ${id} not found in editor for removal.`);
+      }
+      imageContainers.forEach((img) => {
+        const container = img.closest('.image-container');
+        if (container) container.remove();
+      });
+      const newContent = editorRef.current.innerHTML;
+      setContent(newContent);
+      debouncedSetContent(newContent);
+      setHasUnsavedChanges(true);
+    } catch (error) {
+      console.error('Error removing image:', error);
+      setErrorMessage('Failed to remove image. Please try again.');
     }
-    setImages((prevImages) => prevImages.filter((img) => img.id !== id));
-    const imageContainers = editorRef.current.querySelectorAll(`.image-container img[src="${image.url}"]`);
-    imageContainers.forEach((img) => {
-      const container = img.closest('.image-container');
-      if (container) container.remove();
-    });
-    debouncedSetContent(editorRef.current.innerHTML);
-    setHasUnsavedChanges(true);
   };
 
   const toggleAspectRatioLock = () => {
-    if (isAdmin && !viewOnly) {
+    if (!isAdmin || viewOnly) return;
+    try {
       setLockAspectRatio(!lockAspectRatio);
       setHasUnsavedChanges(true);
+    } catch (error) {
+      console.error('Error toggling aspect ratio lock:', error);
+      setErrorMessage('Failed to toggle aspect ratio lock. Please try again.');
     }
   };
 
   const handleKeyDown = (e) => {
-    if (isAdmin && !viewOnly) {
+    if (!isAdmin || viewOnly) return;
+    try {
       if (e.key === 'Tab') {
         e.preventDefault();
         document.execCommand('insertHTML', false, '    ');
@@ -471,9 +584,7 @@ function EditorContent({
       if (selection.rangeCount > 0) {
         const range = selection.getRangeAt(0);
         let container = range.startContainer;
-        if (container.nodeType !== 1) {
-          container = container.parentNode;
-        }
+        if (container.nodeType !== 1) container = container.parentNode;
         const imageContainer = container.closest('.image-container');
         if (imageContainer && e.key !== 'Tab') {
           e.preventDefault();
@@ -487,17 +598,25 @@ function EditorContent({
           selection.addRange(newRange);
         }
       }
+    } catch (error) {
+      console.error('Error handling key down:', error);
+      setErrorMessage('Failed to handle key input. Please try again.');
     }
   };
 
   const handleEditorClick = () => {
-    if (isAdmin && !viewOnly) {
+    if (!isAdmin || viewOnly) return;
+    try {
       updateActiveFormattingStates();
+    } catch (error) {
+      console.error('Error handling editor click:', error);
+      setErrorMessage('Failed to update editor state. Please try again.');
     }
   };
 
   const updateActiveFormattingStates = () => {
-    if (isAdmin && editorRef.current && !viewOnly) {
+    if (!isAdmin || !editorRef.current || viewOnly) return;
+    try {
       const selection = window.getSelection();
       let bulletList = false;
       let numberedList = false;
@@ -510,35 +629,16 @@ function EditorContent({
 
       if (selection.rangeCount > 0) {
         let node = selection.getRangeAt(0).commonAncestorContainer;
-        if (node.nodeType !== 1) {
-          node = node.parentNode;
-        }
+        if (node.nodeType !== 1) node = node.parentNode;
         while (node && node !== editorRef.current) {
-          if (node.tagName === 'UL') {
-            bulletList = true;
-            break;
-          } else if (node.tagName === 'OL') {
-            numberedList = true;
-            break;
-          } else if (node.tagName === 'H1') {
-            heading1 = true;
-            break;
-          } else if (node.tagName === 'H2') {
-            heading2 = true;
-            break;
-          } else if (node.tagName === 'H3') {
-            heading3 = true;
-            break;
-          } else if (node.tagName === 'H4') {
-            heading4 = true;
-            break;
-          } else if (node.tagName === 'H5') {
-            heading5 = true;
-            break;
-          } else if (node.tagName === 'H6') {
-            heading6 = true;
-            break;
-          }
+          if (node.tagName === 'UL') bulletList = true;
+          else if (node.tagName === 'OL') numberedList = true;
+          else if (node.tagName === 'H1') heading1 = true;
+          else if (node.tagName === 'H2') heading2 = true;
+          else if (node.tagName === 'H3') heading3 = true;
+          else if (node.tagName === 'H4') heading4 = true;
+          else if (node.tagName === 'H5') heading5 = true;
+          else if (node.tagName === 'H6') heading6 = true;
           node = node.parentNode;
         }
       }
@@ -559,196 +659,391 @@ function EditorContent({
         heading5,
         heading6,
       });
+    } catch (error) {
+      console.error('Error updating formatting states:', error);
+      setErrorMessage('Failed to update formatting states. Please try again.');
     }
   };
 
   const handleSaveWithJSON = () => {
-    if (isAdmin && editorRef.current && !viewOnly) {
+    if (!isAdmin || !editorRef.current || viewOnly || !token) {
+      setErrorMessage('Authorization token missing or insufficient permissions. Please log in.');
+      navigate('/login');
+      return;
+    }
+    try {
       const htmlContent = editorRef.current.innerHTML;
-      const jsonContent = parseEditorContentToJSON(htmlContent);
-      console.log('Parsed JSON content:', jsonContent);
+      let jsonContent = parseEditorContentToJSON(htmlContent);
+      jsonContent = jsonContent.filter((node) => {
+        if (node.type === 'list') {
+          node.items = node.items.filter((item) => item !== '');
+          return node.items.length > 0;
+        }
+        return true;
+      });
       handleSave({ htmlContent, jsonContent });
+    } catch (error) {
+      console.error('Error saving with JSON:', error);
+      setErrorMessage('Failed to save blog post. Please try again.');
     }
   };
 
   const handleUpdateWithJSON = () => {
-    if (isAdmin && editorRef.current && !viewOnly) {
+    if (!isAdmin || !editorRef.current || viewOnly || !token) {
+      setErrorMessage('Authorization token missing or insufficient permissions. Please log in.');
+      navigate('/login');
+      return;
+    }
+    try {
       const htmlContent = editorRef.current.innerHTML;
-      const jsonContent = parseEditorContentToJSON(htmlContent);
-      console.log('Parsed JSON content for update:', jsonContent);
+      let jsonContent = parseEditorContentToJSON(htmlContent);
+      jsonContent = jsonContent.filter((node) => {
+        if (node.type === 'list') {
+          node.items = node.items.filter((item) => item !== '');
+          return node.items.length > 0;
+        }
+        return true;
+      });
       handleUpdate({ htmlContent, jsonContent });
+    } catch (error) {
+      console.error('Error updating with JSON:', error);
+      setErrorMessage('Failed to update blog post. Please try again.');
+    }
+  };
+
+  const handleDeleteWithToken = async (postId) => {
+    if (!token) {
+      setErrorMessage('Authorization token missing. Please log in.');
+      navigate('/login');
+      return;
+    }
+    if (!window.confirm('Are you sure you want to delete this post?')) return;
+
+    try {
+      setDeletingPostId(postId);
+      await handleDelete(postId);
+      setErrorMessage('Post deleted successfully.');
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      setErrorMessage('Failed to delete post. Please try again.');
+    } finally {
+      setDeletingPostId(null);
+    }
+  };
+
+  const fetchBlogByIdWithToken = async (postId) => {
+    if (!token) {
+      setErrorMessage('Authorization token missing. Please log in.');
+      navigate('/login');
+      return;
+    }
+    try {
+      await fetchBlogById(postId);
+    } catch (error) {
+      console.error('Error fetching blog post:', error);
+      setErrorMessage('Failed to load post. Please try again.');
+    }
+  };
+
+  const handleOpenPost = (slug) => {
+    if (viewOnly || !slug) {
+      setErrorMessage('Invalid post URL or view-only mode.');
+      return;
+    }
+    try {
+      navigate(`/blog/${slug}`);
+    } catch (error) {
+      console.error('Error navigating to blog post:', error);
+      setErrorMessage('Failed to open blog post. Please try again.');
+    }
+  };
+
+  const handleEditPost = async (postId) => {
+    if (!token || !isAdmin) {
+      setErrorMessage('Authorization token missing or insufficient permissions. Please log in.');
+      navigate('/login');
+      return;
+    }
+    try {
+      setSelectedPostId(postId);
+      await fetchBlogByIdWithToken(postId);
+      setSection('Blog Editor');
+    } catch (error) {
+      console.error('Error initiating edit:', error);
+      setErrorMessage('Failed to load post for editing. Please try again.');
+    }
+  };
+
+  const handleViewPost = async (postId, postTitle) => {
+    if (!token) {
+      setErrorMessage('Authorization token missing. Please log in.');
+      navigate('/login');
+      return;
+    }
+    try {
+      setSelectedPostId(postId);
+      await fetchBlogByIdWithToken(postId);
+      setSection('Preview');
+    } catch (error) {
+      console.error(`Error viewing post "${postTitle}":`, error);
+      setErrorMessage('Failed to load post for preview. Please try again.');
     }
   };
 
   const handleDashboardRedirect = () => {
-    navigate('/dashboard');
+    try {
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Error redirecting to dashboard:', error);
+      setErrorMessage('Failed to redirect to dashboard. Please try again.');
+    }
   };
+
+  const renderPreviewContent = useMemo(() => {
+    try {
+      const sanitizedContent = DOMPurify.sanitize(content || '<p>Blog content goes here...</p>', {
+        ALLOWED_TAGS: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'img', 'div', 'br', 'strong', 'em', 'u', 'a'],
+        ALLOWED_ATTR: ['src', 'alt', 'class', 'style', 'data-image-id', 'href'],
+        ADD_ATTR: ['src', 'href'],
+        ADD_URI_SAFE_ATTR: ['src', 'href'],
+      });
+      return sanitizedContent;
+    } catch (error) {
+      console.error('Error rendering preview content:', error);
+      setErrorMessage('Failed to render preview. Please try again.');
+      return '<p>Error rendering content. Please try again.</p>';
+    }
+  }, [content, setErrorMessage]);
+
+  const renderPosts = useMemo(() => {
+    const posts = activeSection === 'Published' ? publishedPosts : draftPosts;
+    return posts.map((post) => (
+      <div
+        key={post.id}
+        className={`post-card rounded-xl shadow-md hover:shadow-lg transition-shadow flex flex-col w-full min-h-[200px] ${
+          activeSection === 'Published'
+            ? 'bg-[#FCF0F8] border border-[#D93BB1]'
+            : 'bg-white'
+        } p-4`}
+      >
+        <h3
+          className={`font-bold truncate ${
+            activeSection === 'Published'
+              ? 'text-lg sm:text-xl text-[#7B0A5F]'
+              : 'text-base sm:text-lg font-semibold text-[#9E0B7F]'
+          }`}
+        >
+          {post.title}
+        </h3>
+        <p
+          className={`flex-grow line-clamp-3 ${
+            activeSection === 'Published'
+              ? 'text-sm sm:text-base text-[#6B7280] mt-2'
+              : 'text-[#718096] text-sm mt-2'
+          }`}
+        >
+          {post.description || 'No description available'}
+        </p>
+        <div
+          className={`flex items-center mt-2 ${
+            activeSection === 'Published'
+              ? 'text-[#9E0B7F] text-xs sm:text-sm font-medium'
+              : 'text-[#718096] text-xs sm:text-sm'
+          }`}
+        >
+          <Calendar className="mr-2" size={16} />
+          {post.date || 'Not published'}
+        </div>
+        {activeSection === 'Published' && (
+          <div className="flex flex-col sm:flex-row sm:flex-wrap justify-end gap-1.5 mt-4">
+            <button
+              onClick={() => handleViewPost(post.id, post.title)}
+              className="px-3 py-1.5 rounded-md flex items-center bg-blue-700 text-white hover:bg-blue-800 text-xs sm:text-sm min-w-[70px] justify-center"
+              aria-label={`View post ${post.title} in preview`}
+            >
+              <Eye className="mr-1" size={16} />
+              View
+            </button>
+            <a
+              href={`/blog/${post.slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1.5 rounded-md flex items-center bg-[#7B0A5F] text-white hover:bg-opacity-80 text-xs sm:text-sm min-w-[70px] justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label={`Open post ${post.title} in new tab`}
+            >
+              <ExternalLink className="mr-1" size={16} />
+              Open
+            </a>
+            {isAdmin ? (
+              <>
+                <button
+                  onClick={() => handleEditPost(post.id)}
+                  className="px-3 py-1.5 rounded-md flex items-center bg-green-600 text-white hover:bg-green-700 text-xs sm:text-sm min-w-[70px] justify-center"
+                  aria-label={`Edit post ${post.title}`}
+                >
+                  <Edit className="mr-1" size={16} />
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDeleteWithToken(post.id)}
+                  className={`px-3 py-1.5 rounded-md flex items-center bg-red-700 text-white hover:bg-red-800 text-xs sm:text-sm min-w-[70px] justify-center ${deletingPostId === post.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  disabled={deletingPostId === post.id}
+                  aria-label={`Delete post ${post.title}`}
+                >
+                  <Trash2 className="mr-1" size={16} />
+                  Delete
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  className="px-3 py-1.5 rounded-md flex items-center bg-gray-400 text-white text-xs sm:text-sm opacity-60 cursor-not-allowed min-w-[70px] justify-center"
+                  disabled
+                  aria-label="Edit post (admin only)"
+                >
+                  <Edit className="mr-1" size={16} />
+                  Edit
+                </button>
+                <button
+                  className="px-3 py-1.5 rounded-md flex items-center bg-gray-400 text-white text-xs sm:text-sm opacity-60 cursor-not-allowed min-w-[70px] justify-center"
+                  disabled
+                  aria-label="Delete post (admin only)"
+                >
+                  <Trash2 className="mr-1" size={16} />
+                  Delete
+                </button>
+              </>
+            )}
+          </div>
+        )}
+        {activeSection === 'Drafts' && (
+          <div className="flex flex-col sm:flex-row justify-end gap-2 mt-4">
+            {isAdmin ? (
+              <button
+                onClick={() => handleEditPost(post.id)}
+                className="px-3 py-1.5 rounded-md flex items-center bg-[#ADD01C] text-white hover:bg-opacity-90 text-sm min-w-[80px] justify-center"
+                aria-label={`Edit draft ${post.title}`}
+              >
+                <Edit className="mr-1" size={14} />
+                Edit
+              </button>
+            ) : (
+              <button
+                className="px-3 py-1.5 rounded-md flex items-center bg-gray-300 text-white text-sm opacity-50 cursor-not-allowed min-w-[80px] justify-center"
+                disabled
+                aria-label="Edit draft (admin only)"
+              >
+                <Edit className="mr-1" size={14} />
+                Edit
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+    ));
+  }, [activeSection, publishedPosts, draftPosts, isAdmin, viewOnly, deletingPostId, handleEditPost, handleDeleteWithToken, handleViewPost]);
 
   return (
     <div className="flex flex-col md:flex-row h-screen w-full bg-[#FCF0F8]" style={{ fontFamily: 'Arial, sans-serif' }}>
       <style>
         {`
-          .image-container {
-            margin: 10px 0;
+          .image-container { margin: 10px 0; width: 100%; box-sizing: border-box; }
+          .image-align-left { display: flex; justify-content: flex-start; }
+          .image-align-center { display: flex; justify-content: center; }
+          .image-align-right { display: flex; justify-content: flex-end; }
+          .image-container img { width: 100%; height: auto; max-width: 100%; display: block; }
+          .prose img { width: 100%; height: auto; max-width: 100%; display: block; }
+          .prose h1 { font-size: 2rem; font-weight: 700; color: #9E0B7F; margin: 1.5rem 0 1rem; line-height: 1.2; }
+          .prose h2 { font-size: 1.75rem; font-weight: 600; color: #9E0B7F; margin: 1.25rem 0 0.75rem; }
+          .prose h3 { font-size: 1.5rem; font-weight: 600; color: #9E0B7F; margin: 1rem 0 0.5rem; }
+          .prose h4 { font-size: 1.25rem; font-weight: 600; color: #9E0B7F; margin: 1rem 0 0.5rem; }
+          .prose h5 { font-size: 1.1rem; font-weight: 600; color: #9E0B7F; margin: 1rem 0 0.5rem; }
+          .prose h6 { font-size: 1rem; font-weight: 600; color: #9E0B7F; margin: 1rem 0 0.5rem; }
+          .prose p { font-size: 1rem; line-height: 1.75; color: #333333; margin-bottom: 1rem; }
+          .prose ul { list-style-type: disc; padding-left: 20px; color: #333333; }
+          .prose ol { list-style-type: decimal; padding-left: 20px; color: #333333; }
+          .prose li { margin-bottom: 8px; font-size: 1rem; line-height: 1.75; }
+          .mobile-menu-nav { transition: all 0.3s ease; }
+          .sidebar-ul li button { transition: background-color 0.2s ease; font-family: Arial, sans-serif; }
+          .mobile-menu-nav button { font-family: Arial, sans-serif; }
+          .group:hover .group-hover\\:block { display: block; }
+          .disabled-input { background-color: #f5f5f5; cursor: not-allowed; opacity: 0.6; }
+          .disabled-button { background-color: #d1d5db; cursor: not-allowed; opacity: 0.6; }
+          .calendar-icon { pointer-events: none; }
+          input[type="date"]::-webkit-calendar-picker-indicator {
+            opacity: 0; position: absolute; right: 10px; width: 20px; height: 20px; cursor: pointer;
+          }
+          /* Responsive card styles */
+          .post-card {
             width: 100%;
             box-sizing: border-box;
-          }
-          .image-align-left {
+            min-height: 200px;
             display: flex;
-            justify-content: flex-start;
+            flex-direction: column;
           }
-          .image-align-center {
+          .post-card h3 {
+            font-size: clamp(1rem, 4vw, 1.25rem);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+          .post-card p {
+            font-size: clamp(0.875rem, 3vw, 1rem);
+            line-height: 1.5;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+          }
+          .post-card .date-container {
+            font-size: clamp(0.75rem, 2.5vw, 0.875rem);
+          }
+          .post-card .button-container {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: auto;
           }
-          .image-align-right {
-            display: flex;
-            justify-content: flex-end;
-          }
-          .image-container img {
-            width: 100%;
-            height: auto;
-            max-width: 100%;
-          }
-          .prose img {
-            width: 100%;
-            height: auto;
-            max-width: 100%;
-          }
-          .prose h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #9E0B7F;
-            margin-top: 1.5rem;
-            margin-bottom: 1rem;
-            line-height: 1.2;
-          }
-          .prose h2 {
-            font-size: 1.75rem;
-            font-weight: 600;
-            color: #9E0B7F;
-            margin-top: 1.25rem;
-            margin-bottom: 0.75rem;
-          }
-          .prose h3 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #9E0B7F;
-            margin-top: 1rem;
-            margin-bottom: 0.5rem;
-          }
-          .prose h4 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #9E0B7F;
-            margin-top: 1rem;
-            margin-bottom: 0.5rem;
-          }
-          .prose h5 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #9E0B7F;
-            margin-top: 1rem;
-            margin-bottom: 0.5rem;
-          }
-          .prose h6 {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #9E0B7F;
-            margin-top: 1rem;
-            margin-bottom: 0.5rem;
-          }
-          .prose p {
-            font-size: 1rem;
-            line-height: 1.75;
-            color: #333333;
-            margin-bottom: 1rem;
-          }
-          .prose ul {
-            list-style-type: disc;
-            padding-left: 20px;
-            color: #333333;
-          }
-          .prose ol {
-            list-style-type: decimal;
-            padding-left: 20px;
-            color: #333333;
-          }
-          .prose li {
-            margin-bottom: 8px;
-            font-size: 1rem;
-            line-height: 1.75;
-          }
-          .mobile-menu-nav {
-            transition: all 0.3s ease;
-          }
-          .sidebar-ul li button {
-            transition: background-color 0.2s ease;
-            font-family: Arial, sans-serif;
-          }
-          .mobile-menu-nav button {
-            font-family: Arial, sans-serif;
-          }
-          .group:hover .group-hover\\:block {
-            display: block;
-          }
-          @media (max-width: 768px) {
-            .preview-container {
-              padding: 16px !important;
-              margin: 0 !important;
-            }
-            .preview-title {
-              font-size: 1.75rem !important;
-              line-height: 2.25rem !important;
-              margin-bottom: 1rem !important;
-            }
-            .preview-meta {
-              font-size: 0.9rem !important;
-              flex-direction: column !important;
-              align-items: flex-start !important;
-              gap: 0.5rem !important;
-            }
-            .preview-meta span {
-              margin-bottom: 0.25rem !important;
-            }
-            .preview-description {
-              font-size: 1rem !important;
-              margin-bottom: 1.5rem !important;
-            }
-            .preview-content {
-              padding: 1.5rem !important;
-              font-size: 1rem !important;
-              line-height: 1.75 !important;
-            }
-            .preview-url {
-              font-size: 0.875rem !important;
-              margin-top: 1.5rem !important;
-            }
-            .preview-categories {
-              flex-wrap: wrap !important;
-              gap: 0.5rem !important;
-            }
-            .preview-categories span {
-              font-size: 0.85rem !important;
-              padding: 0.25rem 0.75rem !important;
-            }
-            .image-container {
-              margin: 8px 0;
-            }
-            .image-container img {
-              width: 100%;
-              height: auto;
+          @media (min-width: 640px) {
+            .post-card .button-container {
+              flex-direction: row;
+              flex-wrap: wrap;
+              gap: 0.375rem;
             }
           }
-          .disabled-input {
-            background-color: #f5f5f5;
-            cursor: not-allowed;
-            opacity: 0.6;
+          @media (max-width: 639px) {
+            .post-card {
+              padding: 0.75rem;
+            }
+            .post-card button, .post-card a {
+              padding: 0.5rem 0.75rem;
+              font-size: 0.75rem;
+              min-height: 2.5rem;
+            }
           }
-          .disabled-button {
-            background-color: #d1d5db;
-            cursor: not-allowed;
-            opacity: 0.6;
+          @media (min-width: 768px) {
+            .post-card {
+              padding: 1rem;
+            }
+            .post-card button, .post-card a {
+              padding: 0.375rem 0.75rem;
+              font-size: 0.875rem;
+            }
+          }
+          @media (min-width: 1024px) {
+            .post-grid {
+              grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+          }
+          @media (min-width: 640px) and (max-width: 767px) {
+            .post-card .button-container {
+              flex-wrap: wrap;
+              gap: 0.375rem;
+            }
+            .post-card button, .post-card a {
+              flex: 1 1 calc(50% - 0.375rem);
+              min-width: 0;
+            }
           }
         `}
       </style>
@@ -758,7 +1053,11 @@ function EditorContent({
           <img src="/Logo1.png" alt="NutriDietMitra Logo" className="w-8 h-8" />
           <h1 className="text-xl font-bold">NutriDiet</h1>
         </div>
-        <button onClick={toggleMobileMenu} className="text-white p-2 rounded-md">
+        <button
+          onClick={toggleMobileMenu}
+          className="text-white p-2 rounded-md"
+          aria-label="Toggle mobile menu"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6"
@@ -780,59 +1079,23 @@ function EditorContent({
         <div className="md:hidden mobile-menu-nav bg-[#9E0B7F] text-white px-4 py-2">
           <nav>
             <ul className="sidebar-ul list-none p-0 m-0">
-              <li className="mb-2">
-                <button
-                  onClick={handleDashboardRedirect}
-                  className="flex items-center px-4 py-3 rounded-md w-full text-left hover:bg-[#9E0B7F]/80"
-                >
-                  <LayoutDashboard className="mr-2" size={20} />
-                  <span>Dashboard</span>
-                </button>
-              </li>
-              <li className="mb-2">
-                <button
-                  onClick={() => setSection('Blog Editor')}
-                  className={`flex items-center px-4 py-3 rounded-md w-full text-left ${
-                    activeSection === 'Blog Editor' ? 'bg-[#ADD01C] text-[#333333]' : 'hover:bg-[#9E0B7F]/80'
-                  }`}
-                >
-                  <Edit className="mr-2" size={20} />
-                  <span>Blog Editor</span>
-                </button>
-              </li>
-              <li className="mb-2">
-                <button
-                  onClick={() => setSection('Preview')}
-                  className={`flex items-center px-4 py-3 rounded-md w-full text-left ${
-                    activeSection === 'Preview' ? 'bg-[#ADD01C] text-[#333333]' : 'hover:bg-[#9E0B7F]/80'
-                  }`}
-                >
-                  <Eye className="mr-2" size={20} />
-                  <span>Preview</span>
-                </button>
-              </li>
-              <li className="mb-2">
-                <button
-                  onClick={() => setSection('Published')}
-                  className={`flex items-center px-4 py-3 rounded-md w-full text-left ${
-                    activeSection === 'Published' ? 'bg-[#ADD01C] text-[#333333]' : 'hover:bg-[#9E0B7F]/80'
-                  }`}
-                >
-                  <CheckSquare className="mr-2" size={20} />
-                  <span>Published</span>
-                </button>
-              </li>
-              <li className="mb-2">
-                <button
-                  onClick={() => setSection('Drafts')}
-                  className={`flex items-center px-4 py-3 rounded-md w-full text-left ${
-                    activeSection === 'Drafts' ? 'bg-[#ADD01C] text-[#333333]' : 'hover:bg-[#9E0B7F]/80'
-                  }`}
-                >
-                  <Clock className="mr-2" size={20} />
-                  <span>Drafts</span>
-                </button>
-              </li>
+              {['Blog Editor', 'Preview', 'Published', 'Drafts'].map((section) => (
+                <li key={section} className="mb-2">
+                  <button
+                    onClick={() => setSection(section)}
+                    className={`flex items-center px-4 py-3 rounded-md w-full text-left ${
+                      activeSection === section ? 'bg-[#ADD01C] text-[#333333]' : 'hover:bg-[#9E0B7F]/80'
+                    }`}
+                    aria-label={`Switch to ${section}`}
+                  >
+                    {section === 'Blog Editor' && <Edit className="mr-2" size={20} />}
+                    {section === 'Preview' && <Eye className="mr-2" size={20} />}
+                    {section === 'Published' && <CheckSquare className="mr-2" size={20} />}
+                    {section === 'Drafts' && <Clock className="mr-2" size={20} />}
+                    <span>{section}</span>
+                  </button>
+                </li>
+              ))}
             </ul>
           </nav>
         </div>
@@ -845,59 +1108,23 @@ function EditorContent({
         </div>
         <nav>
           <ul className="sidebar-ul list-none p-0 m-0">
-            {/* <li className="mb-2">
-              <button
-                onClick={handleDashboardRedirect}
-                className="flex items-center px-4 py-3 rounded-md w-full text-left hover:bg-[#9E0B7F]/80"
-              >
-                <LayoutDashboard className="mr-2" size={20} />
-                <span>Dashboard</span>
-              </button>
-            </li> */}
-            <li className="mb-2">
-              <button
-                onClick={() => setSection('Blog Editor')}
-                className={`flex items-center px-4 py-3 rounded-md w-full text-left ${
-                  activeSection === 'Blog Editor' ? 'bg-[#ADD01C] text-[#333333]' : 'hover:bg-[#9E0B7F]/80'
-                }`}
-              >
-                <Edit className="mr-2" size={20} />
-                <span>Blog Editor</span>
-              </button>
-            </li>
-            <li className="mb-2">
-              <button
-                onClick={() => setSection('Preview')}
-                className={`flex items-center px-4 py-3 rounded-md w-full text-left ${
-                  activeSection === 'Preview' ? 'bg-[#ADD01C] text-[#333333]' : 'hover:bg-[#9E0B7F]/80'
-                }`}
-              >
-                <Eye className="mr-2" size={20} />
-                <span>Preview</span>
-              </button>
-            </li>
-            <li className="mb-2">
-              <button
-                onClick={() => setSection('Published')}
-                className={`flex items-center px-4 py-3 rounded-md w-full text-left ${
-                  activeSection === 'Published' ? 'bg-[#ADD01C] text-[#333333]' : 'hover:bg-[#9E0B7F]/80'
-                }`}
-              >
-                <CheckSquare className="mr-2" size={20} />
-                <span>Published</span>
-              </button>
-            </li>
-            <li className="mb-2">
-              <button
-                onClick={() => setSection('Drafts')}
-                className={`flex items-center px-4 py-3 rounded-md w-full text-left ${
-                  activeSection === 'Drafts' ? 'bg-[#ADD01C] text-[#333333]' : 'hover:bg-[#9E0B7F]/80'
-                }`}
-              >
-                <Clock className="mr-2" size={20} />
-                <span>Drafts</span>
-              </button>
-            </li>
+            {['Blog Editor', 'Preview', 'Published', 'Drafts'].map((section) => (
+              <li key={section} className="mb-2">
+                <button
+                  onClick={() => setSection(section)}
+                  className={`flex items-center px-4 py-3 rounded-md w-full text-left ${
+                    activeSection === section ? 'bg-[#ADD01C] text-[#333333]' : 'hover:bg-[#9E0B7F]/80'
+                  }`}
+                  aria-label={`Switch to ${section}`}
+                >
+                  {section === 'Blog Editor' && <Edit className="mr-2" size={20} />}
+                  {section === 'Preview' && <Eye className="mr-2" size={20} />}
+                  {section === 'Published' && <CheckSquare className="mr-2" size={20} />}
+                  {section === 'Drafts' && <Clock className="mr-2" size={20} />}
+                  <span>{section}</span>
+                </button>
+              </li>
+            ))}
           </ul>
         </nav>
       </div>
@@ -921,13 +1148,18 @@ function EditorContent({
               <button
                 onClick={handleSaveWithJSON}
                 className="px-4 py-2 rounded-md flex items-center bg-[#ADD01C] text-white hover:bg-opacity-90"
+                aria-label={selectedPostId ? 'Update post' : 'Save post'}
               >
                 <Save className="mr-2" size={16} />
                 <span className="hidden sm:inline">{selectedPostId ? 'Update' : 'Save'}</span>
               </button>
             )}
             {activeSection === 'Blog Editor' && (!isAdmin || viewOnly) && (
-              <button className="px-4 py-2 rounded-md flex items-center disabled-button" disabled>
+              <button
+                className="px-4 py-2 rounded-md flex items-center disabled-button"
+                disabled
+                aria-label="Save post (admin only)"
+              >
                 <Save className="mr-2" size={16} />
                 <span className="hidden sm:inline">Save (Admin Only)</span>
               </button>
@@ -937,14 +1169,16 @@ function EditorContent({
                 <button
                   onClick={handleUpdateWithJSON}
                   className="px-4 py-2 rounded-md flex items-center bg-[#ADD01C] text-white hover:bg-opacity-90"
+                  aria-label="Update post"
                 >
                   <Edit className="mr-2" size={16} />
                   <span className="hidden sm:inline">Update</span>
                 </button>
                 <button
-                  onClick={() => handleDelete(selectedPostId)}
-                  className={`px-4 py-2 rounded-md flex items-center bg-red-600 text-white hover:bg-opacity-90 ${isDeleting ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  disabled={isDeleting}
+                  onClick={() => handleDeleteWithToken(selectedPostId)}
+                  className={`px-4 py-2 rounded-md flex items-center bg-red-600 text-white hover:bg-opacity-90 ${deletingPostId === selectedPostId ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  disabled={deletingPostId === selectedPostId}
+                  aria-label="Delete post"
                 >
                   <Trash2 className="mr-2" size={16} />
                   <span className="hidden sm:inline">Delete</span>
@@ -953,11 +1187,19 @@ function EditorContent({
             )}
             {activeSection === 'Preview' && (!isAdmin || viewOnly) && selectedPostId && (
               <>
-                <button className="px-4 py-2 rounded-md flex items-center disabled-button" disabled>
+                <button
+                  className="px-4 py-2 rounded-md flex items-center disabled-button"
+                  disabled
+                  aria-label="Update post (admin only)"
+                >
                   <Edit className="mr-2" size={16} />
                   <span className="hidden sm:inline">Update (Admin Only)</span>
                 </button>
-                <button className="px-4 py-2 rounded-md flex items-center disabled-button" disabled>
+                <button
+                  className="px-4 py-2 rounded-md flex items-center disabled-button"
+                  disabled
+                  aria-label="Delete post (admin only)"
+                >
                   <Trash2 className="mr-2" size={16} />
                   <span className="hidden sm:inline">Delete (Admin Only)</span>
                 </button>
@@ -967,6 +1209,7 @@ function EditorContent({
               <button
                 onClick={handleDashboardRedirect}
                 className="px-4 py-2 rounded-md flex items-center bg-[#9E0B7F] text-white hover:bg-opacity-90"
+                aria-label="Go to dashboard"
               >
                 <LayoutDashboard className="mr-2" size={16} />
                 <span className="hidden sm:inline">Dashboard</span>
@@ -976,7 +1219,9 @@ function EditorContent({
         </header>
 
         {errorMessage && (
-          <div className="p-4 bg-red-100 text-red-700 border border-red-300 rounded-md mx-4 mt-4">{errorMessage}</div>
+          <div className="p-4 bg-red-100 text-red-700 border border-red-300 rounded-md mx-4 mt-4">
+            {errorMessage}
+          </div>
         )}
 
         <div className="flex flex-col md:flex-row flex-grow overflow-auto">
@@ -999,8 +1244,14 @@ function EditorContent({
                       placeholder={isAdmin ? 'Enter blog title' : 'View-only (Admin Only)'}
                       disabled={!isAdmin}
                       autoComplete="off"
+                      aria-invalid={!!inputErrors.title}
+                      aria-describedby={inputErrors.title ? 'title-error' : undefined}
                     />
-                    {inputErrors.title && <p className="text-red-500 text-xs mt-1">{inputErrors.title}</p>}
+                    {inputErrors.title && (
+                      <p id="title-error" className="text-red-500 text-xs mt-1">
+                        {inputErrors.title}
+                      </p>
+                    )}
                   </div>
                   <div className="mb-6">
                     <label htmlFor="description" className="block mb-2 font-medium text-[#333333]">
@@ -1016,9 +1267,13 @@ function EditorContent({
                       placeholder={isAdmin ? 'Enter blog description' : 'View-only (Admin Only)'}
                       disabled={!isAdmin}
                       rows={4}
+                      aria-invalid={!!inputErrors.description}
+                      aria-describedby={inputErrors.description ? 'description-error' : undefined}
                     />
                     {inputErrors.description && (
-                      <p className="text-red-500 text-xs mt-1">{inputErrors.description}</p>
+                      <p id="description-error" className="text-red-500 text-xs mt-1">
+                        {inputErrors.description}
+                      </p>
                     )}
                   </div>
                   <div className="flex flex-col md:flex-row gap-4 mb-6">
@@ -1037,8 +1292,12 @@ function EditorContent({
                         placeholder={isAdmin ? 'enter-slug-here' : 'View-only (Admin Only)'}
                         disabled={!isAdmin}
                         autoComplete="off"
+                        aria-invalid={!!inputErrors.slug}
+                        aria-describedby={inputErrors.slug ? 'slug-error' : undefined}
                       />
-                      {inputErrors.slug && <p className="text-red-500 text-xs mt-1">{inputErrors.slug}</p>}
+                      {inputErrors.slug && (
+                        <p id="slug-error" className="text-red-500 text-xs mt-1">{inputErrors.slug}</p>
+                      )}
                     </div>
                     <div className="flex-1">
                       <label htmlFor="publishDate" className="block mb-2 font-medium text-[#333333]">
@@ -1050,15 +1309,22 @@ function EditorContent({
                           id="publishDate"
                           value={publishDate}
                           onChange={handleDateChange}
-                          className={`w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#D93BB1] ${
+                          className={`w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#D93BB1] pr-10 ${
                             inputErrors.publishDate ? 'border-red-500' : 'border-gray-300'
                           } ${!isAdmin ? 'disabled-input' : ''}`}
                           disabled={!isAdmin}
+                          aria-invalid={!!inputErrors.publishDate}
+                          aria-describedby={inputErrors.publishDate ? 'publishDate-error' : undefined}
                         />
-                        <Calendar className="absolute right-3 top-2.5 text-[#718096]" size={20} />
+                        <Calendar
+                          className="absolute right-3 top-2.5 text-[#718096] calendar-icon"
+                          size={20}
+                        />
                       </div>
                       {inputErrors.publishDate && (
-                        <p className="text-red-500 text-xs mt-1">{inputErrors.publishDate}</p>
+                        <p id="publishDate-error" className="text-red-500 text-xs mt-1">
+                          {inputErrors.publishDate}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -1078,28 +1344,37 @@ function EditorContent({
                         placeholder={isAdmin ? 'Add a category' : 'View-only (Admin Only)'}
                         disabled={!isAdmin}
                         autoComplete="off"
+                        aria-invalid={!!inputErrors.categories}
+                        aria-describedby={inputErrors.categories ? 'categories-error' : undefined}
                       />
                       {isAdmin && (
                         <button
                           onClick={handleAddCategory}
                           className="px-4 py-2 rounded-md bg-[#ADD01C] text-white hover:bg-opacity-90"
+                          aria-label="Add category"
                         >
                           Add
                         </button>
                       )}
                       {!isAdmin && (
-                        <button className="px-4 py-2 rounded-md disabled-button" disabled>
+                        <button
+                          className="px-4 py-2 rounded-md disabled-button"
+                          disabled
+                          aria-label="Add category (admin only)"
+                        >
                           Add
                         </button>
                       )}
                     </div>
                     {inputErrors.categories && (
-                      <p className="text-red-500 text-xs mt-1">{inputErrors.categories}</p>
+                      <p id="categories-error" className="text-red-500 text-xs mt-1">
+                        {inputErrors.categories}
+                      </p>
                     )}
                     <div className="flex flex-wrap gap-2 mt-2">
-                      {categories.map((category) => (
+                      {categories.map((category, index) => (
                         <div
-                          key={category}
+                          key={`${category}-${index}`}
                           className="flex items-center px-3 py-1 rounded-full bg-[#FCF0F8] text-[#9E0B7F]"
                         >
                           <span>{category}</span>
@@ -1107,8 +1382,9 @@ function EditorContent({
                             <button
                               onClick={() => handleRemoveCategory(category)}
                               className="ml-2 text-[#9E0B7F] hover:text-red-600"
+                              aria-label={`Remove category ${category}`}
                             >
-                              &times;
+                              ×
                             </button>
                           )}
                         </div>
@@ -1116,424 +1392,84 @@ function EditorContent({
                     </div>
                   </div>
                 </div>
-                <div className="bg-white rounded-md p-4 md:p-6 shadow-sm">
-                  <div className="mb-4">
-                    <label className="block mb-2 font-medium text-[#333333]">Content</label>
-                    <div className="mb-2 flex flex-wrap gap-2">
-                      <button
-                        onClick={() => handleFormat('bold')}
-                        className={`p-2 rounded-md ${
-                          activeFormatButtons.bold ? 'bg-[#ADD01C] text-white' : 'bg-gray-100'
-                        } ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
-                        disabled={!isAdmin || viewOnly}
-                        title="Bold"
-                      >
-                        <Bold size={16} />
-                      </button>
-                      <button
-                        onClick={() => handleFormat('italic')}
-                        className={`p-2 rounded-md ${
-                          activeFormatButtons.italic ? 'bg-[#ADD01C] text-white' : 'bg-gray-100'
-                        } ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
-                        disabled={!isAdmin || viewOnly}
-                        title="Italic"
-                      >
-                        <Italic size={16} />
-                      </button>
-                      <button
-                        onClick={() => handleFormat('underline')}
-                        className={`p-2 rounded-md ${
-                          activeFormatButtons.underline ? 'bg-[#ADD01C] text-white' : 'bg-gray-100'
-                        } ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
-                        disabled={!isAdmin || viewOnly}
-                        title="Underline"
-                      >
-                        <Underline size={16} />
-                      </button>
-                      <button
-                        onClick={() => handleFormat('insertUnorderedList')}
-                        className={`p-2 rounded-md ${
-                          activeFormatButtons.bulletList ? 'bg-[#ADD01C] text-white' : 'bg-gray-100'
-                        } ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
-                        disabled={!isAdmin || viewOnly}
-                        title="Bullet List"
-                      >
-                        <List size={16} />
-                      </button>
-                      <button
-                        onClick={() => handleFormat('insertOrderedList')}
-                        className={`p-2 rounded-md ${
-                          activeFormatButtons.numberedList ? 'bg-[#ADD01C] text-white' : 'bg-gray-100'
-                        } ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
-                        disabled={!isAdmin || viewOnly}
-                        title="Numbered List"
-                      >
-                        <List size={16} />
-                      </button>
-                      <button
-                        onClick={() => handleFormat('justifyLeft')}
-                        className={`p-2 rounded-md ${
-                          activeFormatButtons.alignLeft ? 'bg-[#ADD01C] text-white' : 'bg-gray-100'
-                        } ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
-                        disabled={!isAdmin || viewOnly}
-                        title="Align Left"
-                      >
-                        <AlignLeft size={16} />
-                      </button>
-                      <button
-                        onClick={() => handleFormat('justifyCenter')}
-                        className={`p-2 rounded-md ${
-                          activeFormatButtons.alignCenter ? 'bg-[#ADD01C] text-white' : 'bg-gray-100'
-                        } ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
-                        disabled={!isAdmin || viewOnly}
-                        title="Align Center"
-                      >
-                        <AlignCenter size={16} />
-                      </button>
-                      <button
-                        onClick={() => handleFormat('justifyRight')}
-                        className={`p-2 rounded-md ${
-                          activeFormatButtons.alignRight ? 'bg-[#ADD01C] text-white' : 'bg-gray-100'
-                        } ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
-                        disabled={!isAdmin || viewOnly}
-                        title="Align Right"
-                      >
-                        <AlignRight size={16} />
-                      </button>
-                      <button
-                        onClick={() => fileInputRef.current.click()}
-                        className={`p-2 rounded-md bg-gray-100 ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
-                        disabled={!isAdmin || viewOnly}
-                        title="Insert Image"
-                      >
-                        <Image size={16} />
-                      </button>
-                      <button
-                        onClick={() => {
-                          const url = prompt('Enter the URL:');
-                          if (url) handleFormat('createLink', url);
-                        }}
-                        className={`p-2 rounded-md bg-gray-100 ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
-                        disabled={!isAdmin || viewOnly}
-                        title="Insert Link"
-                      >
-                        <Link size={16} />
-                      </button>
-                      <input
-                        type="file"
-                        ref={fileInputRef}
-                        onChange={handleImageUpload}
-                        accept="image/*"
-                        className="hidden"
-                        multiple
-                      />
-                    </div>
-                    <div className="mb-2 flex flex-wrap gap-2">
-                      <button
-                        onClick={() => handleFormat('formatBlock', 'h1')}
-                        className={`p-2 rounded-md ${
-                          activeFormatButtons.heading1 ? 'bg-[#ADD01C] text-white' : 'bg-gray-100'
-                        } ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
-                        disabled={!isAdmin || viewOnly}
-                        title="Heading 1"
-                      >
-                        H1
-                      </button>
-                      <button
-                        onClick={() => handleFormat('formatBlock', 'h2')}
-                        className={`p-2 rounded-md ${
-                          activeFormatButtons.heading2 ? 'bg-[#ADD01C] text-white' : 'bg-gray-100'
-                        } ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
-                        disabled={!isAdmin || viewOnly}
-                        title="Heading 2"
-                      >
-                        H2
-                      </button>
-                      <button
-                        onClick={() => handleFormat('formatBlock', 'h3')}
-                        className={`p-2 rounded-md ${
-                          activeFormatButtons.heading3 ? 'bg-[#ADD01C] text-white' : 'bg-gray-100'
-                        } ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
-                        disabled={!isAdmin || viewOnly}
-                        title="Heading 3"
-                      >
-                        H3
-                      </button>
-                      <button
-                        onClick={() => handleFormat('formatBlock', 'h4')}
-                        className={`p-2 rounded-md ${
-                          activeFormatButtons.heading4 ? 'bg-[#ADD01C] text-white' : 'bg-gray-100'
-                        } ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
-                        disabled={!isAdmin || viewOnly}
-                        title="Heading 4"
-                      >
-                        H4
-                      </button>
-                    </div>
-                    <div className="mb-2 flex gap-2">
-                      <button
-                        onClick={() => updateImageAlignment('left')}
-                        className={`p-2 rounded-md bg-gray-100 ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
-                        disabled={!isAdmin || viewOnly}
-                        title="Align Image Left"
-                      >
-                        <AlignLeft size={16} />
-                      </button>
-                      <button
-                        onClick={() => updateImageAlignment('center')}
-                        className={`p-2 rounded-md bg-gray-100 ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
-                        disabled={!isAdmin || viewOnly}
-                        title="Align Image Center"
-                      >
-                        <AlignCenter size={16} />
-                      </button>
-                      <button
-                        onClick={() => updateImageAlignment('right')}
-                        className={`p-2 rounded-md bg-gray-100 ${!isAdmin || viewOnly ? 'disabled-button' : ''}`}
-                        disabled={!isAdmin || viewOnly}
-                        title="Align Image Right"
-                      >
-                        <AlignRight size={16} />
-                      </button>
-                    </div>
-                    <div
-                      ref={editorRef}
-                      contentEditable={isAdmin && !viewOnly}
-                      onInput={handleContentChange}
-                      onClick={handleEditorClick}
-                      onKeyDown={handleKeyDown}
-                      className={`w-full min-h-[400px] border rounded-md p-4 focus:outline-none focus:ring-2 focus:ring-[#D93BB1] ${
-                        inputErrors.content ? 'border-red-500' : 'border-gray-300'
-                      } ${!isAdmin || viewOnly ? 'bg-gray-50 cursor-default' : 'bg-white'}`}
-                      style={{ whiteSpace: 'pre-wrap', fontFamily: 'Arial, sans-serif' }}
-                    />
-                    {inputErrors.content && <p className="text-red-500 text-xs mt-1">{inputErrors.content}</p>}
+                <EditorControls
+                  isAdmin={isAdmin}
+                  viewOnly={viewOnly}
+                  editorRef={editorRef}
+                  fileInputRef={fileInputRef}
+                  images={images}
+                  lockAspectRatio={lockAspectRatio}
+                  inputErrors={inputErrors}
+                  activeFormatButtons={activeFormatButtons}
+                  handleFormat={handleFormat}
+                  updateImageAlignment={updateImageAlignment}
+                  handleContentChange={handleContentChange}
+                  handleImageUpload={handleImageUpload}
+                  updateImageSize={updateImageSize}
+                  removeImage={removeImage}
+                  toggleAspectRatioLock={toggleAspectRatioLock}
+                  handleKeyDown={handleKeyDown}
+                  handleEditorClick={handleEditorClick}
+                />
+              </div>
+              <div className="w-full md:w-1/2 p-4 md:p-6 bg-gray-50 overflow-auto">
+                <h2 className="text-xl font-bold text-[#9E0B7F] mb-4">Preview</h2>
+                <div className="bg-white rounded-md p-4 md:p-6 shadow-sm prose max-w-none">
+                  <h1 className="preview-title text-3xl font-bold text-[#9E0B7F] mb-4">
+                    {title || 'Blog Title'}
+                  </h1>
+                  <div className="preview-meta flex items-center text-[#718096] mb-4">
+                    <span className="flex items-center mr-4">
+                      <Calendar className="mr-2" size={16} />
+                      {publishDate || 'Select a date'}
+                    </span>
+                    <span className="flex items-center">
+                      <Tag className="mr-2" size={16} />
+                      {categories.length > 0 ? categories.join(', ') : 'No categories'}
+                    </span>
                   </div>
-                  {images.length > 0 && (
-                    <div className="mb-4">
-                      <h3 className="text-lg font-medium text-[#333333] mb-2">Image Settings</h3>
-                      <div className="flex items-center mb-2">
-                        <button
-                          onClick={toggleAspectRatioLock}
-                          className="p-2 rounded-md bg-gray-100 mr-2"
-                          disabled={!isAdmin || viewOnly}
-                        >
-                          {lockAspectRatio ? <Lock size={16} /> : <Unlock size={16} />}
-                        </button>
-                        <span className="text-[#718096]">
-                          {lockAspectRatio ? 'Unlock Aspect Ratio' : 'Lock Aspect Ratio'}
-                        </span>
-                      </div>
-                      {images.map((image) => (
-                        <div key={image.id} className="mb-4 p-4 border rounded-md">
-                          <img src={image.url} alt="Preview" className="w-32 h-auto mb-2" />
-                          <div className="flex gap-4 mb-2">
-                            <div>
-                              <label className="block text-sm text-[#333333]">Width (%)</label>
-                              <input
-                                type="number"
-                                value={image.width}
-                                onChange={(e) => updateImageSize(image.id, 'width', e.target.value)}
-                                className={`w-full border rounded-md px-2 py-1 ${
-                                  inputErrors[`${image.id}-width`] ? 'border-red-500' : 'border-gray-300'
-                                } ${!isAdmin || viewOnly ? 'disabled-input' : ''}`}
-                                disabled={!isAdmin || viewOnly}
-                              />
-                              {inputErrors[`${image.id}-width`] && (
-                                <p className="text-red-500 text-xs mt-1">{inputErrors[`${image.id}-width`]}</p>
-                              )}
-                            </div>
-                            <div>
-                              <label className="block text-sm text-[#333333]">Height</label>
-                              <input
-                                type="number"
-                                value={image.height}
-                                onChange={(e) => updateImageSize(image.id, 'height', e.target.value)}
-                                className={`w-full border rounded-md px-2 py-1 ${
-                                  inputErrors[`${image.id}-height`] ? 'border-red-500' : 'border-gray-300'
-                                } ${!isAdmin || viewOnly ? 'disabled-input' : ''}`}
-                                disabled={!isAdmin || viewOnly || lockAspectRatio}
-                              />
-                              {inputErrors[`${image.id}-height`] && (
-                                <p className="text-red-500 text-xs mt-1">{inputErrors[`${image.id}-height`]}</p>
-                              )}
-                            </div>
-                          </div>
-                          {isAdmin && !viewOnly && (
-                            <button
-                              onClick={() => removeImage(image.id)}
-                              className="px-3 py-1 rounded-md bg-red-600 text-white hover:bg-opacity-90"
-                            >
-                              Remove Image
-                            </button>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  <p className="preview-description text-lg text-[#333333] mb-6">
+                    {description || 'Blog description'}
+                  </p>
+                  <div className="preview-content" dangerouslySetInnerHTML={{ __html: renderPreviewContent }} />
+                  <p className="preview-url text-[#718096] mt-4">
+                    URL: {slug ? `${window.location.origin}/blog/${slug}` : 'Enter a slug'}
+                  </p>
                 </div>
               </div>
-              <div className="w-full md:w-1/2 p-4 md:p-6 overflow-auto">
-                <div className="bg-white rounded-md p-4 md:p-6 shadow-sm preview-container">
-                  <h2 className="text-2xl md:text-3xl font-bold text-[#9E0B7F] mb-4 preview-title">{title || 'Blog Title'}</h2>
-                  <div className="flex items-center gap-2 text-sm text-[#718096] mb-4 preview-meta">
-                    <span>{publishDate || 'Publish Date'}</span>
-                    <span>|</span>
-                    <span>{categories.join(', ') || 'Categories'}</span>
-                  </div>
-                  <p className="text-base text-[#333333] mb-4 preview-description">{description || 'Blog Description'}</p>
-                  <div
-                    className="prose preview-content"
-                    dangerouslySetInnerHTML={{
-                      __html: DOMPurify.sanitize(content || '<p>Blog content goes here...</p>', {
-                        ALLOWED_TAGS: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'img', 'div', 'br', 'strong', 'em', 'u', 'a'],
-                        ALLOWED_ATTR: ['src', 'alt', 'class', 'style', 'href'],
-                      }),
-                    }}
-                  />
-                  <div className="flex items-center gap-2 text-sm text-[#718096] mt-4 preview-url">
-                    <span>URL:</span>
-                    <a
-                      href={`/blog/${slug || 'no-slug'}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[#9E0B7F] hover:underline"
-                    >
-                      /blog/{slug || 'no-slug'}
-                    </a>
-                    <button
-                      onClick={() => {
-                        navigator.clipboard.writeText(`${window.location.origin}/blog/${slug}`);
-                        alert('URL copied to clipboard!');
-                      }}
-                      className="px-2 py-1 rounded-md bg-[#ADD01C] text-white hover:bg-opacity-90"
-                    >
-                      Copy
-                    </button>
-                  </div>
-                  <div className="flex flex-wrap gap-2 mt-4 preview-categories">
-                    {categories.map((category) => (
-                      <span
-                        key={category}
-                        className="px-3 py-1 rounded-full bg-[#FCF0F8] text-[#9E0B7F] text-sm"
-                      >
-                        {category}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
+            </div>
+          )}
+
+          {(activeSection === 'Published' || activeSection === 'Drafts') && !viewOnly && (
+            <div className="w-full p-4 md:p-6 overflow-auto">
+              <h2 className="text-xl font-bold text-[#9E0B7F] mb-4">{activeSection}</h2>
+              <div className="post-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">{renderPosts}</div>
             </div>
           )}
 
           {activeSection === 'Preview' && (
-            <div className="w-full p-4 md:p-6 overflow-auto">
-              <div className="bg-white rounded-md p-4 md:p-6 shadow-sm max-w-4xl mx-auto preview-container">
-                <h2 className="text-2xl md:text-3xl font-bold text-[#9E0B7F] mb-4 preview-title">{title || 'Blog Title'}</h2>
-                <div className="flex items-center gap-2 text-sm text-[#718096] mb-4 preview-meta">
-                  <span>{publishDate || 'Publish Date'}</span>
-                  <span>|</span>
-                  <span>{categories.join(', ') || 'Categories'}</span>
+            <div className="w-full p-4 md:p-6 overflow-auto preview-container">
+              <div className="bg-white rounded-md p-4 md:p-6 shadow-sm prose max-w-none">
+                <h1 className="preview-title text-3xl font-bold text-[#9E0B7F] mb-4">
+                  {title || 'Blog Title'}
+                </h1>
+                <div className="preview-meta flex items-center text-[#718096] mb-4">
+                  <span className="flex items-center mr-4">
+                    <Calendar className="mr-2" size={16} />
+                    {publishDate || 'Select a date'}
+                  </span>
+                  <span className="flex items-center">
+                    <Tag className="mr-2" size={16} />
+                    {categories.length > 0 ? categories.join(', ') : 'No categories'}
+                  </span>
                 </div>
-                <p className="text-base text-[#333333] mb-4 preview-description">{description || 'Blog Description'}</p>
-                <div
-                  className="prose preview-content"
-                  dangerouslySetInnerHTML={{
-                    __html: DOMPurify.sanitize(content || '<p>Blog content goes here...</p>', {
-                      ALLOWED_TAGS: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'img', 'div', 'br', 'strong', 'em', 'u', 'a'],
-                      ALLOWED_ATTR: ['src', 'alt', 'class', 'style', 'href'],
-                    }),
-                  }}
-                />
-                <div className="flex items-center gap-2 text-sm text-[#718096] mt-4 preview-url">
-                  <span>URL:</span>
-                  <a
-                    href={`/blog/${slug || 'no-slug'}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[#9E0B7F] hover:underline"
-                  >
-                    /blog/{slug || 'no-slug'}
-                  </a>
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(`${window.location.origin}/blog/${slug}`);
-                      alert('URL copied to clipboard!');
-                    }}
-                    className="px-2 py-1 rounded-md bg-[#ADD01C] text-white hover:bg-opacity-90"
-                  >
-                    Copy
-                  </button>
-                </div>
-                <div className="flex flex-wrap gap-2 mt-4 preview-categories">
-                  {categories.map((category) => (
-                    <span
-                      key={category}
-                      className="px-3 py-1 rounded-full bg-[#FCF0F8] text-[#9E0B7F] text-sm"
-                    >
-                      {category}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {(activeSection === 'Published' || activeSection === 'Drafts') && (
-            <div className="w-full p-4 md:p-6 overflow-auto">
-              <div className="bg-white rounded-md p-4 md:p-6 shadow-sm">
-                <h2 className="text-xl font-bold text-[#9E0B7F] mb-4">{activeSection}</h2>
-                {activeSection === 'Published' && publishedPosts.length === 0 && (
-                  <p className="text-[#718096]">No published posts available.</p>
-                )}
-                {activeSection === 'Drafts' && draftPosts.length === 0 && (
-                  <p className="text-[#718096]">No drafts available.</p>
-                )}
-                {(activeSection === 'Published' ? publishedPosts : draftPosts).map((post) => (
-                  <div
-                    key={post.id}
-                    className="flex justify-between items-center p-4 border-b border-gray-200 hover:bg-gray-50"
-                  >
-                    <div>
-                      <h3 className="text-lg font-medium text-[#333333]">{post.title}</h3>
-                      <p className="text-sm text-[#718096]">{post.date}</p>
-                    </div>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => {
-                          fetchBlogById(post.id);
-                          setSection('Blog Editor');
-                        }}
-                        className="px-3 py-1 rounded-md bg-[#ADD01C] text-white hover:bg-opacity-90"
-                      >
-                        View
-                      </button>
-                      <button
-                        onClick={() => window.open(`/blog/${post.slug}`, '_blank')}
-                        className="px-3 py-1 rounded-md bg-[#9E0B7F] text-white hover:bg-opacity-90"
-                      >
-                        Open
-                      </button>
-                      {isAdmin && (
-                        <>
-                          <button
-                            onClick={() => navigate(`/blog/${post.slug}/edit`)}
-                            className="px-3 py-1 rounded-md bg-blue-600 text-white hover:bg-opacity-90"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleDelete(post.id)}
-                            className={`px-3 py-1 rounded-md bg-red-600 text-white hover:bg-opacity-90 ${isDeleting ? 'opacity-50 cursor-not-allowed' : ''}`}
-                            disabled={isDeleting}
-                          >
-                            Delete
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                ))}
+                <p className="preview-description text-lg text-[#333333] mb-6">
+                  {description || 'Blog description'}
+                </p>
+                <div className="preview-content" dangerouslySetInnerHTML={{ __html: renderPreviewContent }} />
+                <p className="preview-url text-[#718096] mt-4">
+                  URL: {slug ? `${window.location.origin}/blog/${slug}` : 'Enter a slug'}
+                </p>
               </div>
             </div>
           )}
@@ -1542,5 +1478,85 @@ function EditorContent({
     </div>
   );
 }
+
+EditorContent.propTypes = {
+  isAdmin: PropTypes.bool.isRequired,
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  slug: PropTypes.string.isRequired,
+  publishDate: PropTypes.string.isRequired,
+  categories: PropTypes.arrayOf(PropTypes.string),
+  newCategory: PropTypes.string.isRequired,
+  hasUnsavedChanges: PropTypes.bool.isRequired,
+  content: PropTypes.string.isRequired,
+  images: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string,
+      file: PropTypes.instanceOf(File),
+      url: PropTypes.string,
+      width: PropTypes.number,
+      height: PropTypes.number,
+    })
+  ).isRequired,
+  lockAspectRatio: PropTypes.bool.isRequired,
+  inputErrors: PropTypes.object.isRequired,
+  activeFormatButtons: PropTypes.object.isRequired,
+  mobileMenuOpen: PropTypes.bool.isRequired,
+  activeSection: PropTypes.string.isRequired,
+  errorMessage: PropTypes.string.isRequired,
+  publishedPosts: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string,
+      title: PropTypes.string,
+      description: PropTypes.string,
+      date: PropTypes.string,
+      slug: PropTypes.string,
+    })
+  ).isRequired,
+  draftPosts: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string,
+      title: PropTypes.string,
+      description: PropTypes.string,
+      date: PropTypes.string,
+    })
+  ).isRequired,
+  selectedPostId: PropTypes.string,
+  editorRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }).isRequired,
+  fileInputRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }).isRequired,
+  imageRatios: PropTypes.shape({ current: PropTypes.object }).isRequired,
+  imageUrls: PropTypes.shape({ current: PropTypes.object }).isRequired,
+  debouncedSetContent: PropTypes.func.isRequired,
+  setTitle: PropTypes.func.isRequired,
+  setDescription: PropTypes.func.isRequired,
+  setSlug: PropTypes.func.isRequired,
+  setPublishDate: PropTypes.func.isRequired,
+  setCategories: PropTypes.func.isRequired,
+  setNewCategory: PropTypes.func.isRequired,
+  setHasUnsavedChanges: PropTypes.func.isRequired,
+  setImages: PropTypes.func.isRequired,
+  setLockAspectRatio: PropTypes.func.isRequired,
+  setInputErrors: PropTypes.func.isRequired,
+  setActiveFormatButtons: PropTypes.func.isRequired,
+  setMobileMenuOpen: PropTypes.func.isRequired,
+  setActiveSection: PropTypes.func.isRequired,
+  setErrorMessage: PropTypes.func.isRequired,
+  setSelectedPostId: PropTypes.func.isRequired,
+  handleTitleChange: PropTypes.func.isRequired,
+  handleDescriptionChange: PropTypes.func.isRequired,
+  handleSlugChange: PropTypes.func.isRequired,
+  handleDateChange: PropTypes.func.isRequired,
+  handleAddCategory: PropTypes.func.isRequired,
+  handleRemoveCategory: PropTypes.func.isRequired,
+  handleSave: PropTypes.func.isRequired,
+  handleUpdate: PropTypes.func.isRequired,
+  handleDelete: PropTypes.func.isRequired,
+  toggleMobileMenu: PropTypes.func.isRequired,
+  setSection: PropTypes.func.isRequired,
+  fetchBlogById: PropTypes.func.isRequired,
+  isDeleting: PropTypes.bool.isRequired,
+  viewOnly: PropTypes.bool.isRequired,
+  setContent: PropTypes.func.isRequired,
+};
 
 export default EditorContent;

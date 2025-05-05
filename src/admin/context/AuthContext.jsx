@@ -1,10 +1,9 @@
-// src/context/AuthContext.js
 import { createContext, useState, useEffect } from 'react';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(JSON.parse(sessionStorage.getItem('user')) || null);
+  const [user, setUserState] = useState(JSON.parse(sessionStorage.getItem('user')) || null);
   const [token, setToken] = useState(sessionStorage.getItem('token') || null);
   const [refreshToken, setRefreshToken] = useState(sessionStorage.getItem('refresh_token') || null);
   const [justSignedUp, setJustSignedUp] = useState(false);
@@ -17,17 +16,27 @@ export const AuthProvider = ({ children }) => {
     console.log('Restoring session:', { storedToken, storedUser, storedRefreshToken });
     setToken(storedToken);
     try {
-      setUser(storedUser ? JSON.parse(storedUser) : null);
+      setUserState(storedUser ? JSON.parse(storedUser) : null);
     } catch (error) {
       console.error('Failed to parse stored user:', error);
-      setUser(null);
+      setUserState(null);
     }
     setRefreshToken(storedRefreshToken);
   }, []);
 
+  // Custom setUser function to update user state and sessionStorage
+  const setUser = (newUser) => {
+    setUserState(newUser);
+    if (newUser) {
+      sessionStorage.setItem('user', JSON.stringify(newUser));
+    } else {
+      sessionStorage.removeItem('user');
+    }
+  };
+
   const login = (newToken, newUser, newRefreshToken, isSignup = false) => {
     setToken(newToken);
-    setUser(newUser);
+    setUserState(newUser);
     setRefreshToken(newRefreshToken);
     setJustSignedUp(isSignup);
     sessionStorage.setItem('token', newToken);
@@ -38,7 +47,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setToken(null);
-    setUser(null);
+    setUserState(null);
     setRefreshToken(null);
     setJustSignedUp(false);
     sessionStorage.removeItem('token');
@@ -48,7 +57,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, refreshToken, login, logout, isLoggedIn: !!token, justSignedUp, setJustSignedUp }}>
+    <AuthContext.Provider value={{ user, token, refreshToken, login, logout, setUser, isLoggedIn: !!token, justSignedUp, setJustSignedUp }}>
       {children}
     </AuthContext.Provider>
   );
