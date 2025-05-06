@@ -4,6 +4,7 @@ import img1 from '/assets/Images/img1.jpg';
 import img2 from '/assets/Images/img2.jpg';
 import img3 from '/assets/Images/img3.jpg';
 import Appointment from './form/Appointment';
+// import Weight from '/Icon/Weight.ico';
 
 const heroSlides = [
   {
@@ -58,22 +59,22 @@ const qualityCards = [
 
 const services = [
   {
-    icon: <Apple className="text-nutricare-green" size={24} />,
+    icon: <img src="/Icon/weight.ico" className="text-nutricare-green w-7 h-7" alt="Weight Management Icon"  />,
     title: "Weight Management",
     description: "Sustainable plans for weight loss or gain, tailored to your lifestyle without fad diets."
   },
   {
-    icon: <Heart className="text-nutricare-green" size={24} />,
+    icon: <img src="/Icon/thyroid.ico" className="text-nutricare-green w-7 h-7" alt="PCOS & Thyroid Icon" />,
     title: "PCOS & Thyroid",
     description: "Hormone-balancing diets to manage symptoms and improve overall health."
   },
   {
-    icon: <Salad className="text-nutricare-green" size={24} />,
+    icon: <Salad  size={24} />,
     title: "Diabetes Care",
     description: "Kitchen-based plans to control blood sugar and boost energy naturally."
   },
   {
-    icon: <Stethoscope className="text-nutricare-green" size={24} />,
+    icon: <img src="/Icon/skin.ico" className="text-nutricare-green w-7 h-7" alt="Glowing Skin Icon" />,
     title: "Glowing Skin",
     description: "Antioxidant-rich diets for radiant, clear skin from the inside out."
   }

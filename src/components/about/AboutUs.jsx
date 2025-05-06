@@ -7,8 +7,8 @@ import {
   Award,
   Apple,
   Globe,
-  BookOpen, // Added for Evidence-Based Nutrition
-  Stethoscope, // Added for Specialized Nutrition
+  BookOpen,
+  Stethoscope,
 } from "lucide-react";
 import img1 from "/assets/Images/img1.jpg";
 import ConsultationFormModal from "../form/Consultency.jsx";
@@ -22,8 +22,8 @@ const icons = {
   award: Award,
   apple: Apple,
   globe: Globe,
-  bookOpen: BookOpen, // Added for Evidence-Based Nutrition
-  stethoscope: Stethoscope, // Added for Specialized Nutrition
+  bookOpen: BookOpen,
+  stethoscope: Stethoscope,
 };
 
 // Get icon component by name
@@ -57,8 +57,8 @@ const AboutUs = () => {
 
   // Color scheme
   const iconColors = {
-    primary: "text-[#9E0B7F]",
-    secondary: "text-[#D93BB1]",
+    // primary: "text-[#9E0B7F]",
+    // secondary: "text-[#D93BB1]",
     accent: "text-[#ADD01C]",
   };
 
@@ -76,7 +76,7 @@ const AboutUs = () => {
       color: iconColors.secondary,
     },
     {
-      icon: "stethoscope",
+      icon: <img src="/Icon/Specialized.ico" className="w-10 h-10 filter-accent" alt="Specialized Nutrition Icon" />,
       title: "Specialized Nutrition",
       description: "Expert plans for PCOS, diabetes, thyroid, and more",
       color: iconColors.accent,
@@ -111,7 +111,9 @@ const AboutUs = () => {
                   key={index}
                   className="bg-white p-4 rounded-lg shadow-md transform transition hover:scale-105 hover:shadow-lg"
                 >
-                  {getIconByName(feature.icon, { className: feature.color, size: 40 })}
+                  {typeof feature.icon === "string"
+                    ? getIconByName(feature.icon, { className: feature.color, size: 40 })
+                    : feature.icon}
                   <h3 className="font-bold text-[#333333] mb-2">
                     {feature.title}
                   </h3>
@@ -132,7 +134,7 @@ const AboutUs = () => {
                 alt="Nutridietmitra Nutrition Expertise"
                 className="rounded-xl object-cover w-full max-h-[500px]"
               />
-              <div className="absolute bottom-0 right-0 md:-bottom-6 md:-right-6 bg-[#9E0B7F] text-white p-4 md:p-6 rounded-xl shadow-lg w-fit">
+              <div className="absolute bottom-0 right-0 md:-bottom-6 md:-right-6 bg-[#9E0B7F] text-white p-4 md:p sister rounded-xl shadow-lg w-fit">
                 <div className="flex items-center space-x-4">
                   <div className="text-4xl md:text-5xl font-bold">{years}+</div>
                   <div>

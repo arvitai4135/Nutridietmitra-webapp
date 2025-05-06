@@ -150,7 +150,7 @@ const AboutTop = () => {
           <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-100 hover:border-nutricare-green hover:shadow-xl transition-all duration-300 group">
             <div className="flex items-center mb-6">
               <div className="w-14 h-14 rounded-lg bg-nutricare-bg-light flex items-center justify-center group-hover:bg-nutricare-green transition-colors duration-300">
-                <Heart className="w-7 h-7 text-nutricare-primary-dark group-hover:text-white transition-colors duration-300" />
+                <img src="/Icon/weight.ico" className="text-nutricare-green w-7 h-7" alt="Weight Management Icon" />
               </div>
               <h3 className="text-2xl font-bold text-nutricare-text-dark ml-4">
                 Our Mission
@@ -165,7 +165,7 @@ const AboutTop = () => {
           <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-100 hover:border-nutricare-green hover:shadow-xl transition-all duration-300 group">
             <div className="flex items-center mb-6">
               <div className="w-14 h-14 rounded-lg bg-nutricare-bg-light flex items-center justify-center group-hover:bg-nutricare-green transition-colors duration-300">
-                <FileText className="w-7 h-7 text-nutricare-primary-dark group-hover:text-white transition-colors duration-300" />
+                <FileText className="w-7 h-7 group-hover:text-white transition-colors duration-300" />
               </div>
               <h3 className="text-2xl font-bold text-nutricare-text-dark ml-4">
                 Our Vision
@@ -180,7 +180,7 @@ const AboutTop = () => {
           <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:border-nutricare-green hover:shadow-xl transition-all duration-300 group">
             <div className="flex items-center mb-6">
               <div className="w-14 h-14 rounded-lg bg-nutricare-bg-light flex items-center justify-center group-hover:bg-nutricare-green transition-colors duration-300">
-                <Clock className="w-7 h-7 text-nutricare-primary-dark group-hover:text-white transition-colors duration-300" />
+                <Clock className="w-7 h-7 group-hover:text-white transition-colors duration-300" />
               </div>
               <h3 className="text-2xl font-bold text-nutricare-text-dark ml-4">
                 Our History

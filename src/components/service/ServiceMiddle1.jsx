@@ -72,7 +72,7 @@ const NutritionServices = () => {
       id: 5,
       title: "Diabetes Management",
       description: "Kitchen-based meal plans to control blood sugar levels naturally, enhance insulin function, and boost energy.",
-      icon: <FontAwesomeIcon icon={faTint} className="w-full h-full" />,
+      icon: <img src="/Icon/diabetes.ico" className="w-10 h-10 filter-accent" alt="Specialized Nutrition Icon" />,
       benefits: ["Blood sugar control", "Insulin support", "Energy stability"],
       color: "from-teal-500 to-teal-600",
       category: "chronic"
@@ -81,7 +81,7 @@ const NutritionServices = () => {
       id: 6,
       title: "Thyroid Management",
       description: "Natural, kitchen-based diets to support thyroid function, boost metabolism, and reduce fatigue.",
-      icon: <ThyroidIcon />,
+      icon: <img src="/Icon/thyroid.ico" className="w-10 h-10 filter-accent" alt="Specialized Nutrition Icon" />,
       benefits: ["Thyroid support", "Metabolism boost", "Fatigue reduction"],
       color: "from-amber-500 to-amber-600",
       category: "hormonal"
@@ -90,7 +90,7 @@ const NutritionServices = () => {
       id: 7,
       title: "Child Nutrition",
       description: "Fun, healthy meal plans for kids to support growth, immunity, and lifelong healthy eating habits.",
-      icon: <FontAwesomeIcon icon={faAppleAlt} className="w-full h-full" />,
+      icon: <img src="/Icon/child.ico" className="w-10 h-10 filter-accent" alt="Specialized Nutrition Icon" />,
       benefits: ["Growth support", "Immunity boost", "Healthy habits"],
       color: "from-orange-500 to-orange-600",
       category: "lifestyle"
@@ -99,7 +99,7 @@ const NutritionServices = () => {
       id: 8,
       title: "Immunity Boosting Plan",
       description: "Antioxidant-rich, kitchen-based diets to strengthen immunity and protect against illness naturally.",
-      icon: <FontAwesomeIcon icon={faShieldAlt} className="w-full h-full" />,
+      icon: <img src="/Icon/immunity.ico" className="w-10 h-10 filter-accent" alt="Specialized Nutrition Icon" />,
       benefits: ["Immune strength", "Illness resistance", "Energy boost"],
       color: "from-yellow-500 to-yellow-600",
       category: "wellness"
@@ -126,7 +126,7 @@ const NutritionServices = () => {
       id: 11,
       title: "Anti-Inflammatory Diet",
       description: "Gut-friendly meals to reduce inflammation, alleviate chronic issues, and promote overall wellness.",
-      icon: <FontAwesomeIcon icon={faLeaf} className="w-full h-full" />,
+      icon: <img src="/Icon/Anti.ico" className="w-10 h-10 filter-accent" alt="Specialized Nutrition Icon" />,
       benefits: ["Inflammation reduction", "Gut health", "Chronic issue relief"],
       color: "from-green-500 to-green-600",
       category: "wellness"
@@ -144,7 +144,7 @@ const NutritionServices = () => {
       id: 13,
       title: "Post-Menopause Management",
       description: "Nutritional plans to balance hormones, support bone health, and manage menopausal symptoms.",
-      icon: <FontAwesomeIcon icon={faMoon} className="w-full h-full" />,
+      icon: <img src="/Icon/Post.ico" className="w-10 h-10 filter-accent" alt="Specialized Nutrition Icon" />,
       benefits: ["Hormone balance", "Bone health", "Symptom management"],
       color: "from-violet-500 to-violet-600",
       category: "hormonal"
@@ -153,7 +153,7 @@ const NutritionServices = () => {
       id: 14,
       title: "Glowing Skin Diet",
       description: "Antioxidant-rich meals and hydration plans for radiant, clear, and glowing skin.",
-      icon: <FontAwesomeIcon icon={faSun} className="w-full h-full" />,
+      icon: <img src="/Icon/skin.ico" className="w-10 h-10 filter-accent" alt="Specialized Nutrition Icon" />,
       benefits: ["Radiant skin", "Blemish reduction", "Hydration support"],
       color: "from-fuchsia-500 to-fuchsia-600",
       category: "wellness"
@@ -162,7 +162,7 @@ const NutritionServices = () => {
       id: 15,
       title: "Detox Diet",
       description: "Natural, fiber-rich meals to gently cleanse the body and boost energy levels.",
-      icon: <FontAwesomeIcon icon={faSun} className="w-full h-full" />,
+      icon: <img src="/Icon/healthy.ico" className="w-10 h-10 filter-accent" alt="Specialized Nutrition Icon" />,
       benefits: ["Body cleansing", "Energy boost", "Digestive health"],
       color: "from-lime-500 to-lime-600",
       category: "wellness"

@@ -150,7 +150,7 @@ const Service = () => {
                   <div className="flex items-start">
                     <div className="flex-shrink-0 mr-4">
                       <div className="w-12 h-12 flex items-center justify-center rounded-lg bg-nutricare-green bg-opacity-10 group-hover:bg-nutricare-green group-hover:bg-opacity-100 transition-all duration-300">
-                        <Dumbbell className="w-6 h-6 text-nutricare-green group-hover:text-white transition-colors duration-300" />
+                      <img src="/Icon/Specialized.ico" className="w-6 h-6 filter-accent" alt="Specialized Nutrition Icon" />,
                       </div>
                     </div>
                     <div>
