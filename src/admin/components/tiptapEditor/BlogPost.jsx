@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
-import EditorContent from './EditorContent';
 import DOMPurify from 'dompurify';
 
 const BlogPost = () => {
@@ -33,14 +32,12 @@ const BlogPost = () => {
         const response = await api.get(`/blogs/slug/${slug}`);
         console.log('Raw API response:', JSON.stringify(response, null, 2));
 
-        // Check if response.data exists
         if (!response.data) {
           throw new Error('API response is empty or missing data.');
         }
 
         let blogData = response.data;
 
-        // Handle case where response.data is a string
         if (typeof blogData === 'string') {
           try {
             blogData = JSON.parse(blogData);
@@ -50,20 +47,17 @@ const BlogPost = () => {
           }
         }
 
-        // Check if blogData.data exists (nested data structure)
         if (blogData.data) {
           blogData = blogData.data;
           console.log('Extracted blogData.data:', JSON.stringify(blogData, null, 2));
         }
 
-        // Validate blogData
         if (!blogData || typeof blogData !== 'object') {
           throw new Error(
             `Invalid API response: Blog data is missing or not an object. Received: ${JSON.stringify(blogData)}`
           );
         }
 
-        // Ensure body is an array
         if (!Array.isArray(blogData.body)) {
           console.warn('Blog body is not an array:', blogData.body);
           blogData.body = [];
@@ -96,26 +90,26 @@ const BlogPost = () => {
                   console.warn(`Invalid heading at index ${index}:`, item);
                   return;
                 }
-                htmlContent += `<h${level}>${DOMPurify.sanitize(item.content)}</h${level}>`;
+                htmlContent += `<h${level} class="text-2xl md:text-3xl font-bold mt-4 mb-2 text-gray-800">${DOMPurify.sanitize(item.content)}</h${level}>`;
               } else if (item.type === 'paragraph') {
                 if (!item.content || typeof item.content !== 'string') {
                   console.warn(`Invalid paragraph at index ${index}:`, item);
                   return;
                 }
-                htmlContent += `<p>${DOMPurify.sanitize(item.content)}</p>`;
+                htmlContent += `<p class="text-gray-600 leading-relaxed mb-4">${DOMPurify.sanitize(item.content)}</p>`;
               } else if (item.type === 'list') {
                 if (!item.style || !['bullet', 'ordered'].includes(item.style) || !Array.isArray(item.items)) {
                   console.warn(`Invalid list at index ${index}:`, item);
                   return;
                 }
                 const listTag = item.style === 'bullet' ? 'ul' : 'ol';
-                htmlContent += `<${listTag}>`;
+                htmlContent += `<${listTag} class="${item.style === 'bullet' ? 'list-disc' : 'list-decimal'} pl-6 mb-4">`;
                 item.items.forEach((listItem, itemIndex) => {
                   if (typeof listItem !== 'string' || !listItem.trim()) {
                     console.warn(`Invalid list item at index ${itemIndex}:`, listItem);
                     return;
                   }
-                  htmlContent += `<li>${DOMPurify.sanitize(listItem)}</li>`;
+                  htmlContent += `<li class="text-gray-600 mb-1">${DOMPurify.sanitize(listItem)}</li>`;
                 });
                 htmlContent += `</${listTag}>`;
               } else {
@@ -126,7 +120,7 @@ const BlogPost = () => {
             }
           });
           if (!htmlContent) {
-            htmlContent = '<p>No valid content available for this blog post.</p>';
+            htmlContent = '<p class="text-gray-600">No valid content available for this blog post.</p>';
           }
           console.log('Generated HTML content:', htmlContent);
           return DOMPurify.sanitize(htmlContent);
@@ -171,15 +165,15 @@ const BlogPost = () => {
           } else if (err.response.status >= 500) {
             errorMessage = `Server error: Unable to fetch blog post. Please try again later.`;
           }
-} else if (err.message.includes('Network Error')) {
-  errorMessage = `Cannot connect to the backend server at ${
-    import.meta.env.VITE_API_BASE_URL || 'https://backend.nutridietmitra.com/api'
-  }. Please ensure the server is running and accessible, or contact your administrator.`;
-} else {
-  errorMessage = `Failed to fetch blog post: ${err.message}`;
-}
+        } else if (err.message.includes('Network Error')) {
+          errorMessage = `Cannot connect to the backend server at ${
+            import.meta.env.VITE_API_BASE_URL || 'https://backend.nutridietmitra.com/api'
+          }. Please ensure the server is running and accessible, or contact your administrator.`;
+        } else {
+          errorMessage = `Failed to fetch blog post: ${err.message}`;
+        }
         setError(errorMessage);
-        setContent('<p>Unable to load blog content due to a server error.</p>');
+        setContent('<p class="text-gray-600">Unable to load blog content due to a server error.</p>');
       } finally {
         setLoading(false);
       }
@@ -217,84 +211,42 @@ const BlogPost = () => {
     );
   }
 
-  const editorContentProps = {
-    isAdmin: false,
-    title: blog.title,
-    description: blog.description,
-    slug: blog.slug,
-    publishDate: blog.publishDate,
-    categories: blog.categories,
-    newCategory: '',
-    hasUnsavedChanges: false,
-    content: content,
-    images: blog.images,
-    lockAspectRatio: true,
-    inputErrors: {},
-    activeFormatButtons: {
-      bold: false,
-      italic: false,
-      underline: false,
-      bulletList: false,
-      numberedList: false,
-      alignLeft: false,
-      alignCenter: false,
-      alignRight: false,
-      heading1: false,
-      heading2: false,
-      heading3: false,
-      heading4: false,
-      heading5: false,
-      heading6: false,
-    },
-    mobileMenuOpen: false,
-    activeSection: 'Preview',
-    errorMessage: '',
-    publishedPosts: [],
-    draftPosts: [],
-    selectedPostId: blog.id,
-    editorRef: { current: null },
-    fileInputRef: { current: null },
-    imageRatios: { current: {} },
-    imageUrls: { current: {} },
-    debouncedSetContent: () => {},
-    setTitle: () => {},
-    setDescription: () => {},
-    setSlug: () => {},
-    setPublishDate: () => {},
-    setCategories: () => {},
-    setNewCategory: () => {},
-    setHasUnsavedChanges: () => {},
-    setImages: () => {},
-    setLockAspectRatio: () => {},
-    setInputErrors: () => {},
-    setActiveFormatButtons: () => {},
-    setMobileMenuOpen: () => {},
-    setActiveSection: () => {},
-    setErrorMessage: () => {},
-    setSelectedPostId: () => {},
-    setPublishedPosts: () => {},
-    setDraftPosts: () => {},
-    handleTitleChange: () => {},
-    handleDescriptionChange: () => {},
-    handleSlugChange: () => {},
-    handleDateChange: () => {},
-    handleAddCategory: () => {},
-    handleRemoveCategory: () => {},
-    handleSave: () => {},
-    handleUpdate: () => {},
-    handleDelete: () => {},
-    toggleMobileMenu: () => {},
-    setSection: () => {},
-    fetchBlogById: () => {},
-    isDeleting: false,
-    viewOnly: true,
-    setContent: () => {},
-  };
-
   return (
     <div className="min-h-screen bg-[#FCF0F8] py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        <EditorContent {...editorContentProps} />
+      <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6 md:p-8">
+        {/* Blog Header */}
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">{blog.title}</h1>
+        <div className="flex flex-wrap items-center text-sm text-gray-500 mb-4">
+          {blog.publishDate && (
+            <span className="mr-4">
+              Published: {new Date(blog.publishDate).toLocaleDateString('en-US', {
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric',
+              })}
+            </span>
+          )}
+          {blog.categories.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {blog.categories.map((category, index) => (
+                <span
+                  key={index}
+                  className="bg-[#FF69B4] text-white px-2 py-1 rounded-full text-xs"
+                >
+                  {category}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+        {blog.description && (
+          <p className="text-gray-600 italic mb-6">{blog.description}</p>
+        )}
+        {/* Blog Content */}
+        <div
+          className="prose prose-lg max-w-none"
+          dangerouslySetInnerHTML={{ __html: content }}
+        />
       </div>
     </div>
   );
