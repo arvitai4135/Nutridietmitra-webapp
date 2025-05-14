@@ -8,34 +8,34 @@ import Appointment from './form/Appointment';
 
 const heroSlides = [
   {
-    title: "Empowering Your Health Journey",
-    subtitle: "Top Rated",
-    description:
-      "Transform your life with personalized, kitchen-based nutrition plans crafted by Dt. Tanu Bhargava. With over 17 years of expertise, we help you heal, energize, and thrive without supplements or crash diets.",
+    // title: "Empowering Your Health Journey",
+    // subtitle: "Top Rated",
+    // description:
+    //   "Transform your life with personalized, kitchen-based nutrition plans crafted by Dt. Tanu Bhargava. With over 17 years of expertise, we help you heal, energize, and thrive without supplements or crash diets.",
     backgroundImage: img1,
-    accentColor: "nutricare-primary-light", // #D93BB1
-    textPosition: "left",
-    highlightPhrase: "heal, energize, and thrive",
+    // accentColor: "nutricare-primary-light", // #D93BB1
+    // textPosition: "left",
+    // highlightPhrase: "heal, energize, and thrive",
   },
   {
-    title: "Sustainable Nutrition for Life",
-    subtitle: "Holistic Wellness Expertise",
-    description:
-      "Join over 5000+ clients who've achieved lasting health with our science-backed, heart-led approach. From PCOS to diabetes, our tailored plans fit your lifestyle and goals.",
+    // title: "Sustainable Nutrition for Life",
+    // subtitle: "Holistic Wellness Expertise",
+    // description:
+    //   "Join over 5000+ clients who've achieved lasting health with our science-backed, heart-led approach. From PCOS to diabetes, our tailored plans fit your lifestyle and goals.",
     backgroundImage: img2,
-    accentColor: "nutricare-green-dark", // #8CA417
-    textPosition: "right",
-    highlightPhrase: "lasting health",
+    // accentColor: "nutricare-green-dark", // #8CA417
+    // textPosition: "right",
+    // highlightPhrase: "lasting health",
   },
   {
-    title: "Your Path to Vibrant Wellness",
-    subtitle: "Guided by Dt. Tanu Bhargava",
-    description:
-      "Experience compassionate, evidence-based nutrition coaching. Our customized plans for weight management, thyroid, and more ensure you feel confident and healthy.",
+    // title: "Your Path to Vibrant Wellness",
+    // subtitle: "Guided by Dt. Tanu Bhargava",
+    // description:
+    //   "Experience compassionate, evidence-based nutrition coaching. Our customized plans for weight management, thyroid, and more ensure you feel confident and healthy.",
     backgroundImage: img3,
-    accentColor: "nutricare-primary-dark", // #9E0B7F
-    textPosition: "center",
-    highlightPhrase: "confident and healthy",
+    // accentColor: "nutricare-primary-dark", // #9E0B7F
+    // textPosition: "center",
+    // highlightPhrase: "confident and healthy",
   },
 ];
 
@@ -59,7 +59,7 @@ const qualityCards = [
 
 const services = [
   {
-    icon: <img src="/Icon/weight.ico" className="text-nutricare-green w-7 h-7" alt="Weight Management Icon"  />,
+    icon: <img src="/Icon/weight.ico" className="text-nutricare-green w-7 h-7" alt="Weight Management Icon" />,
     title: "Weight Management",
     description: "Sustainable plans for weight loss or gain, tailored to your lifestyle without fad diets."
   },
@@ -69,7 +69,7 @@ const services = [
     description: "Hormone-balancing diets to manage symptoms and improve overall health."
   },
   {
-    icon: <Salad  size={24} />,
+    icon: <Salad size={24} />,
     title: "Diabetes Care",
     description: "Kitchen-based plans to control blood sugar and boost energy naturally."
   },
@@ -115,7 +115,7 @@ const Hero = () => {
   return (
     <>
       {/* Hero Slider Section */}
-      <div className="relative min-h-[60vh] md:min-h-[100vh] w-full flex flex-col justify-center items-center font-sans">
+      <div className="relative h-[50vh] sm:min-h-screen w-full flex flex-col justify-center items-center font-sans">
         {/* Slider Content */}
         {heroSlides.map((slide, index) => (
           <div
@@ -123,17 +123,16 @@ const Hero = () => {
             className={`absolute inset-0 w-full h-full transition-opacity duration-700 ease-in-out flex flex-col justify-center items-center ${
               currentSlide === index ? 'opacity-100' : 'opacity-0'
             }`}
-            style={{
-              backgroundImage: `url(${slide.backgroundImage})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat',
-              backgroundColor: 'nutricare-bg-light',
-            }}
           >
-            <div className="absolute inset-0 bg-black bg-opacity-60" />
+            <img
+              src={slide.backgroundImage}
+              alt={`Hero slide ${index + 1}`}
+              className="absolute inset-0 w-full h-full object-contain sm:object-cover object-center bg-gray-200 sm:bg-transparent"
+              loading="lazy"
+            />
+            {/* <div className="absolute inset-0 bg-black bg-opacity-50" /> { */}
             <div
-              className={`relative z-10 max-w-[90%] sm:max-w-2xl md:max-w-3xl px-4 w-full md:w-auto bg-black bg-opacity-60 rounded-lg p-6 ${
+              className={`relative z-10 max-w-[90%] sm:max-w-2xl md:max-w-3xl px-4 w-full md:w-auto rounded-lg p-6 ${
                 slide.textPosition === 'left'
                   ? 'text-left md:ml-16 md:mr-auto'
                   : slide.textPosition === 'right'
@@ -150,7 +149,7 @@ const Hero = () => {
                     : 'inline-block'
                 }`}
               >
-                <span className="relative z-10">{slide.subtitle}</span>
+                <span className="relative z-10">{/* slide.subtitle */}</span>
                 <span
                   className={`absolute bottom-0 w-8 md:w-12 h-0.5 md:h-1 bg-white ${
                     slide.textPosition === 'right' ? 'md:right-0' : 'left-0'
@@ -158,7 +157,7 @@ const Hero = () => {
                 />
               </h4>
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 text-white shadow-md">
-                {slide.title.split(' ').map((word, i, arr) => (
+                {/* {slide.title.split(' ').map((word, i, arr) => (
                   <React.Fragment key={i}>
                     {i === 0 ? (
                       <span className="text-nutricare-primary-light">{word}</span>
@@ -169,7 +168,7 @@ const Hero = () => {
                     )}
                     {i < arr.length - 1 && ' '}
                   </React.Fragment>
-                ))}
+                ))} */}
               </h1>
               <p
                 className={`text-sm sm:text-base md:text-lg mb-6 md:mb-8 text-white shadow-md ${
@@ -180,14 +179,14 @@ const Hero = () => {
                     : 'max-w-md md:max-w-xl mx-auto'
                 }`}
               >
-                {slide.description.split(slide.highlightPhrase).map((part, i, arr) => (
+                {/* {slide.description.split(slide.highlightPhrase).map((part, i, arr) => (
                   <React.Fragment key={i}>
                     {part}
                     {i < arr.length - 1 && (
                       <span className="text-nutricare-green-dark font-semibold">{slide.highlightPhrase}</span>
                     )}
                   </React.Fragment>
-                ))}
+                ))} */}
               </p>
               <div
                 className={`flex flex-col sm:flex-row space-x-0 sm:space-x-4 space-y-3 sm:space-y-0 ${
@@ -198,7 +197,7 @@ const Hero = () => {
                     : 'justify-center'
                 }`}
               >
-                <button 
+                {/* <button 
                   onClick={openAppointment}
                   className="px-4 py-2 sm:px-6 sm:py-3 rounded-full flex items-center transform transition-all hover:scale-105 bg-nutricare-text-dark text-white hover:bg-nutricare-primary-dark"
                 >
@@ -209,7 +208,7 @@ const Hero = () => {
                   className="px-4 py-2 sm:px-6 sm:py-3 rounded-full flex items-center transform transition-all hover:scale-105 bg-nutricare-green text-white hover:bg-nutricare-green-dark"
                 >
                   Contact Us
-                </button>
+                </button> */}
               </div>
             </div>
           </div>
