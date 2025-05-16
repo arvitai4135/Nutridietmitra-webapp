@@ -62,7 +62,6 @@ const Hero = () => {
   const [isAppointmentOpen, setIsAppointmentOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFounderModalOpen, setIsFounderModalOpen] = useState(false);
-  const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const slideInterval = setInterval(() => {
@@ -96,18 +95,7 @@ const Hero = () => {
     setIsModalOpen(false);
   };
 
-  const openFounderModal = (event) => {
-    const { clientX, clientY } = event;
-    const modalWidth = 672; // Approximate max-w-2xl in pixels (2xl = 42rem = 672px)
-    const modalHeight = 512; // Approximate height for content (adjustable)
-    const offsetX = modalWidth / 2;
-    const offsetY = modalHeight / 2;
-
-    // Clamp position to stay within viewport
-    const x = Math.max(offsetX, Math.min(clientX, window.innerWidth - offsetX));
-    const y = Math.max(offsetY, Math.min(clientY, window.innerHeight - offsetY));
-
-    setModalPosition({ x, y });
+  const openFounderModal = () => {
     setIsFounderModalOpen(true);
   };
 
@@ -118,6 +106,18 @@ const Hero = () => {
   const handleContactUs = () => {
     window.location.href = "/contact";
   };
+
+  // Add keyboard support for closing modals
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        if (isModalOpen) closeModal();
+        if (isFounderModalOpen) closeFounderModal();
+      }
+    };
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [isModalOpen, isFounderModalOpen]);
 
   const aboutContent = `
 Welcome to the world of Nutridietmitra
@@ -377,42 +377,46 @@ Dt. Tanu Bhargava is a highly qualified Jaipur-based clinical dietitian and well
 
       {/* About Read More Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto relative border-none">
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 sm:p-6"
+          onClick={closeModal}
+        >
+          <div
+            className="bg-white p-4 sm:p-6 rounded-lg w-full min-w-[90%] sm:min-w-0 max-w-md sm:max-w-2xl max-h-[80vh] overflow-y-auto relative border-none"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               onClick={closeModal}
               className="absolute top-4 right-4 text-nutricare-text-dark hover:text-nutricare-green"
               aria-label="Close modal"
             >
-              <X size={24} />
+              <X size={20} className="sm:w-6 sm:h-6" />
             </button>
-            <h2 className="text-2xl font-bold text-nutricare-text-dark mb-4">Welcome To Nutridietmitra</h2>
-            <p className="text-nutricare-text-gray text-base whitespace-pre-line">{aboutContent}</p>
+            <h2 className="text-xl sm:text-2xl font-bold text-nutricare-text-dark mb-4">Welcome To Nutridietmitra</h2>
+            <p className="text-nutricare-text-gray text-sm sm:text-base whitespace-pre-line">{aboutContent}</p>
           </div>
         </div>
       )}
 
       {/* Founder Read More Modal */}
       {isFounderModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50">
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 sm:p-6"
+          onClick={closeFounderModal}
+        >
           <div
-            className="bg-white p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto relative border-none"
-            style={{
-              position: 'fixed',
-              left: `${modalPosition.x}px`,
-              top: `${modalPosition.y}px`,
-              transform: 'translate(-50%, -50%)',
-            }}
+            className="bg-white p-4 sm:p-6 rounded-lg w-full min-w-[90%] sm:min-w-0 max-w-md sm:max-w-2xl max-h-[80vh] overflow-y-auto relative border-none"
+            onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={closeFounderModal}
               className="absolute top-4 right-4 text-nutricare-text-dark hover:text-nutricare-green"
               aria-label="Close modal"
             >
-              <X size={24} />
+              <X size={20} className="sm:w-6 sm:h-6" />
             </button>
-            <h2 className="text-2xl font-bold text-nutricare-text-dark mb-4">About Dt. Tanu Bhargava</h2>
-            <p className="text-nutricare-text-gray text-base whitespace-pre-line">{founderContent}</p>
+            <h2 className="text-xl sm:text-2xl font-bold text-nutricare-text-dark mb-4">About Dt. Tanu Bhargava</h2>
+            <p className="text-nutricare-text-gray text-sm sm:text-base whitespace-pre-line">{founderContent}</p>
           </div>
         </div>
       )}

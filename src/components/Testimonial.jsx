@@ -113,41 +113,41 @@ const Testimonial = () => {
 
   return (
     <div className="relative bg-nutricare-green overflow-hidden">
-      <div className="container mx-auto px-4 py-16">
-        <div className="flex flex-col md:flex-row items-center">
+      <div className="container mx-auto px-4 sm:px-6 py-12 sm:py-16">
+        <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8">
           {/* Left column with image */}
-          <div className="hidden md:block md:w-5/12 lg:w-5/12 relative">
+          <div className="hidden md:block md:w-5/12 relative">
             <div className="bg-nutricare-bg-light p-4 rounded-lg shadow-xl transform hover:scale-105 transition-transform duration-300">
-              <img src={HealthCoach} alt="Nutridietmitra Nutrition Success" className="w-full h-auto rounded" />
+              <img src={HealthCoach} alt="Nutridietmitra Nutrition Success" className="w-full h-auto rounded object-cover" />
             </div>
-            <div className="absolute -bottom-6 -right-6 bg-nutricare-primary-light h-24 w-24 rounded-full flex items-center justify-center shadow-lg animate-pulse">
-              <span className="text-white font-bold text-2xl">5.0★</span>
+            <div className="absolute -bottom-6 -right-6 bg-nutricare-primary-light h-20 w-20 sm:h-24 sm:w-24 rounded-full flex items-center justify-center shadow-lg animate-pulse">
+              <span className="text-white font-bold text-xl sm:text-2xl">5.0★</span>
             </div>
           </div>
 
           {/* Right column with testimonials */}
-          <div className="w-full md:w-7/12 lg:w-7/12 md:pl-12">
-            <div className="mb-8">
-              <h5 className="text-nutricare-primary-dark font-medium text-lg mb-2">What Our Clients Say</h5>
-              <h2 className="text-nutricare-primary-dark text-4xl md:text-5xl font-bold">
+          <div className="w-full md:w-7/12 md:pl-8 lg:pl-12">
+            <div className="mb-6 sm:mb-8">
+              <h5 className="text-nutricare-primary-dark font-medium text-base sm:text-lg mb-2">What Our Clients Say</h5>
+              <h2 className="text-nutricare-primary-dark text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
                 How Nutridietmitra Changed Lives
               </h2>
-              <p className="text-nutricare-text-gray text-base mt-4">
-                At Nutridietmitra, our clients have experienced and incredible 
-transformational journey recovering from many chronic issues 
-to a healthy living and lifestyle. Here are some success stories 
-of our clients: 
+              <p className="text-nutricare-text-gray text-sm sm:text-base mt-3 sm:mt-4 leading-relaxed">
+                At Nutridietmitra, our clients have experienced an incredible 
+                transformational journey recovering from many chronic issues 
+                to a healthy living and lifestyle. Here are some success stories 
+                of our clients: 
               </p>
             </div>
 
             {/* Testimonial slider */}
-            <div className="relative bg-nutricare-bg-light rounded-lg p-6 md:p-8 shadow-xl border-t-4 border-nutricare-primary-dark">
+            <div className="relative bg-nutricare-bg-light rounded-lg p-4 sm:p-6 md:p-8 shadow-xl border-t-4 border-nutricare-primary-dark">
               {/* Quote marks */}
-              <div className="absolute -top-5 left-8 text-nutricare-primary-light text-8xl">"</div>
+              <div className="absolute -top-4 sm:-top-5 left-6 sm:left-8 text-nutricare-primary-light text-6xl sm:text-8xl">"</div>
 
               {/* Testimonial content */}
-              <div className="mt-4 mb-6">
-                <p className="text-nutricare-text-dark text-lg md:text-xl italic relative z-10 leading-relaxed">
+              <div className="mt-4 mb-4 sm:mb-6">
+                <p className="text-nutricare-text-dark text-base sm:text-lg md:text-xl italic relative z-10 leading-relaxed">
                   {testimonials[activeIndex].quote}
                 </p>
               </div>
@@ -155,22 +155,24 @@ of our clients:
               {/* Author info */}
               <div className="flex items-center">
                 <div className="ml-4">
-                  <h6 className="font-bold text-xl text-nutricare-primary-dark">
+                  <h6 className="font-bold text-lg sm:text-xl text-nutricare-primary-dark">
                     {testimonials[activeIndex].name}
                   </h6>
-                  <p className="text-nutricare-text-gray">{testimonials[activeIndex].location}</p>
+                  <p className="text-nutricare-text-gray text-sm sm:text-base">
+                    {testimonials[activeIndex].location || 'Client'}
+                  </p>
                 </div>
               </div>
 
               {/* Navigation dots */}
-              <div className="flex justify-center mt-6 space-x-2">
+              <div className="flex justify-center mt-4 sm:mt-6 space-x-1 sm:space-x-2">
                 {testimonials.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => goToSlide(index)}
-                    className={`h-3 w-3 rounded-full transition-all duration-300 ${
+                    className={`h-2 w-2 sm:h-3 sm:w-3 rounded-full transition-all duration-300 ${
                       index === activeIndex
-                        ? 'bg-nutricare-primary-dark w-8'
+                        ? 'bg-nutricare-primary-dark sm:w-6'
                         : 'bg-nutricare-text-gray bg-opacity-50'
                     }`}
                     aria-label={`Go to testimonial ${index + 1}`}
@@ -180,42 +182,42 @@ of our clients:
             </div>
 
             {/* Navigation buttons */}
-            <div className="flex justify-end mt-6 space-x-4">
+            <div className="flex justify-end mt-4 sm:mt-6 space-x-3 sm:space-x-4">
               <button
                 onClick={prevTestimonial}
-                className="bg-nutricare-bg-light text-nutricare-primary-dark h-12 w-12 rounded-full flex items-center justify-center shadow-md hover:bg-nutricare-primary-dark hover:text-nutricare-bg-light transition-colors duration-300"
+                className="bg-nutricare-bg-light text-nutricare-primary-dark h-10 w-10 sm:h-12 sm:w-12 rounded-full flex items-center justify-center shadow-md hover:bg-nutricare-primary-dark hover:text-nutricare-bg-light active:bg-nutricare-primary-light transition-colors duration-300"
                 aria-label="Previous testimonial"
               >
-                <ChevronLeft size={24} />
+                <ChevronLeft size={20} className="sm:w-6 sm:h-6" />
               </button>
               <button
                 onClick={nextTestimonial}
-                className="bg-nutricare-primary-dark text-nutricare-bg-light h-12 w-12 rounded-full flex items-center justify-center shadow-md hover:bg-nutricare-bg-light hover:text-nutricare-primary-dark transition-colors duration-300"
+                className="bg-nutricare-primary-dark text-nutricare-bg-light h-10 w-10 sm:h-12 sm:w-12 rounded-full flex items-center justify-center shadow-md hover:bg-nutricare-bg-light hover:text-nutricare-primary-dark active:bg-nutricare-primary-light transition-colors duration-300"
                 aria-label="Next testimonial"
               >
-                <ChevronRight size={24} />
+                <ChevronRight size={20} className="sm:w-6 sm:h-6" />
               </button>
             </div>
           </div>
         </div>
 
         {/* YouTube Button */}
-        <div className="flex justify-center mt-2 md:mt-4">
+        <div className="flex justify-center mt-4 sm:mt-6">
           <a
             href="#"
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-nutricare-primary-dark text-nutricare-bg-light px-4 py-2 rounded-full font-bold text-base shadow-md hover:bg-nutricare-bg-light hover:text-nutricare-primary-dark transition-colors duration-300 flex items-center justify-center w-full max-w-48 md:max-w-52"
+            className="bg-nutricare-primary-dark text-nutricare-bg-light px-4 py-2 sm:px-6 sm:py-3 rounded-full font-bold text-sm sm:text-base shadow-md hover:bg-nutricare-bg-light hover:text-nutricare-primary-dark active:bg-nutricare-primary-light transition-colors duration-300 flex items-center justify-center text-center w-full max-w-40 sm:max-w-48 md:max-w-52"
           >
-            <Youtube size={20} className="mr-2" />
+            <Youtube size={16} className="mr-1 sm:mr-2 sm:w-5 sm:h-5" />
             Watch Testimonial
           </a>
         </div>
       </div>
 
       {/* Decorative elements */}
-      <div className="hidden md:block absolute -top-20 -right-20 bg-nutricare-primary-light bg-opacity-20 h-40 w-40 rounded-full"></div>
-      <div className="hidden md:block absolute -bottom-10 left-1/4 bg-nutricare-green-dark bg-opacity-20 h-20 w-20 rounded-full"></div>
+      <div className="hidden md:block absolute -top-20 -right-20 bg-nutricare-primary-light bg-opacity-20 h-32 w-32 sm:h-40 sm:w-40 rounded-full"></div>
+      <div className="hidden md:block absolute -bottom-10 left-1/4 bg-nutricare-green-dark bg-opacity-20 h-16 w-16 sm:h-20 sm:w-20 rounded-full"></div>
     </div>
   );
 };
