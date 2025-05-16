@@ -11,7 +11,7 @@ import {
   Stethoscope,
 } from "lucide-react";
 import img1 from "/assets/Images/img1.jpg";
-import ConsultationFormModal from "../form/Consultency.jsx";
+import Appointment from "../form/Appointment.jsx";
 
 // Icon mapping object for direct reference by name
 const icons = {
@@ -35,10 +35,10 @@ const getIconByName = (name, props = {}) => {
 const AboutUs = () => {
   const [years, setYears] = useState(0);
   const maxYears = 17;
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAppointmentOpen, setIsAppointmentOpen] = useState(false);
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const openAppointment = () => setIsAppointmentOpen(true);
+  const closeAppointment = () => setIsAppointmentOpen(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -156,13 +156,18 @@ const AboutUs = () => {
             <div className="bg-white p-6 rounded-lg shadow-md">
               <h3 className="text-xl font-semibold text-[#9E0B7F] mb-2">Mission</h3>
               <p className="text-[#718096]">
-                To empower individuals with health, energy, and confidence through delicious, kitchen-based diet plans that promote holistic living and sustainable healthy eating.
+                We are directed to aid a person with their health, energy, balanced emotions and 
+sleep, boosting confidence with a healthy body, healthy eating, and holistic 
+living through delicious diet meals that support, heal and enable your body to 
+a healthy lifestyle.   
               </p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md">
               <h3 className="text-xl font-semibold text-[#9E0B7F] mb-2">Vision</h3>
               <p className="text-[#718096]">
-                To be India's most trusted nutrition expert, inspiring holistic living with empathetic, socially conscious care and viable outcomes globally.
+                We are working to be India's most trusted nutrition expert to empower healthy 
+eating and inspire holistic living, acknowledged for our empathetic and 
+socially conscious care, viable outcomes and real change.
               </p>
             </div>
           </div>
@@ -196,29 +201,32 @@ const AboutUs = () => {
           </div>
         </div>
 
-        {/* Unique Services Section */}
+        {/* Mentions & Recognitions Section */}
         <div className="mt-16">
           <h2 className="text-3xl font-bold text-[#333333] text-center mb-8">
-            Our Unique Offerings
+            Mentions & Recognitions
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white p-6 rounded-lg shadow-md">
-              <div className="flex items-center space-x-4 mb-2">
-                <Apple className="text-[#D93BB1]" size={40} />
-                <h3 className="text-xl font-semibold text-[#9E0B7F]">Fresh Fruit Bouquets</h3>
-              </div>
-              <p className="text-[#718096]">
-                Customized, visually stunning fruit bouquets delivered to your doorstep, perfect for gifting or enjoying a healthy, vibrant snack. Made with fresh, seasonal fruits, tailored to your preferences.
-              </p>
+              <h3 className="text-xl font-semibold text-[#9E0B7F] mb-2">Media & Speaking Engagements</h3>
+              <ul className="text-[#718096] list-disc pl-5 space-y-2">
+                <li>Wellness Columnist for Times of India, DNA & other magazines</li>
+                <li>Speaker at Rajasthan Patrika Summer School (2010)</li>
+                <li>Featured in Health Shows on Zee News & A1TV</li>
+                <li>Celebrity Nutritionist to Preeti Sharma, Gajendra Verma, Milkha Singh, and other notable personalities</li>
+              </ul>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md">
-              <div className="flex items-center space-x-4 mb-2">
-                <Salad className="text-[#ADD01C]" size={40} />
-                <h3 className="text-xl font-semibold text-[#9E0B7F]">Healthy Salad Subscriptions</h3>
-              </div>
-              <p className="text-[#718096]">
-                Nutritious, dietitian-designed salads delivered in Jaipur, customized to your medical history and lifestyle. Options include high-protein, anti-aging, and rainbow fruit salads, starting at ₹200 per meal.
+              <h3 className="text-xl font-semibold text-[#9E0B7F] mb-2">Join Our Family</h3>
+              <p className="text-[#718096] mb-4">
+                Trusted and honoured by thousands, more than a thousand people have already been a part of our family experiencing the real transformation in their bodies with the benefit of our consistency and customized nutrition plans with us. To lose/gain weight, manage a health condition or simply want to feel good in your body and skin - we are here for you. Dt. Tanu Bhargava shared her vast knowledge in seminars, lectures and workshops in government events/institutes, housing societies, colleges and schools, and organisations like HDFC Life, Bharti Infratel, Bajaj Allianz, Aircel, Genpact, and more.
               </p>
+              <button
+                onClick={openAppointment}
+                className="text-[#ADD01C] font-semibold hover:underline bg-transparent border-none cursor-pointer"
+              >
+                Join Now
+              </button>
             </div>
           </div>
         </div>
@@ -255,8 +263,8 @@ const AboutUs = () => {
         </div>
       </div>
 
-      {/* Consultation Form Modal */}
-      <ConsultationFormModal isOpen={isModalOpen} onClose={closeModal} />
+      {/* Appointment Modal */}
+      <Appointment isOpen={isAppointmentOpen} onClose={closeAppointment} />
     </div>
   );
 };

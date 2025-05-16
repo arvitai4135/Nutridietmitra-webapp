@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Dumbbell, Activity, Scale, Utensils, Baby, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Activity, Scale, Baby, X } from 'lucide-react';
 
 // Image paths
 const SportsNutrition = '/assets/Images/SportsNutrition.jpg';
@@ -13,7 +13,9 @@ const services = [
   {
     id: 1,
     image: SportsNutrition,
-    icon: Dumbbell,
+    iconType: 'image',
+    iconImage: '/Icon/sports.ico',
+    iconAlt: 'Sports Nutrition Icon',
     title: 'Sports Nutrition',
     description: 'Boost performance with tailored, kitchen-based nutrition plans designed by Dt. Tanu Bhargava to enhance endurance, recovery, and strength, without supplements.',
     modalContent: {
@@ -29,7 +31,9 @@ const services = [
   {
     id: 2,
     image: PCOSManagement,
-    icon: Activity,
+     iconType: 'image',
+    iconImage: '/Icon/women.ico',
+    iconAlt: 'Sports Nutrition Icon',
     title: 'PCOS/PCOD Management',
     description: 'Balance hormones and ease PCOS symptoms with personalized diet plans from Dt. Tanu Bhargava, crafted to support menstrual health and holistic wellness.',
     modalContent: {
@@ -45,8 +49,10 @@ const services = [
   {
     id: 3,
     image: WeightLoss,
-    icon: Scale,
-    title: 'Weight Loss',
+    iconType: 'image',
+    iconImage: '/Icon/weightLoss.ico',
+    iconAlt: 'Sports Nutrition Icon',
+    title: 'Weight Loss ',
     description: 'Achieve sustainable weight loss with delicious, kitchen-based meal plans by Dt. Tanu Bhargava, designed to nourish your body without starvation diets.',
     modalContent: {
       overview: 'Our Weight Loss plans focus on sustainable, supplement-free nutrition tailored to your lifestyle. With 17+ years of expertise, Dt. Tanu Bhargava creates delicious, kitchen-based diets that promote healthy weight loss while maintaining energy and satisfaction.',
@@ -61,7 +67,9 @@ const services = [
   {
     id: 4,
     image: DiabetesDiet,
-    icon: Utensils,
+    iconType: 'image',
+    iconImage: '/Icon/diabetes.ico',
+    iconAlt: 'Sports Nutrition Icon',
     title: 'Diabetes Diet',
     description: 'Manage blood sugar naturally with customized, nutrient-rich diets by Dt. Tanu Bhargava, balancing energy and insulin without supplements.',
     modalContent: {
@@ -77,7 +85,9 @@ const services = [
   {
     id: 5,
     image: ChildNutrition,
-    icon: Baby,
+     iconType: 'image',
+    iconImage: '/Icon/child.ico',
+    iconAlt: 'Sports Nutrition Icon',
     title: 'Child Nutrition',
     description: 'Support your child’s growth with fun, healthy, nutrient-dense meals tailored by Dt. Tanu Bhargava to build lifelong health and immunity.',
     modalContent: {
@@ -113,6 +123,20 @@ const Work = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedService(null);
+  };
+
+  const renderIcon = (service, className) => {
+    if (service.iconType === 'image') {
+      return (
+        <img
+          src={service.iconImage}
+          alt={service.iconAlt}
+          className={`filter-accent ${className}`}
+        />
+      );
+    }
+    const IconComponent = service.iconComponent;
+    return <IconComponent className={className} />;
   };
 
   return (
@@ -171,8 +195,8 @@ const Work = () => {
               <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 flex flex-col justify-between order-1 md:order-2">
                 <div>
                   <div className="flex items-center mb-3 md:mb-4">
-                    <div className="bg-nutricare-primary-light text-white p-2 md:p-3 rounded-full mr-3">
-                      {React.createElement(services[currentIndex].icon, { className: "text-xl md:text-2xl" })}
+                    <div className="bg-nutricare-primary-light p-2 md:p-3 rounded-full mr-3">
+                      {renderIcon(services[currentIndex], 'w-6 h-6 md:w-8 md:h-8 text-white')}
                     </div>
                     <h3 className="text-xl md:text-2xl font-bold text-nutricare-text-dark">
                       {services[currentIndex].title}
@@ -250,8 +274,8 @@ const Work = () => {
               >
                 <div className="flex justify-between items-center mb-4">
                   <div className="flex items-center">
-                    <div className="bg-nutricare-primary-light text-white p-2 rounded-full mr-3">
-                      {React.createElement(selectedService.icon, { className: "w-8 h-8" })}
+                    <div className="bg-nutricare-primary-light p-2 rounded-full mr-3">
+                      {renderIcon(selectedService, 'w-8 h-8 text-white')}
                     </div>
                     <h3 className="text-xl md:text-2xl font-bold text-nutricare-text-dark">
                       {selectedService.title}

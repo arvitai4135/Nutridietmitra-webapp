@@ -26,7 +26,7 @@ const Service = () => {
           </div>
           <h2 className="text-4xl font-bold text-gray-800 mb-3">Why Nutridietmitra</h2>
           <p className="max-w-2xl mx-auto text-gray-600">
-            Led by Dt. Tanu Bhargava, Nutridietmitra has transformed 5000+ lives globally with personalized, kitchen-based nutrition plans. Awarded Best Dietitian (2020) and featured in Times of India and Zee News, we deliver sustainable health without supplements.
+            Your lifestyle. Your health. Your goals. Our expertise. With 17+ years of expertise, Nutridietmitra has transformed 5000+ healthy clients globally through supervised, founder-led personalized consultations and customized plans. Led by a qualified dietitian and wellness coach, Dt. Tanu Bhargava, we offer globally certified, worldwide online consultations with constant ongoing support and progress tracking. Our practical, kitchen-based diets require no supplements, ensuring sustainable health without starvation or crash diets.
           </p>
         </div>
 
@@ -98,7 +98,7 @@ const Service = () => {
                         Tailored Nutrition Plans
                       </h3>
                       <p className="text-gray-600">
-                        Our holistic, no-starvation diets are customized for weight loss, PCOS, diabetes, thyroid, and more, using kitchen-based, supplement-free solutions.
+                        Customized, kitchen-based diets with no starvation or supplements, designed for weight management, diabetes (maintaining blood sugar levels), thyroid (balancing T4 and T3), PCOD/PCOS, and disease management (e.g., arthritis, hormonal imbalances).
                       </p>
                       <div className="mt-3 h-px w-16 bg-nutricare-green opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
                     </div>
@@ -118,7 +118,7 @@ const Service = () => {
                         Expert Guidance
                       </h3>
                       <p className="text-gray-600">
-                        With 17+ years of experience, Dt. Tanu Bhargava offers science-backed, compassionate guidance for sustainable health transformations.
+                        Led by Dt. Tanu Bhargava, a qualified dietitian and wellness coach with 17+ years of expertise, offering globally certified, science-backed guidance with constant support and progress tracking.
                       </p>
                       <div className="mt-3 h-px w-16 bg-nutricare-green opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
                     </div>
@@ -138,7 +138,7 @@ const Service = () => {
                         Global Support
                       </h3>
                       <p className="text-gray-600">
-                        Serving 5000+ clients worldwide, our online consultations provide personalized care and ongoing support, ensuring 100% satisfaction.
+                        Worldwide online consultations for 5000+ clients, providing personalized care, ongoing support, and 100% satisfaction with solutions that adjust to modern lifestyles.
                       </p>
                       <div className="mt-3 h-px w-16 bg-nutricare-green opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
                     </div>
@@ -150,7 +150,7 @@ const Service = () => {
                   <div className="flex items-start">
                     <div className="flex-shrink-0 mr-4">
                       <div className="w-12 h-12 flex items-center justify-center rounded-lg bg-nutricare-green bg-opacity-10 group-hover:bg-nutricare-green group-hover:bg-opacity-100 transition-all duration-300">
-                      <img src="/Icon/Specialized.ico" className="w-6 h-6 filter-accent" alt="Specialized Nutrition Icon" />,
+                        <img src="/Icon/Specialized.ico" className="w-6 h-6 filter-accent" alt="Specialized Nutrition Icon" />
                       </div>
                     </div>
                     <div>
@@ -158,7 +158,7 @@ const Service = () => {
                         Specialized Nutrition Programs
                       </h3>
                       <p className="text-gray-600">
-                        Tailored plans for child nutrition, sports performance, pregnancy, and more, designed to support unique life stages and goals.
+                        Tailored plans for child nutrition, sports performance, pregnancy, and healthy glowing skin, plus sustainable nutrient plans for athletes, PCOD/PCOS, and wellness coaching with no supplements.
                       </p>
                       <div className="mt-3 h-px w-16 bg-nutricare-green opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
                     </div>

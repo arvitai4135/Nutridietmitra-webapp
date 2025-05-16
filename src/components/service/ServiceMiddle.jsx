@@ -35,12 +35,17 @@ const ServiceMiddle = () => {
           <div className="w-full lg:w-1/2 lg:pl-8">
             {/* Section Title */}
             <div className="mb-10">
-              <h5 className="uppercase text-nutricare-primary-light font-bold tracking-wide mb-2">OUR MISSION</h5>
+              <h5 className="uppercase text-nutricare-primary-light font-bold tracking-wide mb-2">OUR SERVICES </h5>
               <h2 className="text-3xl lg:text-4xl font-bold text-nutricare-text-dark mb-6">
-                Transforming Lives Through Nutrition
+                Purposeful living with customized nutrition.  
               </h2>
               <p className="text-nutricare-text-gray leading-relaxed">
-                Founded in 2014 by Dt. Tanu Bhargava, Nutridietmitra brings over 17 years of expertise to empower more than 5000 clients worldwide with personalized, kitchen-based nutrition plans that promote sustainable health and wellness.
+                Every body is unique and so is every diet plan we offer. At 
+Nutridietmitra, our expert will guide you through different 
+issues like struggle with weight management, managing with 
+a health issue or a condition, or struggling with having a 
+balanced life. Our diet plan will help you to heal, energize and 
+maintain with a tailored diet coaching. Just for you.
               </p>
             </div>
 

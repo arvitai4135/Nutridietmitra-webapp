@@ -16,207 +16,242 @@ const ThyroidIcon = () => (
   </svg>
 );
 
+// Read More Modal Component
+const ReadMoreModal = ({ isOpen, onClose, title, content }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full mx-4 p-6 max-h-[80vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold text-nutricare-primary-dark">{title}</h2>
+          <button
+            onClick={onClose}
+            className="bg-nutricare-green text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-nutricare-green-dark transition-colors"
+          >
+            &times;
+          </button>
+        </div>
+        <p className="text-nutricare-text-gray text-sm whitespace-pre-line">{content}</p>
+      </div>
+    </div>
+  );
+};
+
 const NutritionServices = () => {
   const [hoveredService, setHoveredService] = useState(null);
   const [appointmentOpen, setAppointmentOpen] = useState(false);
   const [selectedService, setSelectedService] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
+  const [readMoreOpen, setReadMoreOpen] = useState(false);
+  const [selectedServiceContent, setSelectedServiceContent] = useState({ title: '', content: '' });
 
   const categories = [
     { id: 'all', name: 'All Services' },
-    { id: 'weight', name: 'Weight Management' },
-    { id: 'chronic', name: 'Chronic Conditions' },
-    { id: 'hormonal', name: 'Hormonal Health' },
-    { id: 'wellness', name: 'General Wellness' },
-    { id: 'lifestyle', name: 'Lifestyle Support' }
+    { id: 'core', name: 'Core Plans' },
+    { id: 'specialized', name: 'Specialized Plans' },
+    { id: 'other', name: 'Other Special Services' }
   ];
 
   const services = [
+    // Core Plans
     {
       id: 1,
       title: "Weight Loss Plan",
-      description: "Personalized diet plans to shed excess weight sustainably using kitchen-based meals, no supplements, and no fad diets.",
-      icon: <FontAwesomeIcon icon={faBalanceScale} className="w-full h-full" />,
-      benefits: ["Sustainable weight loss", "Improved metabolism", "Healthy eating habits"],
+      description: "Our unique and personalized weight-loss diet plans will help shed your excess weight in a friendly and sustainable way while nourishing your body with nourishing kitchen based and no supplements. So, say Bye-BYE to fad diets.",
+      icon: <img src="/Icon/weightLoss.ico" className="w-10 h-10 filter-accent" alt="Specialized Nutrition Icon" />,
+      benefits: ["Sustainable weight loss", "Nourishing meals", "No fad diets"],
       color: "from-pink-500 to-pink-600",
-      category: "weight"
+      category: "core"
     },
     {
       id: 2,
       title: "Weight Gain Plan",
-      description: "Customized plans for healthy weight gain, ideal for low appetite or recovery, using nutrient-dense, kitchen-based meals.",
-      icon: <FontAwesomeIcon icon={faPlusCircle} className="w-full h-full" />,
-      benefits: ["Healthy weight gain", "Muscle growth", "Energy optimization"],
+      description: "Our unique and personalized weight-gain diet plans designed for people who have low appetite, hasty metabolism, or recovering from illness to gain weight in a friendly and sustainable way while nourishing your body. So, no junk diets anymore.",
+      icon: <img src="/Icon/weightGain.ico" className="w-10 h-10 filter-accent" alt="Specialized Nutrition Icon" />,
+      benefits: ["Healthy weight gain", "Nutrient-dense meals", "No junk diets"],
       color: "from-blue-500 to-blue-600",
-      category: "weight"
+      category: "core"
     },
     {
       id: 3,
       title: "PCOS/PCOD Management",
-      description: "Tailored diet and lifestyle strategies to balance hormones, improve menstrual health, and reduce PCOS symptoms.",
+      description: "Balancing hormones has always been a turmoil for PCOD/PCOS Clients. Our expert diet will help you manage and improve your menstrual health, balance hormones, reduce symptoms of PCOS with tailored diet and lifestyle strategies.",
       icon: <FontAwesomeIcon icon={faFemale} className="w-full h-full" />,
-      benefits: ["Hormone balance", "Symptom relief", "Menstrual health"],
+      benefits: ["Hormone balance", "Menstrual health", "Symptom reduction"],
       color: "from-emerald-500 to-emerald-600",
-      category: "hormonal"
+      category: "core"
     },
     {
       id: 4,
       title: "Pre and Post-Pregnancy Plan",
-      description: "Expert maternal nutrition guidance for a healthy pregnancy and postpartum recovery using kitchen-based diets.",
-      icon: <FontAwesomeIcon icon={faBaby} className="w-full h-full" />,
+      description: "From conceiving a baby to delivery and recovery, Our expert will guide you through maternal nutrition on how to ensure a healthy journey for both mom and baby naturally with kitchen based dietary.",
+      icon: <img src="/Icon/pregenancy.ico" className="w-10 h-10 filter-accent" alt="Specialized Nutrition Icon" />,
       benefits: ["Healthy pregnancy", "Postpartum recovery", "Maternal nutrition"],
       color: "from-purple-500 to-purple-600",
-      category: "hormonal"
+      category: "core"
     },
     {
       id: 5,
-      title: "Diabetes Management",
-      description: "Kitchen-based meal plans to control blood sugar levels naturally, enhance insulin function, and boost energy.",
+      title: "Diabetes Diet",
+      description: "Our expert will guide you on how to control blood sugar levels naturally with a kitchen based and no supplements that will help you balance your energy levels and insulin function.",
       icon: <img src="/Icon/diabetes.ico" className="w-10 h-10 filter-accent" alt="Specialized Nutrition Icon" />,
-      benefits: ["Blood sugar control", "Insulin support", "Energy stability"],
+      benefits: ["Blood sugar control", "Energy balance", "Insulin support"],
       color: "from-teal-500 to-teal-600",
-      category: "chronic"
+      category: "core"
     },
     {
       id: 6,
       title: "Thyroid Management",
-      description: "Natural, kitchen-based diets to support thyroid function, boost metabolism, and reduce fatigue.",
+      description: "A diet that will guide you on how to support thyroid function naturally with a kitchen based and no supplements diet that will help you boost metabolism, reduce fatigue and weakness, while combat weight fluctuations.",
       icon: <img src="/Icon/thyroid.ico" className="w-10 h-10 filter-accent" alt="Specialized Nutrition Icon" />,
       benefits: ["Thyroid support", "Metabolism boost", "Fatigue reduction"],
       color: "from-amber-500 to-amber-600",
-      category: "hormonal"
+      category: "core"
     },
     {
       id: 7,
       title: "Child Nutrition",
-      description: "Fun, healthy meal plans for kids to support growth, immunity, and lifelong healthy eating habits.",
+      description: "Diet that lays the base for a healthy lifelong health. Our expert will guide you to make fun and healthy functional meals for your growing child.",
       icon: <img src="/Icon/child.ico" className="w-10 h-10 filter-accent" alt="Specialized Nutrition Icon" />,
-      benefits: ["Growth support", "Immunity boost", "Healthy habits"],
+      benefits: ["Healthy growth", "Fun meals", "Lifelong habits"],
       color: "from-orange-500 to-orange-600",
-      category: "lifestyle"
+      category: "core"
     },
     {
       id: 8,
       title: "Immunity Boosting Plan",
-      description: "Antioxidant-rich, kitchen-based diets to strengthen immunity and protect against illness naturally.",
+      description: "Our Dietitian will guide you with a diet that will give your immune system a booster to increase your immunity with antioxidant-rich, dense nutritional meals naturally with a kitchen based and no supplements.",
       icon: <img src="/Icon/immunity.ico" className="w-10 h-10 filter-accent" alt="Specialized Nutrition Icon" />,
-      benefits: ["Immune strength", "Illness resistance", "Energy boost"],
+      benefits: ["Immune strength", "Antioxidant-rich", "Illness resistance"],
       color: "from-yellow-500 to-yellow-600",
-      category: "wellness"
+      category: "core"
     },
+    // Specialized Plans
     {
       id: 9,
       title: "Sports Nutrition",
-      description: "Performance-focused nutrition to fuel athletes, enhance endurance, and support muscle recovery.",
+      description: "Fueling your fit body with expert nutrition will help you enhance endurance, muscle recovery, internal healing and increase performance.",
       icon: <FontAwesomeIcon icon={faDumbbell} className="w-full h-full" />,
       benefits: ["Enhanced performance", "Muscle recovery", "Endurance support"],
       color: "from-indigo-500 to-indigo-600",
-      category: "lifestyle"
+      category: "specialized"
     },
     {
       id: 10,
       title: "Arthritis Management",
-      description: "Nutrient-rich, anti-inflammatory diets to reduce joint pain and support mobility.",
+      description: "A diet that will support your joints rich in nutrients reducing pain and inflammation in the body.",
       icon: <FontAwesomeIcon icon={faBone} className="w-full h-full" />,
-      benefits: ["Pain reduction", "Joint mobility", "Inflammation control"],
+      benefits: ["Pain reduction", "Joint support", "Inflammation control"],
       color: "from-red-500 to-red-600",
-      category: "chronic"
+      category: "specialized"
     },
     {
       id: 11,
-      title: "Anti-Inflammatory Diet",
-      description: "Gut-friendly meals to reduce inflammation, alleviate chronic issues, and promote overall wellness.",
+      title: "Anti-inflammatory Diet",
+      description: "A diet that will help you understand and resolve your chronic health issues like fatigue, bloating and pain through support, gut friendly meals and calmness.",
       icon: <img src="/Icon/Anti.ico" className="w-10 h-10 filter-accent" alt="Specialized Nutrition Icon" />,
       benefits: ["Inflammation reduction", "Gut health", "Chronic issue relief"],
       color: "from-green-500 to-green-600",
-      category: "wellness"
+      category: "specialized"
     },
     {
       id: 12,
       title: "Healthy Heart Plan",
-      description: "Heart-friendly, kitchen-based meals to balance cholesterol and boost cardiovascular health.",
-      icon: <FontAwesomeIcon icon={faHeart} className="w-full h-full" />,
-      benefits: ["Cholesterol balance", "Heart health", "Blood pressure support"],
+      description: "A diet that helps you boost your cardiovascular function and balance cholesterol with heart friendly kitchen based meal plans.",
+      icon: <img src="/Icon/heart.ico" className="w-10 h-10 filter-accent" alt="Specialized Nutrition Icon" />,
+      benefits: ["Cholesterol balance", "Heart health", "Cardiovascular support"],
       color: "from-rose-500 to-rose-600",
-      category: "chronic"
+      category: "specialized"
     },
     {
       id: 13,
       title: "Post-Menopause Management",
-      description: "Nutritional plans to balance hormones, support bone health, and manage menopausal symptoms.",
+      description: "A diet which will help you post menopause to manage and balance your hormone functioning, bone health with nutritional meals in your transitional phase.",
       icon: <img src="/Icon/Post.ico" className="w-10 h-10 filter-accent" alt="Specialized Nutrition Icon" />,
       benefits: ["Hormone balance", "Bone health", "Symptom management"],
       color: "from-violet-500 to-violet-600",
-      category: "hormonal"
+      category: "specialized"
     },
     {
       id: 14,
       title: "Glowing Skin Diet",
-      description: "Antioxidant-rich meals and hydration plans for radiant, clear, and glowing skin.",
+      description: "A diet which will help you achieve radiant, clear and glowing glass skin from inside and out with antioxidant rich meals and hydration plans.",
       icon: <img src="/Icon/skin.ico" className="w-10 h-10 filter-accent" alt="Specialized Nutrition Icon" />,
-      benefits: ["Radiant skin", "Blemish reduction", "Hydration support"],
+      benefits: ["Radiant skin", "Hydration support", "Antioxidant-rich"],
       color: "from-fuchsia-500 to-fuchsia-600",
-      category: "wellness"
+      category: "specialized"
     },
     {
       id: 15,
       title: "Detox Diet",
-      description: "Natural, fiber-rich meals to gently cleanse the body and boost energy levels.",
+      description: "A detox plan that will help you achieve a healthy body while gently cleansing your body and rebooting your system with kitchen based, natural and fiber rich meals.",
       icon: <img src="/Icon/healthy.ico" className="w-10 h-10 filter-accent" alt="Specialized Nutrition Icon" />,
       benefits: ["Body cleansing", "Energy boost", "Digestive health"],
       color: "from-lime-500 to-lime-600",
-      category: "wellness"
+      category: "specialized"
     },
     {
       id: 16,
       title: "Celiac Disease Management",
-      description: "Delicious gluten-free diets to manage celiac disease and support gut healing.",
-      icon: <FontAwesomeIcon icon={faBreadSlice} className="w-full h-full" />,
+      description: "A diet which will help you to vanish gluten with delicious gluten free-diets.",
+       icon: <img src="/Icon/celiac.ico" className="w-10 h-10 filter-accent" alt="Specialized Nutrition Icon" />,
       benefits: ["Gluten-free nutrition", "Gut healing", "Symptom relief"],
       color: "from-cyan-500 to-cyan-600",
-      category: "chronic"
+      category: "specialized"
     },
     {
       id: 17,
       title: "Fatty Liver Management",
-      description: "Low-fat, liver-supportive meals to reverse fatty liver symptoms and enhance detoxification.",
-      icon: <FontAwesomeIcon icon={faHeart} className="w-full h-full" />,
+      description: "A diet which will help you to reverse your fatty liver symptoms mindfully through low fat and liver supporting meals.",
+      icon: <img src="/Icon/liver.ico" className="w-10 h-10 filter-accent" alt="Specialized Nutrition Icon" />,
       benefits: ["Liver detox", "Symptom reversal", "Fat reduction"],
       color: "from-emerald-600 to-emerald-700",
-      category: "chronic"
+      category: "specialized"
     },
     {
       id: 18,
-      title: "Acid Reflux Management",
-      description: "Stomach-friendly diets to soothe digestion and eliminate acid reflux triggers.",
-      icon: <ClipboardDocumentListIcon className="w-full h-full" />,
+      title: "Acid Reflux Management Diet",
+      description: "A diet that will help you to soothe your digestion and vanish triggers and stressors for your body with stomach friendly and calming diet plans.",
+      icon: <img src="/Icon/reflux.ico" className="w-10 h-10 filter-accent" alt="Specialized Nutrition Icon" />,
       benefits: ["Reflux relief", "Digestive comfort", "Trigger elimination"],
       color: "from-blue-600 to-blue-700",
-      category: "chronic"
+      category: "specialized"
     },
+    // Other Special Services
     {
       id: 19,
       title: "Fresh Fruit Bouquet Delivery",
-      description: "Customizable, visually appealing fresh fruit bouquets as a healthy gift for any occasion, delivered to your doorstep.",
-      icon: <FontAwesomeIcon icon={faGift} className="w-full h-full" />,
-      benefits: ["Healthy gifting", "Customizable options", "Visual appeal"],
+      description: "A fresh fruit bouquet is a beautiful and healthy arrangement of fresh fruits, carefully selected and arranged to create a stunning visual display. It's a perfect gift for any occasion, such as birthdays, anniversaries, or get-well wishes. We deliver fruit bouquets at your doorstep which are customized as per your requirement.\n\nWhat will you get?\n- Healthy Alternative: Fresh fruit bouquets are a healthier alternative to traditional flower bouquets.\n- Customizable: Fruit bouquets can be customized to suit individual tastes and dietary preferences.\n- Visually Appealing: Fresh fruit bouquets are visually appealing and can brighten up any room.\n\n\"A fresh fruit bouquet is a thoughtful and healthy gift that's perfect for any occasion. Our fruit bouquets are carefully crafted with a variety of fresh fruits, arranged to create a stunning visual display. Whether you're looking for a unique gift or a healthy snack, our fresh fruit bouquets are sure to delight.\"\n\nKey Features:\n- Fresh and Seasonal Fruits: Use fresh and seasonal fruits to ensure maximum flavor and nutritional value.\n- Creative Arrangement: Arrange the fruits in a creative and visually appealing way.\n- Customizable: Offer customization options to suit individual tastes and dietary preferences.",
+      icon: <img src="/Icon/fruit.ico" className="w-10 h-10 filter-accent" alt="Specialized Nutrition Icon" />,
+      benefits: ["Healthy alternative", "Customizable", "Visually appealing"],
       color: "from-pink-600 to-pink-700",
-      category: "wellness"
+      category: "other"
     },
     {
       id: 20,
       title: "Healthy Salad Delivery",
-      description: "Customized, organic salads designed by experts, rich in fiber and nutrients, delivered in Jaipur.",
-      icon: <FontAwesomeIcon icon={faUtensils} className="w-full h-full" />,
-      benefits: ["Nutrient-rich meals", "Digestive health", "Weight management"],
+      description: "Why Eating a salad everyday is healthy?\n\nWhat will you get?\n- Rich in Fiber: Salads, especially those with leafy greens and vegetables like carrots and broccoli, are excellent sources of fiber. Fiber aids in digestion, helps prevent constipation, and can contribute to a feeling of fullness, aiding in weight management.\n- Packed with Vitamins and Minerals: Salads provide a wide range of vitamins and minerals, including vitamin C, potassium, and antioxidants like beta-carotene, which are crucial for immune function, skin health, and overall well-being.\n- Low in Calories: Salads are typically low in calories, making them a good option for weight management and healthy eating.\n\nHealth Benefits:\n- Improved Digestive Health: The fiber in salads promotes healthy digestion, helps maintain regular bowel movements, and can prevent constipation.\n- Heart Health: Salads can contribute to a healthy heart by helping to lower cholesterol levels and providing antioxidants that protect against cardiovascular disease.\n- Weight Management: The low calorie content and high fiber content of salads can help with weight loss and maintenance.\n- Boosted Immunity: The vitamins and antioxidants in salads help strengthen the immune system and protect against illness.\n- Healthy Skin: Salads, especially those with fresh vegetables, can contribute to healthy skin by providing hydration and antioxidants.\n- Bone Health: Salads can contribute to strong bones by providing calcium and other essential nutrients.\n\nWhy should you choose our healthy salad meal?\n- Healthy, delicious Salads that are customised as per your medical history, body type and lifestyle.\n- Designed and authenticated by an experienced dietitian.\n- Using fresh and organic fruits and vegetables.",
+      icon: <img src="/Icon/salad.ico" className="w-10 h-10 filter-accent" alt="Specialized Nutrition Icon" />,
+      benefits: ["Rich in fiber", "Packed with vitamins", "Low in calories"],
       color: "from-green-600 to-green-700",
-      category: "wellness"
+      category: "other"
     }
   ];
 
   const handleServiceClick = (serviceTitle) => {
     setSelectedService(serviceTitle);
     setAppointmentOpen(true);
+  };
+
+  const handleReadMoreClick = (title, content) => {
+    setSelectedServiceContent({ title, content });
+    setReadMoreOpen(true);
+  };
+
+  const truncateDescription = (description, maxLength = 100) => {
+    if (description.length <= maxLength) return description;
+    return description.slice(0, maxLength) + '...';
   };
 
   const filteredServices = activeCategory === 'all'
@@ -291,7 +326,21 @@ const NutritionServices = () => {
 
                   <h3 className="text-xl font-bold text-nutricare-primary-dark mb-3 group-hover:text-nutricare-green transition-colors">{service.title}</h3>
 
-                  <p className="text-nutricare-text-gray mb-5 text-sm">{service.description}</p>
+                  <p className={`text-nutricare-text-gray mb-5 text-sm ${service.category === 'other' ? 'truncate max-h-24' : 'whitespace-pre-line'}`}>
+                    {service.category === 'other' ? truncateDescription(service.description) : service.description}
+                  </p>
+
+                  {service.category === 'other' && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent triggering handleServiceClick
+                        handleReadMoreClick(service.title, service.description);
+                      }}
+                      className="text-nutricare-green font-medium hover:underline text-sm"
+                    >
+                      Read More
+                    </button>
+                  )}
 
                   <div className="mb-4 bg-gray-50 p-3 rounded-xl">
                     <h4 className="text-xs font-semibold text-nutricare-green-dark mb-2">KEY BENEFITS</h4>
@@ -352,6 +401,13 @@ const NutritionServices = () => {
         isOpen={appointmentOpen}
         onClose={() => setAppointmentOpen(false)}
         selectedService={selectedService}
+      />
+
+      <ReadMoreModal
+        isOpen={readMoreOpen}
+        onClose={() => setReadMoreOpen(false)}
+        title={selectedServiceContent.title}
+        content={selectedServiceContent.content}
       />
     </div>
   );

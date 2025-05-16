@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaCheckCircle, FaLeaf, FaCarrot, FaRunning, FaStar, FaUserCheck, FaGlobe, FaHeart, FaAward } from 'react-icons/fa';
+import { FaStar, FaUserCheck, FaGlobe, FaHeart, FaAward, FaClock, FaBullseye, FaUtensils } from 'react-icons/fa';
 import HealthyEating from '/assets/Images/HealthyEating.jpg';
 import Appointment from '../form/Appointment';
 
@@ -66,7 +66,7 @@ const ContactMiddle = () => {
               </div>
             </div>
 
-            {/* Updated heading */}
+            {/* Heading */}
             <div>
               <h2
                 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 leading-tight"
@@ -77,79 +77,15 @@ const ContactMiddle = () => {
               <div className="w-16 sm:w-24 h-1 mb-3 sm:mb-4" style={{ backgroundColor: colors.green }}></div>
             </div>
 
-            {/* Updated paragraph text */}
-            <p className="text-sm sm:text-base lg:text-lg mb-2 leading-relaxed" style={{ color: colors.textGray }}>
-              Founded by Dt. Tanu Bhargava, Nutridietmitra empowers over 5000 clients globally with personalized, kitchen-based nutrition plans. With 17+ years of expertise, our holistic, science-backed approach promotes sustainable health without starvation diets or supplements.
-            </p>
-
-            {/* Updated feature points with react-icons */}
-            <div className="space-y-2 mb-4 sm:mb-6">
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div
-                  className="w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center bg-green-100 bg-opacity-30"
-                >
-                  <FaCheckCircle className="text-xs sm:text-sm text-green-600" />
-                </div>
-                <p className="text-sm sm:text-base" style={{ color: colors.textDark }}>
-                  Customized plans for weight, PCOS, diabetes, and thyroid
-                </p>
-              </div>
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div
-                  className="w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center bg-green-100 bg-opacity-30"
-                >
-                  <FaLeaf className="text-xs sm:text-sm text-green-600" />
-                </div>
-                <p className="text-sm sm:text-base" style={{ color: colors.textDark }}>
-                  No supplements, only practical, kitchen-based diets
-                </p>
-              </div>
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div
-                  className="w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center bg-green-100 bg-opacity-30"
-                >
-                  <FaCarrot className="text-xs sm:text-sm text-green-600" />
-                </div>
-                <p className="text-sm sm:text-base" style={{ color: colors.textDark }}>
-                  Healthy salad and fruit bouquet delivery in Jaipur
-                </p>
-              </div>
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div
-                  className="w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center bg-green-100 bg-opacity-30"
-                >
-                  <FaRunning className="text-xs sm:text-sm text-green-600" />
-                </div>
-                <p className="text-sm sm:text-base" style={{ color: colors.textDark }}>
-                  Specialized child nutrition and sports nutrition plans
-                </p>
-              </div>
-            </div>
-
-            {/* Why Choose Us section with react-icons */}
+            {/* Replaced Content: What Can We Assure You? */}
             <div className="mt-4 sm:mt-6">
               <h3
                 className="text-xl sm:text-2xl lg:text-3xl font-semibold mb-3"
                 style={{ color: colors.primaryDark }}
               >
-                Why Choose Nutridietmitra?
+                What Can We Assure You?
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 lg:gap-4">
-                <div className="flex items-start gap-2 sm:gap-3">
-                  <div
-                    className="w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center bg-purple-100 bg-opacity-30"
-                  >
-                    <FaStar className="text-xs sm:text-sm" style={{ color: colors.primaryDark }} />
-                  </div>
-                  <div>
-                    <p className="font-medium text-sm sm:text-base" style={{ color: colors.textDark }}>
-                      17+ Years of Expertise
-                    </p>
-                    <p className="text-xs sm:text-sm" style={{ color: colors.textGray }}>
-                      Led by Dt. Tanu Bhargava, trusted by thousands.
-                    </p>
-                  </div>
-                </div>
                 <div className="flex items-start gap-2 sm:gap-3">
                   <div
                     className="w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center bg-purple-100 bg-opacity-30"
@@ -161,7 +97,82 @@ const ContactMiddle = () => {
                       100% Personalized Plans
                     </p>
                     <p className="text-xs sm:text-sm" style={{ color: colors.textGray }}>
-                      Tailored to your body, lifestyle, and goals.
+                      Diet plans tailored to your unique needs, 0% generic.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2 sm:gap-3">
+                  <div
+                    className="w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center bg-purple-100 bg-opacity-30"
+                  >
+                    <img src="/Icon/support.ico" className="w-3 h-3 filter-accent" alt="Specialized Nutrition Icon" />,
+                  </div>
+                  <div>
+                    <p className="font-medium text-sm sm:text-base" style={{ color: colors.textDark }}>
+                      Constant Support
+                    </p>
+                    <p className="text-xs sm:text-sm" style={{ color: colors.textGray }}>
+                      Ongoing guidance to keep you on track.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2 sm:gap-3">
+                  <div
+                    className="w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center bg-purple-100 bg-opacity-30"
+                  >
+                    <FaClock className="text-xs sm:text-sm" style={{ color: colors.primaryDark }} />
+                  </div>
+                  <div>
+                    <p className="font-medium text-sm sm:text-base" style={{ color: colors.textDark }}>
+                      Weekly Progress Tracking
+                    </p>
+                    <p className="text-xs sm:text-sm" style={{ color: colors.textGray }}>
+                      Reviews and adjustments for optimal results.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2 sm:gap-3">
+                  <div
+                    className="w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center bg-purple-100 bg-opacity-30"
+                  >
+                    <FaStar className="text-xs sm:text-sm" style={{ color: colors.primaryDark }} />
+                  </div>
+                  <div>
+                    <p className="font-medium text-sm sm:text-base" style={{ color: colors.textDark }}>
+                      Motivation & Habit Tracking
+                    </p>
+                    <p className="text-xs sm:text-sm" style={{ color: colors.textGray }}>
+                      Stay inspired with habit-building support.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2 sm:gap-3">
+                  <div
+                    className="w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center bg-purple-100 bg-opacity-30"
+                  >
+                    <FaBullseye className="text-xs sm:text-sm" style={{ color: colors.primaryDark }} />
+                  </div>
+                  <div>
+                    <p className="font-medium text-sm sm:text-base" style={{ color: colors.textDark }}>
+                      Realistic Goal Setting
+                    </p>
+                    <p className="text-xs sm:text-sm" style={{ color: colors.textGray }}>
+                      Achievable targets for lasting change.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2 sm:gap-3">
+                  <div
+                    className="w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center bg-purple-100 bg-opacity-30"
+                  >
+                    <FaUtensils className="text-xs sm:text-sm" style={{ color: colors.primaryDark }} />
+                  </div>
+                  <div>
+                    <p className="font-medium text-sm sm:text-base" style={{ color: colors.textDark }}>
+                      Practical Meals
+                    </p>
+                    <p className="text-xs sm:text-sm" style={{ color: colors.textGray }}>
+                      Tasty diets that fit your routine.
                     </p>
                   </div>
                 </div>
@@ -173,25 +184,10 @@ const ContactMiddle = () => {
                   </div>
                   <div>
                     <p className="font-medium text-sm sm:text-base" style={{ color: colors.textDark }}>
-                      Global Consultations
+                      Global Programs
                     </p>
                     <p className="text-xs sm:text-sm" style={{ color: colors.textGray }}>
-                      Accessible worldwide with ongoing support.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2 sm:gap-3">
-                  <div
-                    className="w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center bg-purple-100 bg-opacity-30"
-                  >
-                    <FaHeart className="text-xs sm:text-sm" style={{ color: colors.primaryDark }} />
-                  </div>
-                  <div>
-                    <p className="font-medium text-sm sm:text-base" style={{ color: colors.textDark }}>
-                      Holistic Approach
-                    </p>
-                    <p className="text-xs sm:text-sm" style={{ color: colors.textGray }}>
-                      Focus on mind, body, and lifestyle.
+                      Suitable for Indian and global clients.
                     </p>
                   </div>
                 </div>

@@ -1,7 +1,7 @@
 import React from 'react';
 import About1 from '/assets/Images/About1.jpg'
 import AboutUs from '../components/about/AboutUs';
-import AboutTop from '../components/about/AboutTop';
+// import AboutTop from '../components/about/AboutTop';
 import AboutMiddle from '../components/about/AboutMiddle'
 
 const About = () => {
@@ -81,7 +81,7 @@ const About = () => {
     {/* Content components */}
     <div className="overflow-x-hidden">
       <AboutUs/>
-      <AboutTop/>
+      {/* <AboutTop/> */}
       <AboutMiddle/>
     </div>
     </>

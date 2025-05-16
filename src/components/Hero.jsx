@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ArrowRight, ChevronLeft, ChevronRight, Heart, Apple, Salad, Award, Check, User, Stethoscope } from 'lucide-react';
+import { ArrowRight, ChevronLeft, ChevronRight, Heart, Apple, Salad, Award, Check, User, Stethoscope, X } from 'lucide-react';
 import img1 from '/assets/Images/img1.jpg';
 import img2 from '/assets/Images/img2.jpg';
 import img3 from '/assets/Images/img3.jpg';
@@ -57,32 +57,12 @@ const qualityCards = [
   }
 ];
 
-const services = [
-  {
-    icon: <img src="/Icon/weight.ico" className="text-nutricare-green w-7 h-7" alt="Weight Management Icon" />,
-    title: "Weight Management",
-    description: "Sustainable plans for weight loss or gain, tailored to your lifestyle without fad diets."
-  },
-  {
-    icon: <img src="/Icon/thyroid.ico" className="text-nutricare-green w-7 h-7" alt="PCOS & Thyroid Icon" />,
-    title: "PCOS & Thyroid",
-    description: "Hormone-balancing diets to manage symptoms and improve overall health."
-  },
-  {
-    icon: <Salad size={24} />,
-    title: "Diabetes Care",
-    description: "Kitchen-based plans to control blood sugar and boost energy naturally."
-  },
-  {
-    icon: <img src="/Icon/skin.ico" className="text-nutricare-green w-7 h-7" alt="Glowing Skin Icon" />,
-    title: "Glowing Skin",
-    description: "Antioxidant-rich diets for radiant, clear skin from the inside out."
-  }
-];
-
 const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAppointmentOpen, setIsAppointmentOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFounderModalOpen, setIsFounderModalOpen] = useState(false);
+  const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const slideInterval = setInterval(() => {
@@ -108,9 +88,66 @@ const Hero = () => {
     setIsAppointmentOpen(false);
   };
 
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const openFounderModal = (event) => {
+    const { clientX, clientY } = event;
+    const modalWidth = 672; // Approximate max-w-2xl in pixels (2xl = 42rem = 672px)
+    const modalHeight = 512; // Approximate height for content (adjustable)
+    const offsetX = modalWidth / 2;
+    const offsetY = modalHeight / 2;
+
+    // Clamp position to stay within viewport
+    const x = Math.max(offsetX, Math.min(clientX, window.innerWidth - offsetX));
+    const y = Math.max(offsetY, Math.min(clientY, window.innerHeight - offsetY));
+
+    setModalPosition({ x, y });
+    setIsFounderModalOpen(true);
+  };
+
+  const closeFounderModal = () => {
+    setIsFounderModalOpen(false);
+  };
+
   const handleContactUs = () => {
     window.location.href = "/contact";
   };
+
+  const aboutContent = `
+Welcome to the world of Nutridietmitra
+Let’s empower your health with personalised nutrition.
+Empowering since 2014.
+Nutridietmitra believes in nutrition, not in restrictions. A sustainable, nourishing
+and balanced meal is all we grow for you. Nutridietmitra is founded by Dt. Tanu
+Bhargava, who is a trusted expert in this field. Her role as a dietitian served for
+over 17 years and we are counting many more. She has helped more than 5000+
+clients to heal, energize and transform their lives into healthy ones. To cater to
+your healthy body we provide personalised diet and lifestyle programs which
+will help you to achieve your healthy goals concerning your body conditions.
+Be it weight issues, support pregnancy, improved digestion, PCOD/PCOS,
+Thyroid, Diabetes or battling with adapting to a healthier lifestyle. We are
+always here to guide you as your nutrition and diet expert with a promise
+to be compassionate about your diet with a science-baked and heart-led
+master plan. Results that you can maintain and feel.
+  `;
+
+  const aboutShortContent = aboutContent.split('\n').slice(0, 6).join('\n');
+
+  const founderContent = `
+Dt. Tanu Bhargava is a highly qualified Jaipur-based clinical dietitian and wellness expert. She aims to use a holistic approach for her clients that is accessible to all globally. Her experience includes top hospitals, health care centres, gym centres, and fitness chains. She has a strong foundation in nutrition therapy, medical, and lifestyle management expertise with 5000+ supported clients through multiple challenges like weight management, PCOD/PCOS, Diabetes, Thyroid disorders, sports nutrition, child immunity boosting and nutrition plans, lifestyle-related disorders, digestive issues, immunity, and more. This created her expertise in overcoming the dietary challenges that fit modern lifestyles.
+Her expertise in sports nutrition and the unique dietary needs of active athletes is honoured by many fitness centres. Today, she is serving as a renowned Consultant Dietitian for Medical Second Opinion Pvt. Ltd while in collaboration with various organisations and corporations for preventive health guidance and workplace wellness.
+Her clinically proven approach is viable, authentic, practical, and evidence-based with socially conscious care for others that respects comfort zone, preferences, tastes, and daily routine - which makes her a trusted expert in the hearts of people worldwide.
+  `;
+
+  const founderShortContent = `
+Dt. Tanu Bhargava is a highly qualified Jaipur-based clinical dietitian and wellness expert. She aims to use a holistic approach for her clients that is accessible to all globally. Her experience includes top hospitals, health care centres, gym centres, and fitness chains. She has a strong foundation in nutrition therapy, medical, and lifestyle management expertise with 5000+ supported clients through multiple challenges.
+  `;
 
   return (
     <>
@@ -130,7 +167,7 @@ const Hero = () => {
               className="absolute inset-0 w-full h-full object-contain sm:object-cover object-center bg-gray-200 sm:bg-transparent"
               loading="lazy"
             />
-            {/* <div className="absolute inset-0 bg-black bg-opacity-50" /> { */}
+            {/* <div className="absolute inset-0 bg-black bg-opacity-50" /> */}
             <div
               className={`relative z-10 max-w-[90%] sm:max-w-2xl md:max-w-3xl px-4 w-full md:w-auto rounded-lg p-6 ${
                 slide.textPosition === 'left'
@@ -255,52 +292,73 @@ const Hero = () => {
           <div className="flex flex-col md:flex-row items-center gap-8">
             <div className="md:w-1/2">
               <h2 className="text-3xl md:text-4xl font-bold text-nutricare-text-dark mb-4">
-                Meet Dt. Tanu Bhargava
+                Welcome to Nutridietmitra: Empowering Your Health
               </h2>
-              <p className="text-nutricare-text-gray text-base md:text-lg mb-6">
-                With over 17 years of experience, Dt. Tanu Bhargava has empowered 5,000+ clients worldwide with personalized nutrition. From weight management to PCOS and diabetes, her science-backed, compassionate approach ensures lasting results. A celebrated dietitian, she’s been honored with awards like the Women Empowerment Award (2020) and Healthcare Achievement Award (2022).
+              <p className="text-nutricare-text-gray text-base md:text-lg mb-6 whitespace-pre-line">
+                {aboutShortContent}
               </p>
-              <div className="flex items-center gap-4">
-                <User className="text-nutricare-green" size={24} />
-                <p className="text-nutricare-text-dark font-semibold">
-                  Trusted by celebrities like Milkha Singh and Preeti Sharma
-                </p>
-              </div>
+              <button
+                onClick={openModal}
+                className="text-nutricare-green font-semibold hover:underline bg-transparent border-none cursor-pointer"
+              >
+                Read More
+              </button>
             </div>
             <div className="md:w-1/2">
               <div className="bg-white shadow-md rounded-lg p-6">
                 <h3 className="text-xl font-bold text-nutricare-text-dark mb-4">Our Philosophy</h3>
-                <p className="text-nutricare-text-gray text-sm md:text-base">
-                  At Nutridietmitra, we believe in nutrition, not restrictions. Our 100% personalized, kitchen-based plans are tailored to your lifestyle, culture, and goals—no crash diets or supplements. We provide weekly support and progress tracking to keep you motivated.
-                </p>
+                <div className="text-nutricare-text-gray text-sm md:text-base">
+                  <p>
+                    NutridietMitra does not believe in one-size-fits-all plans. It believes every individual is different and concerned with different needs, routines, challenges and cultures to cater to. That is why we are here to provide:
+                  </p>
+                  <ul className="list-disc pl-5 mt-2 space-y-1">
+                    <li>Friendly and adaptable solutions that do not include crash diets or starvation.</li>
+                    <li>Throughout your journey, we will be providing constant emotional support and weekly progress tracking with adjustments.</li>
+                    <li>Customized diet plans tailored to YOU.</li>
+                    <li>We look at the holistic side which is the bigger picture: your mind, lifestyle and body.</li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Services Section */}
-      <section className="py-16 bg-white">
+      {/* Founder Section */}
+      <section className="py-8 bg-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-nutricare-text-dark text-center mb-8">
-            Our Nutrition Plans
+          <h2 className="text-3xl md:text-4xl font-bold text-nutricare-text-dark text-center mb-4">
+            Founder - Dt. Tanu Bhargava
           </h2>
-          <p className="text-nutricare-text-gray text-center text-base md:text-lg mb-12 max-w-2xl mx-auto">
-            From weight management to glowing skin, our expert-led plans are designed to help you thrive naturally.
+          <p className="text-nutricare-text-gray text-center text-base md:text-lg mb-6 max-w-2xl mx-auto">
+            The Wellness Mind Behind Nutridietmitra
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {services.map((service, index) => (
-              <div
-                key={index}
-                className="bg-nutricare-bg-light rounded-lg p-6 flex flex-col items-center text-center"
-              >
-                <div className="p-3 rounded-full bg-green-50 mb-4">
-                  {service.icon}
-                </div>
-                <h3 className="text-lg font-bold text-nutricare-text-dark mb-2">{service.title}</h3>
-                <p className="text-nutricare-text-gray text-sm">{service.description}</p>
+          <div className="bg-nutricare-bg-light rounded-lg p-4 w-full">
+            <div className="flex flex-col md:flex-row gap-4 mb-4">
+              <div className="flex-1">
+                <p className="text-nutricare-text-gray text-sm md:text-base leading-tight">
+                  {founderShortContent}
+                </p>
               </div>
-            ))}
+              <div className="flex-1">
+                <p className="text-nutricare-text-gray text-sm md:text-base leading-tight">
+                  Her expertise in sports nutrition and the unique dietary needs of active athletes is honoured by many fitness centres. Today, she is serving as a renowned Consultant Dietitian for Medical Second Opinion Pvt. Ltd while in collaboration with various organisations and corporations for preventive health guidance and workplace wellness.
+                </p>
+              </div>
+              <div className="flex-1">
+                <p className="text-nutricare-text-gray text-sm md:text-base leading-tight">
+                  Her clinically proven approach is viable, authentic, practical, and evidence-based with socially conscious care for others that respects comfort zone, preferences, tastes, and daily routine - which makes her a trusted expert in the hearts of people worldwide.
+                </p>
+              </div>
+            </div>
+            <div className="text-center">
+              <button
+                onClick={openFounderModal}
+                className="text-nutricare-green font-semibold hover:underline bg-transparent border-none cursor-pointer"
+              >
+                Read More
+              </button>
+            </div>
           </div>
           {/* <div className="mt-12 text-center">
             <button
@@ -316,6 +374,48 @@ const Hero = () => {
 
       {/* Appointment Modal */}
       <Appointment isOpen={isAppointmentOpen} onClose={closeAppointment} />
+
+      {/* About Read More Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto relative border-none">
+            <button
+              onClick={closeModal}
+              className="absolute top-4 right-4 text-nutricare-text-dark hover:text-nutricare-green"
+              aria-label="Close modal"
+            >
+              <X size={24} />
+            </button>
+            <h2 className="text-2xl font-bold text-nutricare-text-dark mb-4">Welcome To Nutridietmitra</h2>
+            <p className="text-nutricare-text-gray text-base whitespace-pre-line">{aboutContent}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Founder Read More Modal */}
+      {isFounderModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50">
+          <div
+            className="bg-white p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto relative border-none"
+            style={{
+              position: 'fixed',
+              left: `${modalPosition.x}px`,
+              top: `${modalPosition.y}px`,
+              transform: 'translate(-50%, -50%)',
+            }}
+          >
+            <button
+              onClick={closeFounderModal}
+              className="absolute top-4 right-4 text-nutricare-text-dark hover:text-nutricare-green"
+              aria-label="Close modal"
+            >
+              <X size={24} />
+            </button>
+            <h2 className="text-2xl font-bold text-nutricare-text-dark mb-4">About Dt. Tanu Bhargava</h2>
+            <p className="text-nutricare-text-gray text-base whitespace-pre-line">{founderContent}</p>
+          </div>
+        </div>
+      )}
     </>
   );
 };
