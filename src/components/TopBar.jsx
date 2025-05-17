@@ -248,7 +248,7 @@ const TopBar = () => {
                   title="Operating Hours"
                 ></i>
                 <span className="text-gray-600 text-sm">Mon-Fri: 8am-5pm</span>
-                <div className="absolute top-10 left-1/2 transform -translate-x-1/2 hidden group-hover:block bg-white shadow-md rounded-md p-2 text-xs text-gray-600 whitespace-nowrap z-10">
+                <div className="absolute top-10 left-1/2 transform -translate-x-1/2 hidden group-hover:block bg-white shadow-md rounded-md p-2 text-xs text-gray-600 whitespace-nowrap z-20">
                   Mon-Fri: 8am-5pm
                 </div>
               </div>
@@ -260,12 +260,20 @@ const TopBar = () => {
               <div className="flex items-center gap-3">
                 {/* Location Icon */}
                 <div className="relative group">
-                  <i 
-                    className="fas fa-map-marker-alt text-nutricare-primary-dark hover:text-nutricare-primary-light transition-colors duration-300 cursor-pointer"
-                    title="Location"
-                  ></i>
-                  <div className="absolute top-10 right-0 hidden group-hover:block bg-white shadow-md rounded-md p-2 text-xs text-gray-600 whitespace-nowrap z-10">
-                    Malviya Nagar, Jaipur
+                  <a 
+                    href="https://www.google.com/maps/search/?api=1&query=Plot+93%2C+Mauji+Colony+Rd%2C+Mauji+Colony%2C+Moji+Nagar%2C+Malviya+Nagar%2C+Jaipur%2C+Rajasthan+302017"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-nutricare-primary-dark hover:text-nutricare-primary-light transition-colors duration-300"
+                    aria-label="View on Google Maps"
+                  >
+                    <i 
+                      className="fas fa-map-marker-alt"
+                      title="View Location on Map"
+                    ></i>
+                  </a>
+                  <div className="absolute top-10 right-0 hidden group-hover:block bg-white shadow-md rounded-md p-2 text-xs text-gray-600 whitespace-nowrap z-20">
+                    Plot 93, Mauji Colony Rd, Mauji Colony, Moji Nagar, Malviya Nagar, Jaipur, Rajasthan 302017
                   </div>
                 </div>
 
@@ -280,7 +288,7 @@ const TopBar = () => {
                       title="Email Us"
                     ></i>
                   </a>
-                  <div className="absolute top-10 right-0 hidden group-hover:block bg-white shadow-md rounded-md p-2 text-xs text-gray-600 whitespace-nowrap z-10">
+                  <div className="absolute top-10 right-0 hidden group-hover:block bg-white shadow-md rounded-md p-2 text-xs text-gray-600 whitespace-nowrap z-20">
                     Nutridietmitra@gmail.com
                   </div>
                 </div>
@@ -296,7 +304,7 @@ const TopBar = () => {
                       title="Call Us"
                     ></i>
                   </a>
-                  <div className="absolute top-10 right-0 hidden group-hover:block bg-white shadow-md rounded-md p-2 text-xs text-gray-600 whitespace-nowrap z-10">
+                  <div className="absolute top-10 right-0 hidden group-hover:block bg-white shadow-md rounded-md p-2 text-xs text-gray-600 whitespace-nowrap z-20">
                     +91-7568153534
                   </div>
                 </div>
@@ -312,7 +320,7 @@ const TopBar = () => {
                   >
                     <i className="fab fa-instagram"></i>
                   </a>
-                  <div className="absolute top-10 right-0 hidden group-hover:block bg-white shadow-md rounded-md p-2 text-xs text-gray-600 whitespace-nowrap z-10">
+                  <div className="absolute top-10 right-0 hidden group-hover:block bg-white shadow-md rounded-md p-2 text-xs text-gray-600 whitespace-nowrap z-20">
                     Follow us on Instagram
                   </div>
                 </div>
