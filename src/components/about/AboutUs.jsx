@@ -132,7 +132,8 @@ const AboutUs = () => {
                 alt="Nutridietmitra Nutrition Expertise"
                 className="rounded-xl object-cover w-full max-h-[500px]"
               />
-              <div className="absolute bottom-4 right-4 md:bottom-8 md:right-8 bg-[#9E0B7F] text-white p-4 md:p-6 rounded-xl shadow-xl z-20 w-fit">
+              <div className="absolute bottom-1 right-1 sm:bottom-4 sm:right-4 md:bottom-6 md:right-6 bg-[#9E0B7F] text-white 
+              p-2 sm:p-3 md:p-5 rounded-xl shadow-xl z-20 w-fit">
                 <div className="flex items-center space-x-4">
                   <div className="text-4xl md:text-6xl font-bold">{years}+</div>
                   <div>
