@@ -25,7 +25,7 @@ const ServiceMiddle = () => {
                 <div className="bg-nutricare-primary-dark text-white p-8 rounded-lg shadow-lg text-center min-h-[200px] flex flex-col justify-center">
                   <h4 className="text-xl font-bold mb-1">Our Main Office</h4>
                   <p className="text-white">OM RESIDENCY 93/B2 Mauji Colony, Malviya Nagar, Jaipur</p>
-                  <p className="text-white mt-2">+91-982-959-1919 | nutridietmitra@gmail.com</p>
+                  <p className="text-white mt-2">+91-7568153534 | nutridietmitra@gmail.com</p>
                 </div>
               </div>
             </div>
