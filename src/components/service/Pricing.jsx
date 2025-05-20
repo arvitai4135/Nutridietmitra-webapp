@@ -18,6 +18,62 @@ const globalStyles = `
 body.modal-open {
   overflow: hidden;
 }
+
+/* Pricing Card Styles */
+.pricing-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  position: relative;
+}
+
+.pricing-card h3 {
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.pricing-card .price-section {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.pricing-card .price-section .price {
+  font-size: 1.875rem;
+  font-weight: bold;
+  color: #1a3c34;
+}
+
+.pricing-card .price-section .period {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.pricing-card ul {
+  margin-bottom: 1.5rem;
+  flex: 1;
+}
+
+.pricing-card ul li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.pricing-card ul li span:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: 0.5rem;
+}
+
+.pricing-card button {
+  text-align: center;
+  width: 100%;
+}
 `;
 
 const PricingSection = () => {
@@ -285,6 +341,7 @@ const PricingSection = () => {
         {activeTab === "regular" ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <PricingCard
+              className="pricing-card"
               title="1 Month"
               price="₹4,000"
               period="month"
@@ -294,6 +351,7 @@ const PricingSection = () => {
               user={user}
             />
             <PricingCard
+              className="pricing-card"
               title="2 Months"
               price="₹7,000"
               period="2 months"
@@ -303,6 +361,7 @@ const PricingSection = () => {
               user={user}
             />
             <PricingCard
+              className="pricing-card"
               title="3 Months"
               price="₹9,000"
               period="3 months"
@@ -313,6 +372,7 @@ const PricingSection = () => {
               user={user}
             />
             <PricingCard
+              className="pricing-card"
               title="6 Months"
               price="₹18,000"
               period="6 months"
@@ -325,6 +385,7 @@ const PricingSection = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <PricingCard
+              className="pricing-card"
               title="Single Meal"
               price="₹200"
               period="meal"
@@ -334,6 +395,7 @@ const PricingSection = () => {
               user={user}
             />
             <PricingCard
+              className="pricing-card"
               title="Weekly Meal Plan"
               price="₹1,400"
               period="week"
@@ -344,6 +406,7 @@ const PricingSection = () => {
               user={user}
             />
             <PricingCard
+              className="pricing-card"
               title="Monthly Meal Plan"
               price="₹4,800"
               period="month"
@@ -411,31 +474,6 @@ const PricingSection = () => {
             <p><span className="font-medium text-nutricare-green">Gym Members:</span> 10% discount</p>
           </div>
         </div>
-
-        {/* Custom Plan Section */}
-        {/* <div className="mt-12 text-center bg-white rounded-lg shadow-sm p-6 sm:p-8 max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="inline-block rounded-full bg-nutricare-green bg-opacity-10 p-3 mb-4">
-            <svg className="w-5 h-5 text-nutricare-green" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fillRule="evenodd"
-                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9a1 1 0 00-1-1z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </div>
-          <h4 className="text-lg sm:text-xl font-semibold text-nutricare-primary-dark mb-2">
-            Need a Custom Nutrition Plan?
-          </h4>
-          <p className="text-nutricare-text-gray text-sm sm:text-base mb-4">
-            Our experts craft personalized, kitchen-based plans tailored to your medical history, lifestyle, and goals.
-          </p>
-          <button
-            onClick={openCustomModal}
-            className="px-6 py-2 rounded-full bg-nutricare-green hover:bg-nutricare-green-dark text-white font-medium text-sm sm:text-base transition-colors duration-300 shadow-sm hover:shadow-md"
-          >
-            Get a Custom Plan
-          </button>
-        </div> */}
 
         <SubscriptionForm
           isOpen={isCustomModalOpen}
