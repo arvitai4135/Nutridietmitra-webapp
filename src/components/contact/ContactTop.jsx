@@ -4,72 +4,82 @@ import About1 from '/assets/Images/About1.jpg';
 const ContactUsHeader = () => {
   return (
     <div className="relative w-full overflow-hidden">
-      {/* Image tag instead of background */}
-      <img 
-        src={About1} 
-        alt="Contact header background" 
-        className="absolute inset-0 w-full h-full object-cover"
-      />
-      
-      {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-nutricare-primary-dark to-nutricare-primary-light opacity-80"></div>
-      
-      <div className="container mx-auto px-4 py-16 md:py-24 relative z-10">
-        <div className="flex flex-col items-center justify-center">
-          <div className="text-center text-white mb-4">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">Contact Us</h1>
-            
-            <div className="flex items-center justify-center flex-wrap text-sm md:text-base">
-              <a 
-                href="/" 
-                className="inline-flex items-center hover:text-nutricare-green transition-colors duration-300"
-              >
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  className="h-4 w-4 mr-1" 
-                  fill="none" 
-                  viewBox="0 0 24 24" 
-                  stroke="currentColor"
+      {/* Main image with overlay instead of background image */}
+      <div className="relative">
+        <img 
+          src={About1} 
+          alt="Services Background" 
+          className="w-full h-64 md:h-80 lg:h-89 object-cover"
+        />
+        
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#9E0B7F]/90 to-[#D93BB1]/80"></div>
+        
+        {/* Content positioned over the image */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="container mx-auto px-4">
+            <div className="flex flex-col items-center justify-center text-center">
+              {/* Decorative circles */}
+              <div className="absolute top-1/4 left-1/4 transform -translate-x-1/2 -translate-y-1/2 hidden md:block">
+                <div className="w-16 h-16 rounded-full border-2 border-[#ADD01C]/30"></div>
+              </div>
+              <div className="absolute bottom-1/4 right-1/4 transform translate-x-1/2 translate-y-1/2 hidden md:block">
+                <div className="w-24 h-24 rounded-full border-2 border-[#ADD01C]/20"></div>
+              </div>
+              
+              {/* Main heading with animated underline */}
+              <div className="relative mb-8">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white relative inline-block">
+                  Contact Us
+                  <div className="absolute -bottom-3 left-0 w-full h-1 bg-[#ADD01C]">
+                    <div className="absolute top-0 left-0 w-1/3 h-full bg-white"></div>
+                  </div>
+                </h1>
+              </div>
+              
+              {/* Enhanced breadcrumb */}
+              <div className="flex items-center justify-center flex-wrap gap-2 text-white bg-[#9E0B7F]/50 px-4 py-2 rounded-full text-sm md:text-base">
+                <a 
+                  href="index.html" 
+                  className="flex items-center hover:text-[#ADD01C] transition-colors duration-300 group"
                 >
-                  <path 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth={2} 
-                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" 
-                  />
-                </svg>
-                Home
-              </a>
-              <span className="mx-2">:&nbsp;:</span>
-              <span className="text-nutricare-green font-medium">Contact Us</span>
+                  <div className="bg-white/20 p-1 rounded-full mr-2 group-hover:bg-[#ADD01C]/30 transition-colors duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                    </svg>
+                  </div>
+                  Home
+                </a>
+                
+                <span className="flex items-center px-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </span>
+                
+                <span className="text-[#ADD01C] font-medium flex items-center">
+                  <div className="bg-[#ADD01C]/20 p-1 rounded-full mr-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  Contact Us
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </div>
       
-      {/* Decorative bottom wave */}
-      <div className="absolute bottom-0 left-0 w-full overflow-hidden">
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          viewBox="0 0 1200 120" 
-          preserveAspectRatio="none" 
-          className="w-full h-6 md:h-12"
-        >
-          <path 
-            d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" 
-            fill="#ffffff" 
-            opacity="0.2"
-          />
-          <path 
-            d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" 
-            fill="#ffffff" 
-            opacity="0.5"
-          />
-          <path 
-            d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" 
-            fill="#ffffff" 
-          />
+      {/* Bottom wave shape with accent colors */}
+      <div className="relative bg-white">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 60" preserveAspectRatio="none" className="w-full h-8 md:h-12 -mt-1">
+          <path d="M0,32L80,42.7C160,53,320,75,480,74.7C640,75,800,53,960,42.7C1120,32,1280,32,1360,32L1440,32L1440,0L1360,0C1280,0,1120,0,960,0C800,0,640,0,480,0C320,0,160,0,80,0L0,0Z" fill="#D93BB1" opacity="0.3"></path>
+          <path d="M0,32L60,37.3C120,43,240,53,360,58.7C480,64,600,64,720,56C840,48,960,32,1080,26.7C1200,21,1320,27,1380,29.3L1440,32L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z" fill="#9E0B7F" opacity="0.2"></path>
         </svg>
+        
+        {/* Additional accent stripe */}
+        <div className="h-1 bg-[#ADD01C] w-32 mx-auto"></div>
       </div>
     </div>
   );

@@ -225,7 +225,7 @@ const TopBar = () => {
     <>
       {/* TopBar - Only visible on desktop */}
       <div className="hidden md:block w-full bg-white shadow-sm py-3">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="container mx-auto px-8 sm:px-9 lg:px-11">
           <div className="flex items-center justify-between">
             {/* Logo - Clickable */}
             <div 
