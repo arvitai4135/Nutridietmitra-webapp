@@ -187,11 +187,7 @@ Dt. Tanu Bhargava is a highly qualified Jaipur-based clinical dietitian and well
                 }`}
               >
                 <span className="relative z-10">{/* slide.subtitle */}</span>
-                <span
-                  className={`absolute bottom-0 w-8 md:w-12 h-0.5 md:h-1 bg-white ${
-                    slide.textPosition === 'right' ? 'md:right-0' : 'left-0'
-                  }`}
-                />
+
               </h4>
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 text-white shadow-md">
                 {/* {slide.title.split(' ').map((word, i, arr) => (
