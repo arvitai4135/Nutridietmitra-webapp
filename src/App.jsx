@@ -10,7 +10,7 @@ import { AuthProvider, AuthContext } from "../src/admin/context/AuthContext";
 
 // Website Components
 import Header from "./components/Header";
-import Footer from "./components/Footer";
+import Footer from "./components/Footer"; 
 import Navbar from "./components/Navbar";
 import TopBar from "./components/TopBar";
 import ErrorBoundary from "./errorBoundary/ErrorBoundary";
