@@ -79,7 +79,7 @@ const GalleryHeader = () => {
         </svg>
         
         {/* Additional accent stripe */}
-        <div className="h-0.5 sm:h-0.75 bg-[#ADD01C] w-20 sm:w-24 md:w-28 mx-auto"></div>
+    
       </div>
     </div>
   );

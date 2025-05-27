@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 const PortfolioGallery = () => {
   const [activeTab, setActiveTab] = useState('All');
   const [visibleItemsCount, setVisibleItemsCount] = useState(6); // Initially show 6 items
-  
-  // Portfolio item data updated based on Nutridietmitra.pdf
+
+  // Portfolio item data
   const portfolioItems = [
     {
       id: 1,
@@ -67,22 +67,13 @@ const PortfolioGallery = () => {
       image: "/assets/Images/gallery/ShwetaGupta.JPG",
     },
     {
-      id: 11,
-      title: "Vartika Dangayach",
-      categories: ["General Wellness", "Food Delivery"],
-      image: "/assets/Images/gallery/Vartika Dangayach.jpg",
-    },
-    {
       id: 12,
       title: "Person7",
       categories: ["General Wellness", "Food Delivery"],
       image: "/assets/Images/gallery/Person7.JPG",
     },
   ];
-  
-  // Updated categories for filtering based on Nutridietmitra services (commented out)
-  // const categories = ['All', 'Weight Management', 'Hormonal Health', 'Chronic Conditions', 'Lifestyle Support', 'General Wellness', 'Food Delivery'];
-  
+
   // Filter portfolio items based on active tab
   const filteredItems = activeTab === 'All'
     ? portfolioItems
@@ -106,48 +97,26 @@ const PortfolioGallery = () => {
             Discover our personalized, kitchen-based nutrition programs and food delivery services designed for your health goals.
           </p>
         </div>
-        
-        {/* Category Tabs (commented out) */}
-        {/* <div className="flex flex-wrap justify-center gap-2 md:gap-4 mb-12">
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setActiveTab(category)}
-              className={`px-4 py-2 md:px-6 md:py-3 rounded-full transition-all duration-300 text-sm md:text-base font-medium ${
-                activeTab === category
-                  ? 'bg-nutricare-primary-dark text-white shadow-lg transform scale-105'
-                  : 'bg-white text-nutricare-text-dark hover:bg-nutricare-green hover:text-white'
-              }`}
-            >
-              {category}
-            </button>
-          ))}
-        </div> */}
-        
+
         {/* Portfolio Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredItems.slice(0, visibleItemsCount).map((item) => (
             <div key={item.id} className="group">
               <div className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
                 {/* Image Container */}
-                <div className="relative overflow-hidden h-64">
-                  <img 
-                    src={item.image} 
+                <div className="relative overflow-hidden aspect-w-4 aspect-h-3">
+                  <img
+                    src={item.image}
                     alt={item.title}
-                    className="w-full h-full object-cover transition-all duration-500 group-hover:scale-102"
+                    className="w-full h-full object-contain transition-all duration-500 group-hover:scale-102 bg-gray-100"
+                    onError={(e) => {
+                      e.target.src = "/assets/Images/gallery/placeholder.jpg"; // Fallback image
+                    }}
                   />
                 </div>
-                
+
                 {/* Content */}
                 <div className="p-6">
-                  {/* Category tags (commented out) */}
-                  {/* <div className="flex flex-wrap gap-2 mb-2">
-                    {item.categories.map((category, idx) => (
-                      <span key={idx} className="text-xs px-3 py-1 bg-nutricare-bg-light text-nutricare-primary-dark rounded-full">
-                        {category}
-                      </span>
-                    ))}
-                  </div> */}
                   <h3 className="text-lg font-bold text-nutricare-text-dark group-hover:text-nutricare-primary-dark transition-colors">
                     {item.title}
                   </h3>
@@ -157,11 +126,11 @@ const PortfolioGallery = () => {
             </div>
           ))}
         </div>
-        
+
         {/* Load More Button */}
         {visibleItemsCount < filteredItems.length && (
           <div className="text-center mt-12">
-            <button 
+            <button
               onClick={handleLoadMore}
               className="px-8 py-3 bg-nutricare-primary-dark text-white rounded-full hover:bg-nutricare-primary-light transition-colors shadow-md hover:shadow-lg"
             >
