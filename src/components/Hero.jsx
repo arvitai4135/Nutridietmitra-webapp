@@ -1,9 +1,23 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { ArrowRight, ChevronLeft, ChevronRight, Heart, Apple, Salad, Award, Check, User, Stethoscope, X } from 'lucide-react';
-import img1 from '/assets/Images/img1.jpg';
-import img2 from '/assets/Images/img2.jpg';
-import img3 from '/assets/Images/img3.jpg';
-import Appointment from './form/Appointment';
+import React, { useState, useEffect, useCallback } from 'react'
+import {
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  Heart,
+  Apple,
+  Salad,
+  Award,
+  Check,
+  User,
+  Stethoscope,
+  X,
+} from 'lucide-react'
+import img1 from '/assets/Images/img1.jpg'
+import img2 from '/assets/Images/img2.jpg'
+import img3 from '/assets/Images/img3.jpg'
+import drImg from '../../public/assets/Images/drImg2.jpg'
+import Appointment from './form/Appointment'
+console.log(drImg)
 // import Weight from '/Icon/Weight.ico';
 
 const heroSlides = [
@@ -37,87 +51,92 @@ const heroSlides = [
     // textPosition: "center",
     // highlightPhrase: "confident and healthy",
   },
-];
+]
 
 const qualityCards = [
   {
     icon: <Award className="text-nutricare-green" size={24} />,
-    title: "Top Rated",
-    description: "With so many choices of the food-diet advisory out there, we're at top-rated (cause of lovely services)."
+    title: 'Top Rated',
+    description:
+      "With so many choices of the food-diet advisory out there, we're at top-rated (cause of lovely services).",
   },
   {
     icon: <Check className="text-nutricare-green" size={24} />,
-    title: "Best Quality",
-    description: "Don't look without what inherent our human body! We provides best quality services for your body."
+    title: 'Best Quality',
+    description:
+      "Don't look without what inherent our human body! We provides best quality services for your body.",
   },
   {
     icon: <Apple className="text-nutricare-green" size={24} />,
-    title: "Eat Fresh",
-    description: "Quality does matter! when we feel good we're happier, when we are happier and we're more productive."
-  }
-];
+    title: 'Eat Fresh',
+    description:
+      "Quality does matter! when we feel good we're happier, when we are happier and we're more productive.",
+  },
+]
 
 const Hero = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [isAppointmentOpen, setIsAppointmentOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isFounderModalOpen, setIsFounderModalOpen] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const [isAppointmentOpen, setIsAppointmentOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isFounderModalOpen, setIsFounderModalOpen] = useState(false)
 
   useEffect(() => {
     const slideInterval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 5000);
+      setCurrentSlide((prev) => (prev + 1) % heroSlides.length)
+    }, 5000)
 
-    return () => clearInterval(slideInterval);
-  }, []);
+    return () => clearInterval(slideInterval)
+  }, [])
 
   const nextSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-  }, []);
+    setCurrentSlide((prev) => (prev + 1) % heroSlides.length)
+  }, [])
 
   const prevSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
-  }, []);
+    setCurrentSlide(
+      (prev) => (prev - 1 + heroSlides.length) % heroSlides.length
+    )
+  }, [])
 
   const openAppointment = () => {
-    setIsAppointmentOpen(true);
-  };
+    setIsAppointmentOpen(true)
+  }
 
   const closeAppointment = () => {
-    setIsAppointmentOpen(false);
-  };
+    setIsAppointmentOpen(false)
+  }
 
   const openModal = () => {
-    setIsModalOpen(true);
-  };
+    setIsModalOpen(true)
+  }
 
   const closeModal = () => {
-    setIsModalOpen(false);
-  };
+    setIsModalOpen(false)
+  }
 
   const openFounderModal = () => {
-    setIsFounderModalOpen(true);
-  };
+    setIsFounderModalOpen(true)
+  }
 
   const closeFounderModal = () => {
-    setIsFounderModalOpen(false);
-  };
+    setIsFounderModalOpen(false)
+  }
 
   const handleContactUs = () => {
-    window.location.href = "/contact";
-  };
+    window.location.href = '/contact'
+  }
 
   // Add keyboard support for closing modals
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === 'Escape') {
-        if (isModalOpen) closeModal();
-        if (isFounderModalOpen) closeFounderModal();
+        if (isModalOpen) closeModal()
+        if (isFounderModalOpen) closeFounderModal()
       }
-    };
-    window.addEventListener('keydown', handleEscape);
-    return () => window.removeEventListener('keydown', handleEscape);
-  }, [isModalOpen, isFounderModalOpen]);
+    }
+    window.addEventListener('keydown', handleEscape)
+    return () => window.removeEventListener('keydown', handleEscape)
+  }, [isModalOpen, isFounderModalOpen])
 
   const aboutContent = `
 Welcome to the world of Nutridietmitra
@@ -135,19 +154,19 @@ Thyroid, Diabetes or battling with adapting to a healthier lifestyle. We are
 always here to guide you as your nutrition and diet expert with a promise
 to be compassionate about your diet with a science-baked and heart-led
 master plan. Results that you can maintain and feel.
-  `;
+  `
 
-  const aboutShortContent = aboutContent.split('\n').slice(0, 6).join('\n');
+  const aboutShortContent = aboutContent.split('\n').slice(0, 6).join('\n')
 
   const founderContent = `
 Dt. Tanu Bhargava is a highly qualified Jaipur-based clinical dietitian and wellness expert. She aims to use a holistic approach for her clients that is accessible to all globally. Her experience includes top hospitals, health care centres, gym centres, and fitness chains. She has a strong foundation in nutrition therapy, medical, and lifestyle management expertise with 5000+ supported clients through multiple challenges like weight management, PCOD/PCOS, Diabetes, Thyroid disorders, sports nutrition, child immunity boosting and nutrition plans, lifestyle-related disorders, digestive issues, immunity, and more. This created her expertise in overcoming the dietary challenges that fit modern lifestyles.
 Her expertise in sports nutrition and the unique dietary needs of active athletes is honoured by many fitness centres. Today, she is serving as a renowned Consultant Dietitian for Medical Second Opinion Pvt. Ltd while in collaboration with various organisations and corporations for preventive health guidance and workplace wellness.
 Her clinically proven approach is viable, authentic, practical, and evidence-based with socially conscious care for others that respects comfort zone, preferences, tastes, and daily routine - which makes her a trusted expert in the hearts of people worldwide.
-  `;
+  `
 
   const founderShortContent = `
 Dt. Tanu Bhargava is a highly qualified Jaipur-based clinical dietitian and wellness expert. She aims to use a holistic approach for her clients that is accessible to all globally. Her experience includes top hospitals, health care centres, gym centres, and fitness chains. She has a strong foundation in nutrition therapy, medical, and lifestyle management expertise with 5000+ supported clients through multiple challenges.
-  `;
+  `
 
   return (
     <>
@@ -277,9 +296,13 @@ Dt. Tanu Bhargava is a highly qualified Jaipur-based clinical dietitian and well
                   <div className="mr-2 p-2 rounded-full bg-green-50">
                     {card.icon}
                   </div>
-                  <h3 className="text-lg font-bold text-nutricare-text-dark mt-2">{card.title}</h3>
+                  <h3 className="text-lg font-bold text-nutricare-text-dark mt-2">
+                    {card.title}
+                  </h3>
                 </div>
-                <p className="text-nutricare-text-gray text-sm">{card.description}</p>
+                <p className="text-nutricare-text-gray text-sm">
+                  {card.description}
+                </p>
               </div>
             ))}
           </div>
@@ -306,16 +329,31 @@ Dt. Tanu Bhargava is a highly qualified Jaipur-based clinical dietitian and well
             </div>
             <div className="md:w-1/2">
               <div className="bg-white shadow-md rounded-lg p-6">
-                <h3 className="text-xl font-bold text-nutricare-text-dark mb-4">Our Philosophy</h3>
+                <h3 className="text-xl font-bold text-nutricare-text-dark mb-4">
+                  Our Philosophy
+                </h3>
                 <div className="text-nutricare-text-gray text-sm md:text-base">
                   <p>
-                    NutridietMitra does not believe in one-size-fits-all plans. It believes every individual is different and concerned with different needs, routines, challenges and cultures to cater to. That is why we are here to provide:
+                    NutridietMitra does not believe in one-size-fits-all plans.
+                    It believes every individual is different and concerned with
+                    different needs, routines, challenges and cultures to cater
+                    to. That is why we are here to provide:
                   </p>
                   <ul className="list-disc pl-5 mt-2 space-y-1">
-                    <li>Friendly and adaptable solutions that do not include crash diets or starvation.</li>
-                    <li>Throughout your journey, we will be providing constant emotional support and weekly progress tracking with adjustments.</li>
+                    <li>
+                      Friendly and adaptable solutions that do not include crash
+                      diets or starvation.
+                    </li>
+                    <li>
+                      Throughout your journey, we will be providing constant
+                      emotional support and weekly progress tracking with
+                      adjustments.
+                    </li>
                     <li>Customized diet plans tailored to YOU.</li>
-                    <li>We look at the holistic side which is the bigger picture: your mind, lifestyle and body.</li>
+                    <li>
+                      We look at the holistic side which is the bigger picture:
+                      your mind, lifestyle and body.
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -335,21 +373,44 @@ Dt. Tanu Bhargava is a highly qualified Jaipur-based clinical dietitian and well
           </p>
           <div className="bg-nutricare-bg-light rounded-lg p-4 w-full">
             <div className="flex flex-col md:flex-row gap-4 mb-4">
+              <div
+                className="flex-1"
+                style={{
+                  background: `url(${drImg}) center center/cover`,
+                }}
+              >
+                <p
+                  className="text-nutricare-text-gray text-sm md:text-base leading-tight flex items-center justify-center backdrop-blur-md 
+                  h-full
+                "
+                >
+                  <img src={drImg} alt="" className="w-[50%] " />
+                </p>
+              </div>
               <div className="flex-1">
-                <p className="text-nutricare-text-gray text-sm md:text-base leading-tight">
+                <p className="text-nutricare-text-gray text-sm md:text-base leading-tight text-justify tracking-widest">
                   {founderShortContent}
                 </p>
               </div>
               <div className="flex-1">
-                <p className="text-nutricare-text-gray text-sm md:text-base leading-tight">
-                  Her expertise in sports nutrition and the unique dietary needs of active athletes is honoured by many fitness centres. Today, she is serving as a renowned Consultant Dietitian for Medical Second Opinion Pvt. Ltd while in collaboration with various organisations and corporations for preventive health guidance and workplace wellness.
+                <p className="text-nutricare-text-gray text-sm md:text-base leading-tight text-justify tracking-widest">
+                  Her expertise in sports nutrition and the unique dietary needs
+                  of active athletes is honoured by many fitness centres. Today,
+                  she is serving as a renowned Consultant Dietitian for Medical
+                  Second Opinion Pvt. Ltd while in collaboration with various
+                  organisations and corporations for preventive health guidance
+                  and workplace wellness.
                 </p>
               </div>
-              <div className="flex-1">
+              {/* <div className="flex-1">
                 <p className="text-nutricare-text-gray text-sm md:text-base leading-tight">
-                  Her clinically proven approach is viable, authentic, practical, and evidence-based with socially conscious care for others that respects comfort zone, preferences, tastes, and daily routine - which makes her a trusted expert in the hearts of people worldwide.
+                  Her clinically proven approach is viable, authentic,
+                  practical, and evidence-based with socially conscious care for
+                  others that respects comfort zone, preferences, tastes, and
+                  daily routine - which makes her a trusted expert in the hearts
+                  of people worldwide.
                 </p>
-              </div>
+              </div> */}
             </div>
             <div className="text-center">
               <button
@@ -392,8 +453,12 @@ Dt. Tanu Bhargava is a highly qualified Jaipur-based clinical dietitian and well
             >
               <X size={20} className="sm:w-6 sm:h-6" />
             </button>
-            <h2 className="text-xl sm:text-2xl font-bold text-nutricare-text-dark mb-4">Welcome To Nutridietmitra</h2>
-            <p className="text-nutricare-text-gray text-sm sm:text-base whitespace-pre-line">{aboutContent}</p>
+            <h2 className="text-xl sm:text-2xl font-bold text-nutricare-text-dark mb-4">
+              Welcome To Nutridietmitra
+            </h2>
+            <p className="text-nutricare-text-gray text-sm sm:text-base whitespace-pre-line">
+              {aboutContent}
+            </p>
           </div>
         </div>
       )}
@@ -415,13 +480,17 @@ Dt. Tanu Bhargava is a highly qualified Jaipur-based clinical dietitian and well
             >
               <X size={20} className="sm:w-6 sm:h-6" />
             </button>
-            <h2 className="text-xl sm:text-2xl font-bold text-nutricare-text-dark mb-4">About Dt. Tanu Bhargava</h2>
-            <p className="text-nutricare-text-gray text-sm sm:text-base whitespace-pre-line">{founderContent}</p>
+            <h2 className="text-xl sm:text-2xl font-bold text-nutricare-text-dark mb-4">
+              About Dt. Tanu Bhargava
+            </h2>
+            <p className="text-nutricare-text-gray text-sm sm:text-base whitespace-pre-line">
+              {founderContent}
+            </p>
           </div>
         </div>
       )}
     </>
-  );
-};
+  )
+}
 
-export default Hero; 
+export default Hero
