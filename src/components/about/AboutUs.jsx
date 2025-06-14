@@ -111,7 +111,7 @@ const AboutUs = () => {
               Transforming Lives <br /> Through Nutrition
             </h1>
 
-            <p className="text-[#718096] text-lg leading-relaxed">
+            <p className="text-[#718096] text-lg leading-relaxed text-justify">
               Founded in 2014 by Dt. Tanu Bhargava, a Jaipur-based dietitian
               with over {maxYears}+ years of experience, Nutridietmitra empowers
               over 5000+ clients globally with personalized, kitchen-based
@@ -138,7 +138,7 @@ const AboutUs = () => {
                   <h3 className="font-bold text-[#333333] mb-2">
                     {feature.title}
                   </h3>
-                  <p className="text-[#718096] text-sm">
+                  <p className="text-[#718096] text-sm text-justify">
                     {feature.description}
                   </p>
                 </div>
@@ -185,7 +185,7 @@ const AboutUs = () => {
               <h3 className="text-xl font-semibold text-[#9E0B7F] mb-2">
                 Mission
               </h3>
-              <p className="text-[#718096]">
+              <p className="text-[#718096] text-justify">
                 We are directed to aid a person with their health, energy,
                 balanced emotions and sleep, boosting confidence with a healthy
                 body, healthy eating, and holistic living through delicious diet
@@ -197,7 +197,7 @@ const AboutUs = () => {
               <h3 className="text-xl font-semibold text-[#9E0B7F] mb-2">
                 Vision
               </h3>
-              <p className="text-[#718096]">
+              <p className="text-[#718096] text-justify">
                 We are working to be India's most trusted nutrition expert to
                 empower healthy eating and inspire holistic living, acknowledged
                 for our empathetic and socially conscious care, viable outcomes
@@ -254,7 +254,7 @@ const AboutUs = () => {
           <h2 className="text-3xl font-bold text-[#333333] text-center mb-8">
             Mentions & Recognitions
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-justify">
             <div className="bg-white p-6 rounded-lg shadow-md">
               <h3 className="text-xl font-semibold text-[#9E0B7F] mb-2">
                 Media & Speaking Engagements

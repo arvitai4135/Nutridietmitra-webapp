@@ -1,57 +1,63 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, MessageSquare, User } from 'lucide-react';
-import api from '../../admin/services/api';
-import { toast } from 'react-toastify';
+import React, { useState, useRef, useEffect } from 'react'
+import { ChevronLeft, ChevronRight, MessageSquare, User } from 'lucide-react'
+import api from '../../admin/services/api'
+import { toast } from 'react-toastify'
 
 // List of random placeholder image URLs from picsum.photos
 const placeholderImages = [
-    'https://picsum.photos/600/400?random=1',
-    'https://picsum.photos/600/400?random=2',
-    'https://picsum.photos/600/400?random=3',
-    'https://picsum.photos/600/400?random=4',
-    'https://picsum.photos/600/400?random=5'
-];
+  'https://picsum.photos/600/400?random=1',
+  'https://picsum.photos/600/400?random=2',
+  'https://picsum.photos/600/400?random=3',
+  'https://picsum.photos/600/400?random=4',
+  'https://picsum.photos/600/400?random=5',
+]
 
 // Function to get a random placeholder image
 const getRandomImage = () => {
-    const randomIndex = Math.floor(Math.random() * placeholderImages.length);
-    return placeholderImages[randomIndex];
-};
+  const randomIndex = Math.floor(Math.random() * placeholderImages.length)
+  return placeholderImages[randomIndex]
+}
 
 const BlogList = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [activeCard, setActiveCard] = useState(null);
-  const [isVisible, setIsVisible] = useState(false);
-  const [slidesToShow, setSlidesToShow] = useState(3);
-  const [blogPosts, setBlogPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [selectedBlog, setSelectedBlog] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const sliderContainerRef = useRef(null);
-  const isFetching = useRef(false);
-  const modalRef = useRef(null);
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [activeCard, setActiveCard] = useState(null)
+  const [isVisible, setIsVisible] = useState(false)
+  const [slidesToShow, setSlidesToShow] = useState(3)
+  const [blogPosts, setBlogPosts] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [selectedBlog, setSelectedBlog] = useState(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const sliderContainerRef = useRef(null)
+  const isFetching = useRef(false)
+  const modalRef = useRef(null)
 
   // Modal component to display blog details
   const BlogModal = ({ isOpen, onClose, blog }) => {
-    if (!isOpen || !blog) return null;
+    if (!isOpen || !blog) return null
 
     const renderBodyContent = (item, index) => {
       switch (item.type) {
         case 'heading': {
-          const HeadingTag = `h${item.level || 2}`;
+          const HeadingTag = `h${item.level || 2}`
           return (
-            <HeadingTag key={index} className="text-lg sm:text-xl font-semibold text-[#333333] mt-4 sm:mt-6">
+            <HeadingTag
+              key={index}
+              className="text-lg sm:text-xl font-semibold text-[#333333] mt-4 sm:mt-6"
+            >
               {item.content}
             </HeadingTag>
-          );
+          )
         }
         case 'paragraph':
           return (
-            <p key={index} className="text-[#718096] text-sm sm:text-base mt-3 leading-relaxed">
+            <p
+              key={index}
+              className="text-[#718096] text-sm sm:text-base mt-3 leading-relaxed text-justify"
+            >
               {item.content}
             </p>
-          );
+          )
         case 'image':
           return (
             <div key={index} className="mt-4 sm:mt-6">
@@ -60,46 +66,59 @@ const BlogList = () => {
                 alt={item.caption || 'Blog Image'}
                 className="w-full h-auto rounded-lg max-w-[90vw] sm:max-w-lg md:max-w-2xl shadow-md transition-transform duration-300 hover:scale-[1.02]"
                 onError={(e) => {
-                  console.error(`Failed to load modal image: ${e.target.src}`);
-                  e.target.src = getRandomImage();
+                  console.error(`Failed to load modal image: ${e.target.src}`)
+                  e.target.src = getRandomImage()
                 }}
               />
               {item.caption && (
-                <p className="text-[#ADD01C] text-xs sm:text-sm mt-2 italic">{item.caption}</p>
+                <p className="text-[#ADD01C] text-xs sm:text-sm mt-2 italic">
+                  {item.caption}
+                </p>
               )}
             </div>
-          );
+          )
         case 'list':
           return (
-            <ul key={index} className={`mt-3 sm:mt-4 ${item.style === 'bullet' ? 'list-disc pl-6' : 'list-decimal pl-6'}`}>
+            <ul
+              key={index}
+              className={`mt-3 sm:mt-4 ${
+                item.style === 'bullet' ? 'list-disc pl-6' : 'list-decimal pl-6'
+              }`}
+            >
               {item.items.map((listItem, i) => (
-                <li key={i} className="text-[#718096] text-sm sm:text-base mt-1">
+                <li
+                  key={i}
+                  className="text-[#718096] text-sm sm:text-base mt-1"
+                >
                   {listItem}
                 </li>
               ))}
             </ul>
-          );
+          )
         default:
-          return null;
+          return null
       }
-    };
+    }
 
     const hasContent = blog.body.some(
-      (item) => item.type === 'heading' || item.type === 'paragraph' || item.type === 'list'
-    );
+      (item) =>
+        item.type === 'heading' ||
+        item.type === 'paragraph' ||
+        item.type === 'list'
+    )
 
     // Handle Escape key to close modal
     useEffect(() => {
       const handleEsc = (event) => {
         if (event.key === 'Escape') {
-          onClose();
+          onClose()
         }
-      };
-      window.addEventListener('keydown', handleEsc);
+      }
+      window.addEventListener('keydown', handleEsc)
       return () => {
-        window.removeEventListener('keydown', handleEsc);
-      };
-    }, [onClose]);
+        window.removeEventListener('keydown', handleEsc)
+      }
+    }, [onClose])
 
     return (
       <div
@@ -118,7 +137,10 @@ const BlogList = () => {
         >
           <div className="bg-[#FCF0F8] p-4 sm:p-6 rounded-lg mb-4 sm:mb-6">
             <div className="flex justify-between items-center">
-              <h2 id="modal-title" className="text-xl sm:text-2xl font-bold text-[#333333]">
+              <h2
+                id="modal-title"
+                className="text-xl sm:text-2xl font-bold text-[#333333]"
+              >
                 <span className="text-[#9E0B7F]">{blog.title.slice(0, 1)}</span>
                 {blog.title.slice(1)}
               </h2>
@@ -157,55 +179,58 @@ const BlogList = () => {
                 No content available for this blog.
               </p>
             )}
-            {!hasContent && blog.body.every((item) => item.type === 'image') && (
-              <p className="text-[#718096] text-sm sm:text-base mt-3">
-                This blog contains only images.
-              </p>
-            )}
+            {!hasContent &&
+              blog.body.every((item) => item.type === 'image') && (
+                <p className="text-[#718096] text-sm sm:text-base mt-3">
+                  This blog contains only images.
+                </p>
+              )}
           </div>
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   // Fetch recent blogs
   useEffect(() => {
     const fetchBlogs = async () => {
       if (isFetching.current) {
-        console.log('Already fetching, skipping...');
-        return;
+        console.log('Already fetching, skipping...')
+        return
       }
 
-      isFetching.current = true;
+      isFetching.current = true
       try {
-        setLoading(true);
-        console.log('Fetching blogs...');
-        const response = await api.get('/blogs/all_blog_lists');
-        console.log('API Response:', response.data);
+        setLoading(true)
+        console.log('Fetching blogs...')
+        const response = await api.get('/blogs/all_blog_lists')
+        console.log('API Response:', response.data)
 
         if (response.data.success && Array.isArray(response.data.data)) {
           // Filter published blogs, sort by created_at, and take top 6
           const sortedBlogs = response.data.data
             .filter((blog) => blog.status && blog.title && blog.created_at)
             .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-            .slice(0, 6);
+            .slice(0, 6)
 
-          console.log('Sorted Blogs:', sortedBlogs);
+          console.log('Sorted Blogs:', sortedBlogs)
 
           // Map API data to blogPosts structure
           const formattedBlogs = sortedBlogs.map((blog) => {
-            const imageObj = blog.body.find((item) => item.type === 'image');
-            const imageUrl = imageObj?.url || getRandomImage();
-            let formattedDate;
+            const imageObj = blog.body.find((item) => item.type === 'image')
+            const imageUrl = imageObj?.url || getRandomImage()
+            let formattedDate
             try {
-              const date = new Date(blog.publish_date || blog.created_at);
+              const date = new Date(blog.publish_date || blog.created_at)
               formattedDate = {
                 day: date.getDate().toString().padStart(2, '0'),
-                month: date.toLocaleString('en-US', { month: 'short' }).toUpperCase(),
-              };
+                month: date
+                  .toLocaleString('en-US', { month: 'short' })
+                  .toUpperCase(),
+              }
             } catch (e) {
-              console.warn(`Invalid date for blog ${blog.id}:`, blog.created_at);
-              formattedDate = { day: '01', month: 'JAN' };
+              console.warn(`Invalid date for blog ${blog.id}:`, blog.created_at)
+              formattedDate = { day: '01', month: 'JAN' }
             }
 
             return {
@@ -216,80 +241,82 @@ const BlogList = () => {
               comments: 5,
               author: 'Dt. Tanu Bhargava',
               excerpt: blog.description || 'No description available.',
-            };
-          });
+            }
+          })
 
-          console.log('Formatted Blogs:', formattedBlogs);
-          setBlogPosts(formattedBlogs);
+          console.log('Formatted Blogs:', formattedBlogs)
+          setBlogPosts(formattedBlogs)
         } else {
-          throw new Error('Invalid blog data received');
+          throw new Error('Invalid blog data received')
         }
       } catch (err) {
-        console.error('Error fetching blogs:', err);
+        console.error('Error fetching blogs:', err)
         const errorMessage =
           err.response?.status === 404
             ? 'No blogs found.'
-            : 'Failed to load blogs. Please try again later.';
-        setError(errorMessage);
-        setBlogPosts([]);
-        toast.error(errorMessage);
+            : 'Failed to load blogs. Please try again later.'
+        setError(errorMessage)
+        setBlogPosts([])
+        toast.error(errorMessage)
       } finally {
-        setLoading(false);
-        isFetching.current = false;
-        console.log('Fetch complete');
+        setLoading(false)
+        isFetching.current = false
+        console.log('Fetch complete')
       }
-    };
+    }
 
-    fetchBlogs();
-  }, []);
+    fetchBlogs()
+  }, [])
 
   // Handle responsive slides
   useEffect(() => {
-    setIsVisible(true);
+    setIsVisible(true)
 
     const updateDimensions = () => {
-      const width = window.innerWidth;
-      let slides = 3;
+      const width = window.innerWidth
+      let slides = 3
 
       if (width < 640) {
-        slides = 1;
+        slides = 1
       } else if (width < 1024) {
-        slides = 2;
+        slides = 2
       }
 
-      setSlidesToShow(slides);
-    };
+      setSlidesToShow(slides)
+    }
 
-    updateDimensions();
-    window.addEventListener('resize', updateDimensions);
+    updateDimensions()
+    window.addEventListener('resize', updateDimensions)
 
     return () => {
-      window.removeEventListener('resize', updateDimensions);
-    };
-  }, []);
+      window.removeEventListener('resize', updateDimensions)
+    }
+  }, [])
 
   // Handle blog click to fetch and open modal
   const handleBlogClick = async (blogId) => {
     try {
-      console.log(`Fetching blog ID ${blogId}...`);
-      const response = await api.get(`/blogs/get_blog/${blogId}`);
-      console.log('Single Blog Response:', JSON.stringify(response.data, null, 2));
+      console.log(`Fetching blog ID ${blogId}...`)
+      const response = await api.get(`/blogs/get_blog/${blogId}`)
+      console.log(
+        'Single Blog Response:',
+        JSON.stringify(response.data, null, 2)
+      )
 
       if (response.data.success && response.data.data) {
-        const blogData = response.data.data;
-        let formattedDate;
+        const blogData = response.data.data
+        let formattedDate
         try {
-          formattedDate = new Date(blogData.publish_date || blogData.created_at).toLocaleDateString(
-            'en-US',
-            {
-              day: '2-digit',
-              month: 'long',
-              year: 'numeric',
-            }
-          );
+          formattedDate = new Date(
+            blogData.publish_date || blogData.created_at
+          ).toLocaleDateString('en-US', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric',
+          })
         } catch (e) {
-          console.warn(`Invalid date for blog ${blogId}:`, blogData.created_at);
-          formattedDate = 'Unknown Date';
+          console.warn(`Invalid date for blog ${blogId}:`, blogData.created_at)
+          formattedDate = 'Unknown Date'
         }
 
         const formattedBlog = {
@@ -297,69 +324,79 @@ const BlogList = () => {
           title: blogData.title || 'Untitled',
           date: formattedDate,
           body: blogData.body || [],
-        };
+        }
 
-        console.log('Formatted Blog for Modal:', JSON.stringify(formattedBlog, null, 2));
-        setSelectedBlog(formattedBlog);
-        setIsModalOpen(true);
+        console.log(
+          'Formatted Blog for Modal:',
+          JSON.stringify(formattedBlog, null, 2)
+        )
+        setSelectedBlog(formattedBlog)
+        setIsModalOpen(true)
       } else {
-        throw new Error('Invalid blog data received');
+        throw new Error('Invalid blog data received')
       }
     } catch (err) {
-      console.error(`Error fetching blog ID ${blogId}:`, err);
+      console.error(`Error fetching blog ID ${blogId}:`, err)
       const errorMessage =
         err.response?.status === 404
           ? 'Blog not found.'
           : err.response?.status === 422
           ? 'Invalid blog ID.'
-          : 'Failed to load blog details. Please try again later.';
-      toast.error(errorMessage);
+          : 'Failed to load blog details. Please try again later.'
+      toast.error(errorMessage)
     }
-  };
+  }
 
   // Close modal
   const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedBlog(null);
-  };
+    setIsModalOpen(false)
+    setSelectedBlog(null)
+  }
 
   const nextSlide = () => {
     if (currentIndex >= blogPosts.length - slidesToShow) {
-      setCurrentIndex(0);
+      setCurrentIndex(0)
     } else {
-      setCurrentIndex(currentIndex + 1);
+      setCurrentIndex(currentIndex + 1)
     }
-  };
+  }
 
   const prevSlide = () => {
     if (currentIndex <= 0) {
-      setCurrentIndex(blogPosts.length - slidesToShow);
+      setCurrentIndex(blogPosts.length - slidesToShow)
     } else {
-      setCurrentIndex(currentIndex - 1);
+      setCurrentIndex(currentIndex - 1)
     }
-  };
+  }
 
   const goToSlide = (index) => {
-    setCurrentIndex(index * slidesToShow);
-  };
+    setCurrentIndex(index * slidesToShow)
+  }
 
   // Add duplicate posts for continuous scrolling effect
-  const extendedPosts = [...blogPosts, ...blogPosts];
+  const extendedPosts = [...blogPosts, ...blogPosts]
 
   return (
     <section className="py-16 bg-white overflow-hidden relative">
-      <div className={`container mx-auto px-4 transition-opacity duration-1000 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+      <div
+        className={`container mx-auto px-4 transition-opacity duration-1000 ${
+          isVisible ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
         {/* Section Header */}
         <div className="text-center mb-12 max-w-3xl mx-auto">
           <div className="inline-block relative mb-2">
-            <span className="text-[#ADD01C] font-medium relative z-10">Nutridietmitra Insights</span>
+            <span className="text-[#ADD01C] font-medium relative z-10">
+              Nutridietmitra Insights
+            </span>
             <div className="absolute h-1 w-full bg-[#ADD01C] bg-opacity-30 bottom-0 left-0"></div>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold text-[#333333] mb-4 relative">
             Nutrition <span className="text-[#9E0B7F]">Wisdom</span>
           </h2>
           <p className="text-[#718096] max-w-2xl mx-auto text-base md:text-lg">
-            Expert advice from Dt. Tanu Bhargava on personalized, science-backed nutrition to empower your health journey.
+            Expert advice from Dt. Tanu Bhargava on personalized, science-backed
+            nutrition to empower your health journey.
           </p>
         </div>
 
@@ -389,16 +426,24 @@ const BlogList = () => {
             className="relative overflow-hidden pb-8"
           >
             {loading ? (
-              <p className="text-[#718096] text-center text-base md:text-lg">Loading blogs...</p>
+              <p className="text-[#718096] text-center text-base md:text-lg">
+                Loading blogs...
+              </p>
             ) : error ? (
-              <p className="text-red-500 text-center text-base md:text-lg">{error}</p>
+              <p className="text-red-500 text-center text-base md:text-lg">
+                {error}
+              </p>
             ) : blogPosts.length === 0 ? (
-              <p className="text-[#718096] text-center text-base md:text-lg">No blogs available.</p>
+              <p className="text-[#718096] text-center text-base md:text-lg">
+                No blogs available.
+              </p>
             ) : (
               <div
                 className="flex transition-transform duration-500 ease-in-out"
                 style={{
-                  transform: `translateX(-${currentIndex * (100 / slidesToShow)}%)`,
+                  transform: `translateX(-${
+                    currentIndex * (100 / slidesToShow)
+                  }%)`,
                 }}
               >
                 {extendedPosts.map((post, index) => (
@@ -424,13 +469,19 @@ const BlogList = () => {
                             alt={post.title}
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                             onError={(e) => {
-                              console.error(`Failed to load image: ${e.target.src}`);
-                              e.target.src = getRandomImage();
+                              console.error(
+                                `Failed to load image: ${e.target.src}`
+                              )
+                              e.target.src = getRandomImage()
                             }}
                           />
                           <div className="absolute right-4 bottom-4 bg-[#ADD01C] text-white px-3 py-2 rounded-lg text-center shadow-md transition-transform duration-300 group-hover:scale-105">
-                            <div className="text-xl font-bold leading-none">{post.date.day}</div>
-                            <div className="text-xs font-medium">{post.date.month}</div>
+                            <div className="text-xl font-bold leading-none">
+                              {post.date.day}
+                            </div>
+                            <div className="text-xs font-medium">
+                              {post.date.month}
+                            </div>
                           </div>
                         </div>
 
@@ -444,14 +495,19 @@ const BlogList = () => {
                               {post.title}
                             </button>
                           </h3>
-                          <p className="text-[#718096] mb-4 line-clamp-2">{post.excerpt}</p>
+                          <p className="text-[#718096] mb-4 line-clamp-2">
+                            {post.excerpt}
+                          </p>
                           <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                             <div className="flex items-center text-[#718096] text-sm">
                               <User size={14} className="text-[#D93BB1] mr-1" />
                               <span className="font-medium">{post.author}</span>
                             </div>
                             <div className="flex items-center text-[#718096] text-sm">
-                              <MessageSquare size={14} className="text-[#D93BB1] mr-1" />
+                              <MessageSquare
+                                size={14}
+                                className="text-[#D93BB1] mr-1"
+                              />
                               <span>{post.comments} Comments</span>
                             </div>
                           </div>
@@ -479,12 +535,16 @@ const BlogList = () => {
           {/* Dots Navigation */}
           {blogPosts.length > 0 && (
             <div className="flex justify-center mt-6 space-x-2">
-              {Array.from({ length: Math.ceil(blogPosts.length / slidesToShow) }).map((_, index) => (
+              {Array.from({
+                length: Math.ceil(blogPosts.length / slidesToShow),
+              }).map((_, index) => (
                 <button
                   key={index}
                   onClick={() => goToSlide(index)}
                   className={`h-2 rounded-full transition-all duration-300 ${
-                    Math.floor(currentIndex / slidesToShow) % Math.ceil(blogPosts.length / slidesToShow) === index
+                    Math.floor(currentIndex / slidesToShow) %
+                      Math.ceil(blogPosts.length / slidesToShow) ===
+                    index
                       ? 'w-8 bg-[#9E0B7F]'
                       : 'w-2 bg-[#D93BB1] bg-opacity-40'
                   }`}
@@ -507,7 +567,7 @@ const BlogList = () => {
         blog={selectedBlog}
       />
     </section>
-  );
-};
+  )
+}
 
-export default BlogList;
+export default BlogList

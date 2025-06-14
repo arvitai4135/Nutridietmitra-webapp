@@ -1,24 +1,24 @@
-import React, { useState } from "react";
+import React, { useState } from 'react'
 
 const NutricareLocationSection = () => {
-  const [isDirectionsPanelOpen, setIsDirectionsPanelOpen] = useState(false);
+  const [isDirectionsPanelOpen, setIsDirectionsPanelOpen] = useState(false)
 
   const locationDetails = {
     lat: 26.8676,
     lng: 75.7972,
-    placeName: "Nutricare Wellness",
+    placeName: 'Nutridietmitra',
     address:
-      "Plot 93, Mauji Colony Rd, Mauji Colony, Moji Nagar, Malviya Nagar, Jaipur, Rajasthan 302017",
-  };
+      'Plot 93, Mauji Colony Rd, Mauji Colony, Moji Nagar, Malviya Nagar, Jaipur, Rajasthan 302017',
+  }
 
   const handleDirectionsClick = () => {
-    setIsDirectionsPanelOpen(!isDirectionsPanelOpen);
-  };
+    setIsDirectionsPanelOpen(!isDirectionsPanelOpen)
+  }
 
   const handleNavigateClick = () => {
-    const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${locationDetails.lat},${locationDetails.lng}`;
-    window.open(mapsUrl, "_blank");
-  };
+    const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${locationDetails.lat},${locationDetails.lng}`
+    window.open(mapsUrl, '_blank')
+  }
 
   return (
     <section className="relative w-full h-[400px] md:h-[600px] bg-nutricare-bg-light overflow-hidden">
@@ -30,7 +30,7 @@ const NutricareLocationSection = () => {
           className="w-full h-full object-cover"
           onError={(e) => {
             e.target.src =
-              "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAMAAAD0iTPIAAAAA1BMVEUAAACnej3aAAAASElEQVR4nO3BMQEAAADCoPVPbQ0voAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADg4ADQMgAAAABJRU5ErkJggg==";
+              'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAMAAAD0iTPIAAAAA1BMVEUAAACnej3aAAAASElEQVR4nO3BMQEAAADCoPVPbQ0voAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADg4ADQMgAAAABJRU5ErkJggg=='
           }}
         />
       </div>
@@ -89,7 +89,7 @@ const NutricareLocationSection = () => {
             onClick={handleDirectionsClick}
             className="w-full bg-nutricare-green text-white py-2 px-6 rounded-md hover:bg-nutricare-green-dark transition duration-300 flex items-center justify-center gap-2"
           >
-            <span>{isDirectionsPanelOpen ? "Close" : "Get Directions"}</span>
+            <span>{isDirectionsPanelOpen ? 'Close' : 'Get Directions'}</span>
             <svg
               className="w-5 h-5"
               fill="none"
@@ -127,7 +127,7 @@ const NutricareLocationSection = () => {
         </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default NutricareLocationSection;
+export default NutricareLocationSection
