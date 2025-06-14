@@ -175,30 +175,6 @@ const PricingSection = () => {
     { name: 'Burrito Bowl', price: 'Price TBD' },
   ]
 
-  const processSteps = [
-    {
-      step: 'Book Your Consultation',
-      price: '₹450',
-      description:
-        'Understand your body needs, health goals, and daily routine with our expert consultation.',
-    },
-    {
-      step: 'Nutritional Assessment & Analysis',
-      description:
-        'Identify muscle mass, bone density, water percentage, and body fat to understand nutrient deficiencies and excesses.',
-    },
-    {
-      step: 'Personalized Plan',
-      description:
-        'Receive a customized diet plan tailored to your medical history and preferences.',
-    },
-    {
-      step: 'Track Progress & Stay Motivated',
-      description:
-        'Weekly follow-ups and motivational support to keep you on track toward your goals.',
-    },
-  ]
-
   const openCustomModal = () => setIsCustomModalOpen(true)
   const closeCustomModal = () => {
     setIsCustomModalOpen(false)
@@ -443,38 +419,9 @@ const PricingSection = () => {
 
         {/* Two-Column Layout for How It Works and Our Meal Offerings - Full Width */}
         <div className="mt-12">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* How It Works (1/3 Width) */}
-            <div className="bg-white rounded-lg shadow-sm p-6 lg:col-span-1 px-4 sm:px-6 lg:px-8 text-justify">
-              <h3 className="text-xl sm:text-2xl font-semibold text-nutricare-primary-dark mb-6 text-center">
-                How It Works
-              </h3>
-              <div className="space-y-6">
-                {processSteps.map((step, index) => (
-                  <div key={index} className="flex items-start">
-                    <div className="flex-shrink-0 w-8 h-8 bg-nutricare-green text-white rounded-full flex items-center justify-center font-semibold text-sm">
-                      {index + 1}
-                    </div>
-                    <div className="ml-3 flex-1">
-                      <h4 className="text-base font-semibold text-nutricare-text-dark">
-                        {step.step}{' '}
-                        {step.price && (
-                          <span className="text-nutricare-green text-sm">
-                            ({step.price})
-                          </span>
-                        )}
-                      </h4>
-                      <p className="text-nutricare-text-gray text-sm">
-                        {step.description}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
+          <div className="px-4 max-w-7xl mx-auto">
             {/* Our Meal Offerings (2/3 Width) */}
-            <div className="bg-white rounded-lg shadow-sm p-6 lg:col-span-2 px-4 sm:px-6 lg:px-8">
+            <div className="bg-white rounded-lg shadow-sm p-6  px-4 sm:px-6 lg:px-8">
               <h3 className="text-xl sm:text-2xl font-semibold text-nutricare-primary-dark mb-6 text-center">
                 Our Meal Offerings
               </h3>

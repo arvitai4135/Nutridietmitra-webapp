@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight, Youtube } from 'lucide-react'
-import HealthCoach from '/assets/Images/HealthCoach.jpg'
+import HealthCoach from '/assets/Images/healthy-food-medical-equipment.jpg'
 
 const Testimonial = () => {
   const [activeIndex, setActiveIndex] = useState(0)
@@ -146,7 +146,7 @@ const Testimonial = () => {
                 At Nutridietmitra, our clients have experienced an incredible
                 transformational journey recovering from many chronic issues to
                 a healthy living and lifestyle. Here are some success stories of
-                our clients:
+                our clients:How N
               </p>
             </div>
 

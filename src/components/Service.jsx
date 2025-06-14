@@ -14,6 +14,30 @@ import {
 import HealthCoach from '/assets/Images/HealthCoach.jpg'
 import Consultency from '../components/form/Consultency.jsx'
 
+const processSteps = [
+  {
+    step: 'Book Your Consultation',
+    price: '₹500',
+    description:
+      'Understand your body needs, health goals, and daily routine with our expert consultation.',
+  },
+  {
+    step: 'Nutritional Assessment & Analysis',
+    description:
+      'Identify muscle mass, bone density, water percentage, and body fat to understand nutrient deficiencies and excesses.',
+  },
+  {
+    step: 'Personalized Plan',
+    description:
+      'Receive a customized diet plan tailored to your medical history and preferences.',
+  },
+  {
+    step: 'Track Progress & Stay Motivated',
+    description:
+      'Weekly follow-ups and motivational support to keep you on track toward your goals.',
+  },
+]
+
 const Service = () => {
   const [isConsultationOpen, setIsConsultationOpen] = useState(false)
 
@@ -31,11 +55,11 @@ const Service = () => {
         {/* Section Header */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center justify-center mb-4">
-            <div className="h-px w-8 bg-nutricare-green"></div>
-            <span className="mx-3 text-nutricare-green font-medium text-sm tracking-wider">
+            <div className="h-px w-8 bg-black"></div>
+            <span className="mx-3 text-black font-medium text-sm tracking-wider">
               OUR APPROACH
             </span>
-            <div className="h-px w-8 bg-nutricare-green"></div>
+            <div className="h-px w-8 bg-black"></div>
           </div>
           <h2 className="text-4xl font-bold text-gray-800 mb-3">
             Why Nutridietmitra
@@ -51,6 +75,37 @@ const Service = () => {
             supplements, ensuring sustainable health without starvation or crash
             diets.
           </p>
+        </div>
+
+        {/* How It Works (1/3 Width) */}
+        <div className="bg-white rounded-lg shadow-sm p-6 lg:col-span-1 px-4 sm:px-6 lg:px-8 text-justify">
+          <h3 className="text-xl sm:text-3xl font-semibold text-nutricare-primary-dark mb-6 text-center">
+            How It Works
+          </h3>
+          <div className="">
+            <div className="space-y-6 p-6 bg-nutricare-bg-light w-fit mx-auto rounded">
+              {processSteps.map((step, index) => (
+                <div key={index} className="flex items-start">
+                  <div className="flex-shrink-0 w-8 h-8 bg-nutricare-green text-white rounded-full flex items-center justify-center font-semibold text-sm">
+                    {index + 1}
+                  </div>
+                  <div className="ml-3 flex-1">
+                    <h4 className="text-base font-semibold text-nutricare-text-dark">
+                      {step.step}{' '}
+                      {step.price && (
+                        <span className="text-nutricare-green text-sm">
+                          ({step.price})
+                        </span>
+                      )}
+                    </h4>
+                    <p className="text-nutricare-text-gray text-sm">
+                      {step.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         <div className="flex flex-col lg:flex-row items-stretch gap-8">
