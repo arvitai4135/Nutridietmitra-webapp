@@ -389,12 +389,12 @@ Dt. Tanu Bhargava is a highly qualified Jaipur-based clinical dietitian and well
                 </p>
               </div>
               <div className="flex-1">
-                <p className="text-nutricare-text-gray text-sm md:text-base leading-tight text-justify tracking-widest">
+                <p className="text-nutricare-text-gray  text-justify leading-relaxed  ">
                   {founderShortContent}
                 </p>
               </div>
               <div className="flex-1">
-                <p className="text-nutricare-text-gray text-sm md:text-base leading-tight text-justify tracking-widest">
+                <p className="text-nutricare-text-gray   text-justify leading-relaxed ">
                   Her expertise in sports nutrition and the unique dietary needs
                   of active athletes is honoured by many fitness centres. Today,
                   she is serving as a renowned Consultant Dietitian for Medical
@@ -413,14 +413,14 @@ Dt. Tanu Bhargava is a highly qualified Jaipur-based clinical dietitian and well
                 </p>
               </div> */}
             </div>
-            <div className="text-center">
+            {/* <div className="text-center">
               <button
                 onClick={openFounderModal}
                 className="text-nutricare-green font-semibold hover:underline bg-transparent border-none cursor-pointer"
               >
                 Read More
               </button>
-            </div>
+            </div> */}
           </div>
           {/* <div className="mt-12 text-center">
             <button
