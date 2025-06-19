@@ -95,7 +95,7 @@ const AboutUs = () => {
       className="bg-[#FCF0F8] py-12 overflow-x-hidden"
       style={{ fontFamily: 'Arial, sans-serif' }}
     >
-      <div className="container mx-auto px-4 max-w-screen-xl">
+      <div className="container mx-auto px-4 max-w-screen">
         {/* Main Content Section */}
         <div className="grid md:grid-cols-2 gap-8 items-center">
           {/* Text Content */}

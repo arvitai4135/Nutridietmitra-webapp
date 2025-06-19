@@ -51,59 +51,61 @@ const Service = () => {
 
   return (
     <section className="w-full py-12 bg-gray-50 font-sans">
-      <div className="container mx-auto px-4">
-        {/* Section Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center mb-4">
-            <div className="h-px w-8 bg-black"></div>
-            <span className="mx-3 text-black font-medium text-sm tracking-wider">
-              OUR APPROACH
-            </span>
-            <div className="h-px w-8 bg-black"></div>
+      <div className="container mx-auto px-4 space-y-4">
+        <div className="max-w-screen bg-nutricare-bg-light pt-4 rounded-xl">
+          {/* Section Header */}
+          <div className="text-center">
+            <div className="inline-flex items-center justify-center mb-4">
+              <div className="h-px w-8 bg-nutricare-primary-dark"></div>
+              <span className="mx-3 text-nutricare-primary-dark font-medium text-sm tracking-wider">
+                OUR APPROACH
+              </span>
+              <div className="h-px w-8 bg-nutricare-primary-dark"></div>
+            </div>
+            <h2 className="text-4xl font-bold text-gray-800 mb-3">
+              Why Nutridietmitra
+            </h2>
+            <p className="max-w-2xl mx-auto text-gray-600 text-justify">
+              Your lifestyle. Your health. Your goals. Our expertise. With 17+
+              years of expertise, Nutridietmitra has transformed 5000+ healthy
+              clients globally through supervised, founder-led personalized
+              consultations and customized plans. Led by a qualified dietitian
+              and wellness coach, Dt. Tanu Bhargava, we offer globally
+              certified, worldwide online consultations with constant ongoing
+              support and progress tracking. Our practical, kitchen-based diets
+              require no supplements, ensuring sustainable health without
+              starvation or crash diets.
+            </p>
           </div>
-          <h2 className="text-4xl font-bold text-gray-800 mb-3">
-            Why Nutridietmitra
-          </h2>
-          <p className="max-w-2xl mx-auto text-gray-600 text-justify">
-            Your lifestyle. Your health. Your goals. Our expertise. With 17+
-            years of expertise, Nutridietmitra has transformed 5000+ healthy
-            clients globally through supervised, founder-led personalized
-            consultations and customized plans. Led by a qualified dietitian and
-            wellness coach, Dt. Tanu Bhargava, we offer globally certified,
-            worldwide online consultations with constant ongoing support and
-            progress tracking. Our practical, kitchen-based diets require no
-            supplements, ensuring sustainable health without starvation or crash
-            diets.
-          </p>
-        </div>
 
-        {/* How It Works (1/3 Width) */}
-        <div className="bg-white rounded-lg shadow-sm p-6 lg:col-span-1 px-4 sm:px-6 lg:px-8 text-justify">
-          <h3 className="text-xl sm:text-3xl font-semibold text-nutricare-primary-dark mb-6 text-center">
-            How It Works
-          </h3>
-          <div className="">
-            <div className="space-y-6 p-6 bg-nutricare-bg-light w-fit mx-auto rounded">
-              {processSteps.map((step, index) => (
-                <div key={index} className="flex items-start">
-                  <div className="flex-shrink-0 w-8 h-8 bg-nutricare-green text-white rounded-full flex items-center justify-center font-semibold text-sm">
-                    {index + 1}
+          {/* How It Works (1/3 Width) */}
+          <div className=" rounded-lg shadow-sm p-6 lg:col-span-1 px-4 sm:px-6 lg:px-8 text-justify">
+            <h3 className="text-xl sm:text-3xl font-semibold text-nutricare-primary-dark mb-6 text-center">
+              How It Works
+            </h3>
+            <div className="">
+              <div className="space-y-6 p-6 bg-nutricare-bg-light w-fit mx-auto rounded">
+                {processSteps.map((step, index) => (
+                  <div key={index} className="flex items-start">
+                    <div className="flex-shrink-0 w-8 h-8 bg-nutricare-green text-white rounded-full flex items-center justify-center font-semibold text-sm">
+                      {index + 1}
+                    </div>
+                    <div className="ml-3 flex-1">
+                      <h4 className="text-base font-semibold text-nutricare-text-dark">
+                        {step.step}{' '}
+                        {step.price && (
+                          <span className="text-nutricare-green text-sm">
+                            ({step.price})
+                          </span>
+                        )}
+                      </h4>
+                      <p className="text-nutricare-text-gray text-sm">
+                        {step.description}
+                      </p>
+                    </div>
                   </div>
-                  <div className="ml-3 flex-1">
-                    <h4 className="text-base font-semibold text-nutricare-text-dark">
-                      {step.step}{' '}
-                      {step.price && (
-                        <span className="text-nutricare-green text-sm">
-                          ({step.price})
-                        </span>
-                      )}
-                    </h4>
-                    <p className="text-nutricare-text-gray text-sm">
-                      {step.description}
-                    </p>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>

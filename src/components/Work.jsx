@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Activity, Scale, Baby, X } from 'lucide-react';
+import React, { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ArrowLeft, ArrowRight, Activity, Scale, Baby, X } from 'lucide-react'
 
 // Image paths
-const SportsNutrition = '/assets/Images/SportsNutrition.jpg';
-const PCOSManagement = '/assets/Images/PersonalisedNutrionist.jpg';
-const WeightLoss = '/assets/Images/WeightLoss.jpg';
-const DiabetesDiet = '/assets/Images/DiabetesDiet.jpg';
-const ChildNutrition = '/assets/Images/ChildNutrition.jpg';
+const SportsNutrition = '/assets/Images/SportsNutrition.jpg'
+const PCOSManagement = '/assets/Images/PersonalisedNutrionist.jpg'
+const WeightLoss = '/assets/Images/WeightLoss.jpg'
+const DiabetesDiet = '/assets/Images/DiabetesDiet.jpg'
+const ChildNutrition = '/assets/Images/ChildNutrition.jpg'
 
 const services = [
   {
@@ -17,9 +17,11 @@ const services = [
     iconImage: '/Icon/sports.ico',
     iconAlt: 'Sports Nutrition Icon',
     title: 'Sports Nutrition',
-    description: 'Boost performance with tailored, kitchen-based nutrition plans designed by Dt. Tanu Bhargava to enhance endurance, recovery, and strength, without supplements.',
+    description:
+      'Boost performance with tailored, kitchen-based nutrition plans designed by Dt. Tanu Bhargava to enhance endurance, recovery, and strength, without supplements.',
     modalContent: {
-      overview: 'Our Sports Nutrition plans are crafted to fuel athletes and fitness enthusiasts with nutrient-dense, kitchen-based meals. With 17+ years of expertise, Dt. Tanu Bhargava designs diets to optimize energy, muscle recovery, and performance, avoiding supplements for sustainable results.',
+      overview:
+        'Our Sports Nutrition plans are crafted to fuel athletes and fitness enthusiasts with nutrient-dense, kitchen-based meals. With 17+ years of expertise, Dt. Tanu Bhargava designs diets to optimize energy, muscle recovery, and performance, avoiding supplements for sustainable results.',
       benefits: [
         'Improved stamina and endurance',
         'Faster muscle recovery with natural foods',
@@ -31,13 +33,15 @@ const services = [
   {
     id: 2,
     image: PCOSManagement,
-     iconType: 'image',
+    iconType: 'image',
     iconImage: '/Icon/women.ico',
     iconAlt: 'Sports Nutrition Icon',
     title: 'PCOS/PCOD Management',
-    description: 'Balance hormones and ease PCOS symptoms with personalized diet plans from Dt. Tanu Bhargava, crafted to support menstrual health and holistic wellness.',
+    description:
+      'Balance hormones and ease PCOS symptoms with personalized diet plans from Dt. Tanu Bhargava, crafted to support menstrual health and holistic wellness.',
     modalContent: {
-      overview: 'Our PCOS/PCOD Management plans address hormonal imbalances through customized, supplement-free diets and lifestyle changes. Backed by Dt. Tanu Bhargava’s global expertise, these plans promote regular cycles, weight management, and overall well-being.',
+      overview:
+        'Our PCOS/PCOD Management plans address hormonal imbalances through customized, supplement-free diets and lifestyle changes. Backed by Dt. Tanu Bhargava’s global expertise, these plans promote regular cycles, weight management, and overall well-being.',
       benefits: [
         'Regulated menstrual cycles',
         'Reduced symptoms like acne and hair loss',
@@ -53,9 +57,11 @@ const services = [
     iconImage: '/Icon/weightLoss.ico',
     iconAlt: 'Sports Nutrition Icon',
     title: 'Weight Loss ',
-    description: 'Achieve sustainable weight loss with delicious, kitchen-based meal plans by Dt. Tanu Bhargava, designed to nourish your body without starvation diets.',
+    description:
+      'Achieve sustainable weight loss with delicious, kitchen-based meal plans by Dt. Tanu Bhargava, designed to nourish your body without starvation diets.',
     modalContent: {
-      overview: 'Our Weight Loss plans focus on sustainable, supplement-free nutrition tailored to your lifestyle. With 17+ years of expertise, Dt. Tanu Bhargava creates delicious, kitchen-based diets that promote healthy weight loss while maintaining energy and satisfaction.',
+      overview:
+        'Our Weight Loss plans focus on sustainable, supplement-free nutrition tailored to your lifestyle. With 17+ years of expertise, Dt. Tanu Bhargava creates delicious, kitchen-based diets that promote healthy weight loss while maintaining energy and satisfaction.',
       benefits: [
         'Gradual, sustainable weight reduction',
         'No hunger or restrictive diets',
@@ -71,9 +77,11 @@ const services = [
     iconImage: '/Icon/diabetes.ico',
     iconAlt: 'Sports Nutrition Icon',
     title: 'Diabetes Diet',
-    description: 'Manage blood sugar naturally with customized, nutrient-rich diets by Dt. Tanu Bhargava, balancing energy and insulin without supplements.',
+    description:
+      'Manage blood sugar naturally with customized, nutrient-rich diets by Dt. Tanu Bhargava, balancing energy and insulin without supplements.',
     modalContent: {
-      overview: 'Our Diabetes Diet plans help control blood sugar levels through personalized, kitchen-based nutrition. Dt. Tanu Bhargava’s science-backed approach ensures balanced meals that stabilize insulin, improve energy, and support long-term health without supplements.',
+      overview:
+        'Our Diabetes Diet plans help control blood sugar levels through personalized, kitchen-based nutrition. Dt. Tanu Bhargava’s science-backed approach ensures balanced meals that stabilize insulin, improve energy, and support long-term health without supplements.',
       benefits: [
         'Stable blood sugar levels',
         'Reduced dependency on medications',
@@ -85,13 +93,15 @@ const services = [
   {
     id: 5,
     image: ChildNutrition,
-     iconType: 'image',
+    iconType: 'image',
     iconImage: '/Icon/child.ico',
     iconAlt: 'Sports Nutrition Icon',
     title: 'Child Nutrition',
-    description: 'Support your child’s growth with fun, healthy, nutrient-dense meals tailored by Dt. Tanu Bhargava to build lifelong health and immunity.',
+    description:
+      'Support your child’s growth with fun, healthy, nutrient-dense meals tailored by Dt. Tanu Bhargava to build lifelong health and immunity.',
     modalContent: {
-      overview: 'Our Child Nutrition plans are designed to support growing kids with balanced, kitchen-based meals. Dt. Tanu Bhargava’s expertise ensures fun, tasty diets that boost immunity, growth, and cognitive development, setting the foundation for lifelong health.',
+      overview:
+        'Our Child Nutrition plans are designed to support growing kids with balanced, kitchen-based meals. Dt. Tanu Bhargava’s expertise ensures fun, tasty diets that boost immunity, growth, and cognitive development, setting the foundation for lifelong health.',
       benefits: [
         'Stronger immunity and growth',
         'Improved focus and energy for school',
@@ -100,30 +110,30 @@ const services = [
       success: '95% of parents notice improved health in 8 weeks.',
     },
   },
-];
+]
 
 const Work = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedService, setSelectedService] = useState(null);
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedService, setSelectedService] = useState(null)
 
   const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % services.length);
-  };
+    setCurrentIndex((prev) => (prev + 1) % services.length)
+  }
 
   const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + services.length) % services.length);
-  };
+    setCurrentIndex((prev) => (prev - 1 + services.length) % services.length)
+  }
 
   const openModal = (service) => {
-    setSelectedService(service);
-    setIsModalOpen(true);
-  };
+    setSelectedService(service)
+    setIsModalOpen(true)
+  }
 
   const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedService(null);
-  };
+    setIsModalOpen(false)
+    setSelectedService(null)
+  }
 
   const renderIcon = (service, className) => {
     if (service.iconType === 'image') {
@@ -133,26 +143,33 @@ const Work = () => {
           alt={service.iconAlt}
           className={`filter-accent ${className}`}
         />
-      );
+      )
     }
-    const IconComponent = service.iconComponent;
-    return <IconComponent className={className} />;
-  };
+    const IconComponent = service.iconComponent
+    return <IconComponent className={className} />
+  }
 
   return (
     <section className="bg-nutricare-bg-light py-10">
       <div className="container mx-auto px-3">
         {/* Section Header */}
         <div className="text-center mb-8">
-          <h5 className="text-nutricare-primary-light font-bold mb-2 text-sm uppercase tracking-wider">Our Nutrition Services</h5>
-          <h2 className="text-3xl md:text-4xl font-bold text-nutricare-text-dark mb-4">Tailored Nutrition Plans</h2>
+          <h5 className="text-nutricare-primary-light font-bold mb-2 text-sm uppercase tracking-wider">
+            Our Nutrition Services
+          </h5>
+          <h2 className="text-3xl md:text-4xl font-bold text-nutricare-text-dark mb-4">
+            Tailored Nutrition Plans
+          </h2>
           <p className="text-nutricare-text-gray text-sm md:text-base max-w-2xl mx-auto">
-            Led by Dt. Tanu Bhargava, Nutridietmitra transforms 5000+ lives globally with personalized, kitchen-based nutrition plans. Awarded Best Dietitian (2020) and featured in Times of India, we support your health without supplements or crash diets.
+            Led by Dt. Tanu Bhargava, Nutridietmitra transforms 5000+ lives
+            globally with personalized, kitchen-based nutrition plans. Awarded
+            Best Dietitian (2020) and featured in Times of India, we support
+            your health without supplements or crash diets.
           </p>
         </div>
 
         {/* Carousel Container */}
-        <div className="relative max-w-5xl mx-auto">
+        <div className="relative max-w-[93%] mx-auto ">
           {/* Navigation Arrows for Mobile */}
           <div className="flex justify-between absolute top-1/2 -translate-y-1/2 w-full z-10 px-8 md:hidden">
             <button
@@ -187,7 +204,9 @@ const Work = () => {
                   className="w-full h-56 md:h-80 object-cover"
                 />
                 <div className="hidden md:block absolute bottom-0 left-0 right-0 bg-black/40 text-white p-3 text-center">
-                  <h3 className="text-lg font-bold">{services[currentIndex].title}</h3>
+                  <h3 className="text-lg font-bold">
+                    {services[currentIndex].title}
+                  </h3>
                 </div>
               </div>
 
@@ -196,7 +215,10 @@ const Work = () => {
                 <div>
                   <div className="flex items-center mb-3 md:mb-4">
                     <div className="bg-nutricare-primary-light p-2 md:p-3 rounded-full mr-3">
-                      {renderIcon(services[currentIndex], 'w-6 h-6 md:w-8 md:h-8 text-white')}
+                      {renderIcon(
+                        services[currentIndex],
+                        'w-6 h-6 md:w-8 md:h-8 text-white'
+                      )}
                     </div>
                     <h3 className="text-xl md:text-2xl font-bold text-nutricare-text-dark">
                       {services[currentIndex].title}
@@ -281,28 +303,39 @@ const Work = () => {
                       {selectedService.title}
                     </h3>
                   </div>
-                  <button onClick={closeModal} className="text-nutricare-text-gray hover:text-nutricare-text-dark">
+                  <button
+                    onClick={closeModal}
+                    className="text-nutricare-text-gray hover:text-nutricare-text-dark"
+                  >
                     <X size={24} />
                   </button>
                 </div>
 
                 <div className="space-y-4">
                   <div>
-                    <h4 className="text-lg font-semibold text-nutricare-text-dark">Overview</h4>
+                    <h4 className="text-lg font-semibold text-nutricare-text-dark">
+                      Overview
+                    </h4>
                     <p className="text-nutricare-text-gray text-sm md:text-base">
                       {selectedService.modalContent.overview}
                     </p>
                   </div>
                   <div>
-                    <h4 className="text-lg font-semibold text-nutricare-text-dark">Key Benefits</h4>
+                    <h4 className="text-lg font-semibold text-nutricare-text-dark">
+                      Key Benefits
+                    </h4>
                     <ul className="list-disc pl-5 text-nutricare-text-gray text-sm md:text-base">
-                      {selectedService.modalContent.benefits.map((benefit, index) => (
-                        <li key={index}>{benefit}</li>
-                      ))}
+                      {selectedService.modalContent.benefits.map(
+                        (benefit, index) => (
+                          <li key={index}>{benefit}</li>
+                        )
+                      )}
                     </ul>
                   </div>
                   <div>
-                    <h4 className="text-lg font-semibold text-nutricare-text-dark">Client Success</h4>
+                    <h4 className="text-lg font-semibold text-nutricare-text-dark">
+                      Client Success
+                    </h4>
                     <p className="text-nutricare-text-gray text-sm md:text-base italic">
                       {selectedService.modalContent.success}
                     </p>
@@ -321,7 +354,7 @@ const Work = () => {
         </AnimatePresence>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default Work;
+export default Work
