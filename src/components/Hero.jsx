@@ -206,7 +206,6 @@ Dt. Tanu Bhargava is a highly qualified Jaipur-based clinical dietitian and well
                 }`}
               >
                 <span className="relative z-10">{/* slide.subtitle */}</span>
-
               </h4>
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 text-white shadow-md">
                 {/* {slide.title.split(' ').map((word, i, arr) => (
@@ -313,17 +312,23 @@ Dt. Tanu Bhargava is a highly qualified Jaipur-based clinical dietitian and well
               <h2 className="text-3xl md:text-4xl font-bold text-nutricare-text-dark mb-4">
                 Welcome to Nutridietmitra: Empowering Your Health
               </h2>
-              <p className="text-nutricare-text-gray text-base md:text-lg mb-6 whitespace-pre-line">
-                {aboutShortContent}
+              <p className="text-nutricare-text-gray text-base md:text-lg mb-6 text-justify ">
+                {aboutContent}
               </p>
-              <button
+              {/* <button
                 onClick={openModal}
                 className="text-nutricare-green font-semibold hover:underline bg-transparent border-none cursor-pointer"
               >
                 Read More
-              </button>
+              </button> */}
             </div>
             <div className="md:w-1/2">
+              {/* <button
+                onClick={openModal}
+                className="text-nutricare-green font-semibold hover:underline bg-transparent border-none cursor-pointer"
+              >
+                Read More
+              </button> */}
               <div className="bg-white shadow-md rounded-lg p-6">
                 <h3 className="text-xl font-bold text-nutricare-text-dark mb-4">
                   Our Philosophy
@@ -364,7 +369,7 @@ Dt. Tanu Bhargava is a highly qualified Jaipur-based clinical dietitian and well
           <h2 className="text-3xl md:text-4xl font-bold text-nutricare-text-dark text-center mb-4">
             Founder - Dt. Tanu Bhargava
           </h2>
-          <p className="text-nutricare-text-gray text-center text-base md:text-lg mb-6 max-w-2xl mx-auto">
+          <p className="text-nutricare-primary-dark text-center text-base md:text-lg mb-6 max-w-2xl mx-auto">
             The Wellness Mind Behind Nutridietmitra
           </p>
           <div className="bg-nutricare-bg-light rounded-lg p-4 w-full">
@@ -479,7 +484,7 @@ Dt. Tanu Bhargava is a highly qualified Jaipur-based clinical dietitian and well
             <h2 className="text-xl sm:text-2xl font-bold text-nutricare-text-dark mb-4">
               About Dt. Tanu Bhargava
             </h2>
-            <p className="text-nutricare-text-gray text-sm sm:text-base whitespace-pre-line">
+            <p className="text-nutricare-text-gray text-sm sm:text-base whitespace-pre-line text-justify">
               {founderContent}
             </p>
           </div>

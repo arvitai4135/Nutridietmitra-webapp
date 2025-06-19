@@ -1,95 +1,95 @@
-import React, { useState, useContext } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import { AuthContext } from "../admin/context/AuthContext"; // Adjust path as needed
-import "@fortawesome/fontawesome-free/css/all.min.css";
-import Appointment from "../components/form/Appointment"; // Import the Appointment component
+import React, { useState, useContext } from 'react'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { AuthContext } from '../admin/context/AuthContext' // Adjust path as needed
+import '@fortawesome/fontawesome-free/css/all.min.css'
+import Appointment from '../components/form/Appointment' // Import the Appointment component
 
 const Navbar = () => {
-  const navigate = useNavigate();
-  const { user, updateUser, logout } = useContext(AuthContext); // Access user, updateUser, and logout from AuthContext
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isAppointmentOpen, setIsAppointmentOpen] = useState(false);
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false); // State for profile modal
+  const navigate = useNavigate()
+  const { user, updateUser, logout } = useContext(AuthContext) // Access user, updateUser, and logout from AuthContext
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isAppointmentOpen, setIsAppointmentOpen] = useState(false)
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false) // State for profile modal
   const [formData, setFormData] = useState({
     full_name: user?.full_name || '',
-    phone_number: user?.phone_number || ''
-  }); // State for editable fields
+    phone_number: user?.phone_number || '',
+  }) // State for editable fields
 
   // Functions to handle redirection for auth
   const handleSignIn = () => {
-    navigate("/login");
-    closeMenu();
-  };
+    navigate('/login')
+    closeMenu()
+  }
 
   const handleSignUp = () => {
-    navigate("/signup");
-    closeMenu();
-  };
+    navigate('/signup')
+    closeMenu()
+  }
 
   // Function to handle logout
   const handleLogout = () => {
-    logout(); // Call logout from AuthContext
-    navigate("/"); // Redirect to main website
-    closeMenu();
-  };
+    logout() // Call logout from AuthContext
+    navigate('/') // Redirect to main website
+    closeMenu()
+  }
 
   // Function to handle dashboard navigation
   const handleDashboardClick = () => {
     try {
-      console.log("Dashboard button clicked, user:", user);
-      setIsProfileModalOpen(false); // Close modal
-      navigate("/dashboard");
-      console.log("Navigation to /admin/dashboard attempted");
+      console.log('Dashboard button clicked, user:', user)
+      setIsProfileModalOpen(false) // Close modal
+      navigate('/dashboard')
+      console.log('Navigation to /admin/dashboard attempted')
     } catch (err) {
-      console.error("Navigation error:", err);
-      alert("Failed to navigate to dashboard. Please try again.");
+      console.error('Navigation error:', err)
+      alert('Failed to navigate to dashboard. Please try again.')
     }
-  };
+  }
 
   const toggleAppointment = () => {
-    setIsAppointmentOpen(!isAppointmentOpen);
+    setIsAppointmentOpen(!isAppointmentOpen)
     // Close menu when appointment is opened on mobile
     if (!isAppointmentOpen && isMenuOpen) {
-      setIsMenuOpen(false);
+      setIsMenuOpen(false)
     }
-  };
+  }
 
   // Function to close the mobile menu
   const closeMenu = () => {
-    setIsMenuOpen(false);
-  };
+    setIsMenuOpen(false)
+  }
 
   // Function to open/close profile modal
   const toggleProfileModal = () => {
-    setIsProfileModalOpen(!isProfileModalOpen);
+    setIsProfileModalOpen(!isProfileModalOpen)
     // Close menu when profile modal is opened on mobile
     if (!isProfileModalOpen && isMenuOpen) {
-      setIsMenuOpen(false);
+      setIsMenuOpen(false)
     }
     // Reset form data when closing modal
     if (isProfileModalOpen) {
       setFormData({
         full_name: user?.full_name || '',
-        phone_number: user?.phone_number || ''
-      });
+        phone_number: user?.phone_number || '',
+      })
     }
-  };
+  }
 
   // Function to navigate to change password
   const handleChangePassword = () => {
-    navigate("/change-password");
-    setIsProfileModalOpen(false); // Close modal
-  };
+    navigate('/change-password')
+    setIsProfileModalOpen(false) // Close modal
+  }
 
   // Function to handle input changes
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value } = e.target
     setFormData((prev) => ({
       ...prev,
-      [name]: value
-    }));
-  };
+      [name]: value,
+    }))
+  }
 
   // Function to handle save
   const handleSave = async () => {
@@ -97,14 +97,14 @@ const Navbar = () => {
       // Call updateUser from AuthContext (replace with your actual update logic)
       await updateUser({
         full_name: formData.full_name,
-        phone_number: formData.phone_number
-      });
-      setIsProfileModalOpen(false); // Close modal on success
+        phone_number: formData.phone_number,
+      })
+      setIsProfileModalOpen(false) // Close modal on success
     } catch (error) {
-      console.error("Failed to update user:", error);
+      console.error('Failed to update user:', error)
       // Optionally show an error message to the user
     }
-  };
+  }
 
   return (
     <div className="bg-nutricare-bg-light shadow-sm sticky top-0 z-40">
@@ -117,13 +117,18 @@ const Navbar = () => {
               className="focus:outline-none text-nutricare-primary-dark transition-transform duration-300 ease-in-out"
               aria-label="Toggle menu"
             >
-              <i className={`fas fa-${isMenuOpen ? "times" : "bars"} text-xl`}></i>
+              <i
+                className={`fas fa-${isMenuOpen ? 'times' : 'bars'} text-xl`}
+              ></i>
             </button>
           </div>
 
           {/* Logo - keep the original space for logo if needed */}
           <div className="flex-shrink-0 md:hidden">
-            <Link to="/" className="text-xl font-bold text-nutricare-primary-dark">
+            <Link
+              to="/"
+              className="text-xl font-bold text-nutricare-primary-dark"
+            >
               NutriDiet
             </Link>
           </div>
@@ -179,9 +184,11 @@ const Navbar = () => {
           {/* Original Desktop Navigation Links - PRESERVED EXACTLY */}
           <nav
             className={`${
-              isMenuOpen ? "block" : "hidden"
+              isMenuOpen ? 'block' : 'hidden'
             } md:flex md:space-x-6 font-sans absolute md:static top-16 left-0 w-full md:w-auto bg-nutricare-bg-light md:bg-transparent shadow md:shadow-none z-50 md:z-auto flex flex-col md:flex-row items-center space-y-4 md:space-y-0 py-6 md:py-0 transition-all duration-700 ease-in-out ${
-              isMenuOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10 md:opacity-100 md:translate-x-0"
+              isMenuOpen
+                ? 'opacity-100 translate-x-0'
+                : 'opacity-0 -translate-x-10 md:opacity-100 md:translate-x-0'
             }`}
           >
             <NavLink
@@ -190,8 +197,8 @@ const Navbar = () => {
               className={({ isActive }) =>
                 `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 ${
                   isActive
-                    ? "text-nutricare-primary-dark bg-nutricare-bg-light"
-                    : "text-nutricare-text-dark hover:text-nutricare-primary-dark hover:bg-nutricare-bg-light"
+                    ? 'text-nutricare-primary-dark bg-nutricare-bg-light'
+                    : 'text-nutricare-text-dark hover:text-nutricare-primary-dark hover:bg-nutricare-bg-light'
                 }`
               }
             >
@@ -203,8 +210,8 @@ const Navbar = () => {
               className={({ isActive }) =>
                 `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 ${
                   isActive
-                    ? "text-nutricare-primary-dark bg-nutricare-bg-light"
-                    : "text-nutricare-text-dark hover:text-nutricare-primary-dark hover:bg-nutricare-bg-light"
+                    ? 'text-nutricare-primary-dark bg-nutricare-bg-light'
+                    : 'text-nutricare-text-dark hover:text-nutricare-primary-dark hover:bg-nutricare-bg-light'
                 }`
               }
             >
@@ -216,12 +223,12 @@ const Navbar = () => {
               className={({ isActive }) =>
                 `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 ${
                   isActive
-                    ? "text-nutricare-primary-dark bg-nutricare-bg-light"
-                    : "text-nutricare-text-dark hover:text-nutricare-primary-dark hover:bg-nutricare-bg-light"
+                    ? 'text-nutricare-primary-dark bg-nutricare-bg-light'
+                    : 'text-nutricare-text-dark hover:text-nutricare-primary-dark hover:bg-nutricare-bg-light'
                 }`
               }
             >
-              Service
+              Services
             </NavLink>
             <NavLink
               to="/gallery"
@@ -229,8 +236,8 @@ const Navbar = () => {
               className={({ isActive }) =>
                 `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 ${
                   isActive
-                    ? "text-nutricare-primary-dark bg-nutricare-bg-light"
-                    : "text-nutricare-text-dark hover:text-nutricare-primary-dark hover:bg-nutricare-bg-light"
+                    ? 'text-nutricare-primary-dark bg-nutricare-bg-light'
+                    : 'text-nutricare-text-dark hover:text-nutricare-primary-dark hover:bg-nutricare-bg-light'
                 }`
               }
             >
@@ -242,8 +249,8 @@ const Navbar = () => {
               className={({ isActive }) =>
                 `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 ${
                   isActive
-                    ? "text-nutricare-primary-dark bg-nutricare-bg-light"
-                    : "text-nutricare-text-dark hover:text-nutricare-primary-dark hover:bg-nutricare-bg-light"
+                    ? 'text-nutricare-primary-dark bg-nutricare-bg-light'
+                    : 'text-nutricare-text-dark hover:text-nutricare-primary-dark hover:bg-nutricare-bg-light'
                 }`
               }
             >
@@ -255,8 +262,8 @@ const Navbar = () => {
               className={({ isActive }) =>
                 `block py-2 px-4 md:px-3 rounded-full transition-all duration-300 ${
                   isActive
-                    ? "text-nutricare-primary-dark bg-nutricare-bg-light"
-                    : "text-nutricare-text-dark hover:text-nutricare-primary-dark hover:bg-nutricare-bg-light"
+                    ? 'text-nutricare-primary-dark bg-nutricare-bg-light'
+                    : 'text-nutricare-text-dark hover:text-nutricare-primary-dark hover:bg-nutricare-bg-light'
                 }`
               }
             >
@@ -332,13 +339,17 @@ const Navbar = () => {
               </button>
 
               {/* Modal Header */}
-              <h2 className="text-xl font-bold text-nutricare-primary-dark mb-4">Profile Information</h2>
+              <h2 className="text-xl font-bold text-nutricare-primary-dark mb-4">
+                Profile Information
+              </h2>
 
               {/* Profile Form */}
               <div className="space-y-4">
                 {/* Email (Read-only) */}
                 <div>
-                  <label className="block text-sm font-medium text-nutricare-text-dark">Email</label>
+                  <label className="block text-sm font-medium text-nutricare-text-dark">
+                    Email
+                  </label>
                   <input
                     type="email"
                     value={user.email || 'N/A'}
@@ -349,7 +360,9 @@ const Navbar = () => {
 
                 {/* Full Name (Editable) */}
                 <div>
-                  <label className="block text-sm font-medium text-nutricare-text-dark">Full Name</label>
+                  <label className="block text-sm font-medium text-nutricare-text-dark">
+                    Full Name
+                  </label>
                   <input
                     type="text"
                     name="full_name"
@@ -362,7 +375,9 @@ const Navbar = () => {
 
                 {/* Phone Number (Editable) */}
                 <div>
-                  <label className="block text-sm font-medium text-nutricare-text-dark">Phone Number</label>
+                  <label className="block text-sm font-medium text-nutricare-text-dark">
+                    Phone Number
+                  </label>
                   <input
                     type="tel"
                     name="phone_number"
@@ -375,7 +390,9 @@ const Navbar = () => {
 
                 {/* Subscription Details (Read-only, placeholder) */}
                 <div>
-                  <label className="block text-sm font-medium text-nutricare-text-dark">Subscription Plan</label>
+                  <label className="block text-sm font-medium text-nutricare-text-dark">
+                    Subscription Plan
+                  </label>
                   <input
                     type="text"
                     value={user.subscription_plan || 'Basic Plan'} // Placeholder, replace with actual data
@@ -386,7 +403,9 @@ const Navbar = () => {
 
                 {/* Food Plan Details (Read-only, placeholder) */}
                 <div>
-                  <label className="block text-sm font-medium text-nutricare-text-dark">Food Plan</label>
+                  <label className="block text-sm font-medium text-nutricare-text-dark">
+                    Food Plan
+                  </label>
                   <input
                     type="text"
                     value={user.food_plan || 'Standard Diet'} // Placeholder, replace with actual data
@@ -396,7 +415,7 @@ const Navbar = () => {
                 </div>
 
                 {/* Dashboard Button for Admins */}
-                {user?.role === "admin" && (
+                {user?.role === 'admin' && (
                   <button
                     onClick={handleDashboardClick}
                     className="w-full py-2 px-4 bg-nutricare-green text-white rounded-full hover:bg-nutricare-green-dark transition-colors duration-300 font-sans text-sm"
@@ -427,10 +446,13 @@ const Navbar = () => {
         )}
 
         {/* Appointment Modal */}
-        <Appointment isOpen={isAppointmentOpen} onClose={() => setIsAppointmentOpen(false)} />
+        <Appointment
+          isOpen={isAppointmentOpen}
+          onClose={() => setIsAppointmentOpen(false)}
+        />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar
