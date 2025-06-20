@@ -10,7 +10,7 @@ export const createAppointment = async (appointmentData) => {
     message: appointmentData.dietConcern || null,
     status: 'active',
   };
-
+  
   const response = await axios.post(
     `${import.meta.env.VITE_API_BASE_URL}/appointments/create`,
     payload,
