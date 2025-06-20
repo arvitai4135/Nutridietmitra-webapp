@@ -53,7 +53,7 @@ const BlogList = () => {
           return (
             <p
               key={index}
-              className="text-[#718096] text-sm sm:text-base mt-3 leading-relaxed text-justify"
+              className="text-[#718096] text-sm sm:text-base mt-3 leading-relaxed "
             >
               {item.content}
             </p>

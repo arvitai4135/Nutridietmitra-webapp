@@ -505,7 +505,7 @@ const NutritionServices = () => {
                   className={`h-3 bg-gradient-to-r ${service.color} rounded-t-2xl`}
                 ></div>
 
-                <div className="bg-white p-6 h-full border-t-0 border border-gray-100 rounded-b-2xl text-justify">
+                <div className="bg-white p-6 h-full border-t-0 border border-gray-100 rounded-b-2xl ">
                   <div
                     className={`w-14 h-14 bg-gradient-to-br ${service.color} rounded-2xl mb-5 p-3 text-white transform
                     transition-all duration-300 relative z-10 shadow-lg`}

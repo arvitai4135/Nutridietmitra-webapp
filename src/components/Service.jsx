@@ -65,7 +65,7 @@ const Service = () => {
             <h2 className="text-4xl font-bold text-gray-800 mb-3">
               Why Nutridietmitra
             </h2>
-            <p className="max-w-2xl mx-auto text-gray-600 text-justify">
+            <p className="max-w-2xl mx-auto text-gray-600 ">
               Your lifestyle. Your health. Your goals. Our expertise. With 17+
               years of expertise, Nutridietmitra has transformed 5000+ healthy
               clients globally through supervised, founder-led personalized
@@ -79,7 +79,7 @@ const Service = () => {
           </div>
 
           {/* How It Works (1/3 Width) */}
-          <div className=" rounded-lg shadow-sm p-6 lg:col-span-1 px-4 sm:px-6 lg:px-8 text-justify">
+          <div className=" rounded-lg shadow-sm p-6 lg:col-span-1 px-4 sm:px-6 lg:px-8 ">
             <h3 className="text-xl sm:text-3xl font-semibold text-nutricare-primary-dark mb-6 text-center">
               How It Works
             </h3>
@@ -181,7 +181,7 @@ const Service = () => {
           </div>
 
           {/* Right Content Column */}
-          <div className="w-full lg:w-1/2 text-justify">
+          <div className="w-full lg:w-1/2 ">
             <div className="bg-white p-6 rounded-xl shadow-lg">
               {/* Features */}
               <div className="space-y-6">

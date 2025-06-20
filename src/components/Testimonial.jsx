@@ -158,8 +158,8 @@ const Testimonial = () => {
               </div>
 
               {/* Testimonial content */}
-              <div className="mt-4 mb-4 sm:mb-6 text-justify">
-                <p className="text-nutricare-text-dark text-base sm:text-lg md:text-xl italic relative z-10 leading-relaxed text-justify">
+              <div className="mt-4 mb-4 sm:mb-6 ">
+                <p className="text-nutricare-text-dark text-base sm:text-lg md:text-xl italic relative z-10 leading-relaxed ">
                   {testimonials[activeIndex].quote}
                 </p>
               </div>

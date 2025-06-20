@@ -45,7 +45,7 @@ const ServiceMiddle = () => {
               <h2 className="text-3xl lg:text-4xl font-bold text-nutricare-text-dark mb-6">
                 Purposeful living with customized nutrition.
               </h2>
-              <p className="text-nutricare-text-gray leading-relaxed text-justify">
+              <p className="text-nutricare-text-gray leading-relaxed ">
                 Every body is unique and so is every diet plan we offer. At
                 Nutridietmitra, our expert will guide you through different
                 issues like struggle with weight management, managing with a
@@ -56,7 +56,7 @@ const ServiceMiddle = () => {
             </div>
 
             {/* Features Row */}
-            <div className="flex flex-col md:flex-row gap-6 text-justify">
+            <div className="flex flex-col md:flex-row gap-6 ">
               {/* Feature 1 */}
               <div className="w-full md:w-1/2">
                 <div className="bg-nutricare-bg-light rounded-lg overflow-hidden shadow-md transition-transform duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col">
